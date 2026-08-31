@@ -117,25 +117,25 @@ class AppTheme {
         labelStyle: AppTypography.bodyMedium.copyWith(color: AppColors.textSecondaryLight),
         prefixIconColor: AppColors.textSecondaryLight,
         suffixIconColor: AppColors.textSecondaryLight,
-        border: OutlineInputBorder(
+        border: const OutlineInputBorder(
           borderRadius: AppRadius.input,
-          borderSide: const BorderSide(color: AppColors.lightBorder, width: 1.0),
+          borderSide: BorderSide(color: AppColors.lightBorder, width: 1.0),
         ),
-        enabledBorder: OutlineInputBorder(
+        enabledBorder: const OutlineInputBorder(
           borderRadius: AppRadius.input,
-          borderSide: const BorderSide(color: AppColors.lightBorder, width: 1.0),
+          borderSide: BorderSide(color: AppColors.lightBorder, width: 1.0),
         ),
-        focusedBorder: OutlineInputBorder(
+        focusedBorder: const OutlineInputBorder(
           borderRadius: AppRadius.input,
-          borderSide: const BorderSide(color: AppColors.primary, width: 2.0),
+          borderSide: BorderSide(color: AppColors.primary, width: 2.0),
         ),
-        errorBorder: OutlineInputBorder(
+        errorBorder: const OutlineInputBorder(
           borderRadius: AppRadius.input,
-          borderSide: const BorderSide(color: AppColors.statusError, width: 1.0),
+          borderSide: BorderSide(color: AppColors.statusError, width: 1.0),
         ),
-        focusedErrorBorder: OutlineInputBorder(
+        focusedErrorBorder: const OutlineInputBorder(
           borderRadius: AppRadius.input,
-          borderSide: const BorderSide(color: AppColors.statusError, width: 2.0),
+          borderSide: BorderSide(color: AppColors.statusError, width: 2.0),
         ),
       ),
 
@@ -287,25 +287,25 @@ class AppTheme {
         labelStyle: AppTypography.bodyMedium.copyWith(color: AppColors.textSecondaryDark),
         prefixIconColor: AppColors.textSecondaryDark,
         suffixIconColor: AppColors.textSecondaryDark,
-        border: OutlineInputBorder(
+        border: const OutlineInputBorder(
           borderRadius: AppRadius.input,
-          borderSide: const BorderSide(color: AppColors.darkBorder, width: 1.0),
+          borderSide: BorderSide(color: AppColors.darkBorder, width: 1.0),
         ),
-        enabledBorder: OutlineInputBorder(
+        enabledBorder: const OutlineInputBorder(
           borderRadius: AppRadius.input,
-          borderSide: const BorderSide(color: AppColors.darkBorder, width: 1.0),
+          borderSide: BorderSide(color: AppColors.darkBorder, width: 1.0),
         ),
-        focusedBorder: OutlineInputBorder(
+        focusedBorder: const OutlineInputBorder(
           borderRadius: AppRadius.input,
-          borderSide: const BorderSide(color: AppColors.primaryLight, width: 2.0),
+          borderSide: BorderSide(color: AppColors.primaryLight, width: 2.0),
         ),
-        errorBorder: OutlineInputBorder(
+        errorBorder: const OutlineInputBorder(
           borderRadius: AppRadius.input,
-          borderSide: const BorderSide(color: AppColors.statusError, width: 1.0),
+          borderSide: BorderSide(color: AppColors.statusError, width: 1.0),
         ),
-        focusedErrorBorder: OutlineInputBorder(
+        focusedErrorBorder: const OutlineInputBorder(
           borderRadius: AppRadius.input,
-          borderSide: const BorderSide(color: AppColors.statusError, width: 2.0),
+          borderSide: BorderSide(color: AppColors.statusError, width: 2.0),
         ),
       ),
 

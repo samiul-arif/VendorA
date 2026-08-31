@@ -9,6 +9,7 @@ import '../../features/profile/presentation/views/profile_screen.dart';
 import '../../features/profile/presentation/views/edit_profile_screen.dart';
 import '../../features/profile/presentation/views/shop_settings_screen.dart';
 import '../../features/notifications/presentation/views/notification_center_screen.dart';
+import '../../features/permissions/presentation/views/permissions_settings_screen.dart';
 
 // Central Route Generator with custom page transitions
 class AppRouter {
@@ -96,6 +97,12 @@ class AppRouter {
         return _buildPageRoute(
           settings: settings,
           builder: (_) => const ProfileScreen(),
+        );
+
+      case AppRoutes.permissions:
+        return _buildPageRoute(
+          settings: settings,
+          builder: (_) => const PermissionsSettingsScreen(),
         );
 
       default:

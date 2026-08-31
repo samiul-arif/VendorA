@@ -10,6 +10,9 @@ import '../../../../shared/components/app_card.dart';
 import '../../../../shared/components/app_dialog.dart';
 import '../../../../shared/components/status_badge.dart';
 import '../../../../shared/components/app_circular_back_button.dart';
+import '../../../../shared/components/app_toast.dart';
+import '../../../notifications/presentation/controllers/notification_controller.dart';
+import '../../../notifications/domain/models/notification_type.dart';
 import '../../domain/models/order_model.dart';
 import '../../domain/models/order_status.dart';
 import '../controllers/order_controller.dart';
@@ -48,22 +51,17 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
 
     result.when(
       success: (updated) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Order #${order.orderNumber} status changed to ${newStatus.label}!'),
-            backgroundColor: AppColors.statusSuccess,
-            behavior: SnackBarBehavior.floating,
-          ),
+        context.read<NotificationController>().dispatchNotification(
+          context,
+          title: 'Order Status Changed (#${order.orderNumber})',
+          message: 'Status transitioned to ${newStatus.label}.',
+          type: NotificationType.order,
+          relatedOrderId: order.id,
+          toastVariant: AppToastVariant.success,
         );
       },
       failure: (msg, _) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(msg),
-            backgroundColor: AppColors.statusError,
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
+        AppToast.showError(context, title: 'Action Failed', message: msg);
       },
     );
   }
@@ -88,22 +86,17 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
 
       result.when(
         success: (_) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Order #${order.orderNumber} has been cancelled.'),
-              backgroundColor: AppColors.statusError,
-              behavior: SnackBarBehavior.floating,
-            ),
+          context.read<NotificationController>().dispatchNotification(
+            context,
+            title: 'Order Cancelled (#${order.orderNumber})',
+            message: 'Order was rejected and customer has been notified.',
+            type: NotificationType.order,
+            relatedOrderId: order.id,
+            toastVariant: AppToastVariant.error,
           );
         },
         failure: (msg, _) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(msg),
-              backgroundColor: AppColors.statusError,
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
+          AppToast.showError(context, title: 'Cancellation Failed', message: msg);
         },
       );
     }
@@ -331,11 +324,10 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
               ),
               ElevatedButton.icon(
                 onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Simulating call to ${order.customerPhone}...'),
-                      behavior: SnackBarBehavior.floating,
-                    ),
+                  AppToast.showInfo(
+                    context,
+                    title: 'Initiating Call',
+                    message: 'Connecting to customer at ${order.customerPhone}...',
                   );
                 },
                 icon: const Icon(Icons.call_rounded, size: 14),
@@ -472,11 +464,10 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
           ),
           IconButton(
             onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Contacting courier ${order.riderName}...'),
-                  behavior: SnackBarBehavior.floating,
-                ),
+              AppToast.showInfo(
+                context,
+                title: 'Calling Courier',
+                message: 'Connecting dispatch line with ${order.riderName}...',
               );
             },
             icon: const Icon(Icons.phone_in_talk_rounded, color: AppColors.statusSuccess),

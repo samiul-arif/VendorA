@@ -11,6 +11,9 @@ import '../../domain/models/order_model.dart';
 import '../../domain/models/order_status.dart';
 import '../controllers/order_controller.dart';
 import '../widgets/order_card.dart';
+import '../../../notifications/presentation/controllers/notification_controller.dart';
+import '../../../notifications/domain/models/notification_type.dart';
+import '../../../../shared/components/app_toast.dart';
 import 'order_details_screen.dart';
 
 // Order Management Screen (Content-First Merchant Layout)
@@ -58,32 +61,32 @@ class _OrderListScreenState extends State<OrderListScreen> {
 
     result.when(
       success: (updated) {
-        String msg;
+        String title;
+        String desc;
         if (newStatus == OrderStatus.preparing || newStatus == OrderStatus.accepted) {
-          msg = 'Order #${order.orderNumber} accepted! Moved to preparation queue.';
+          title = 'Order Accepted (#${order.orderNumber})';
+          desc = 'Order moved to kitchen preparation queue.';
         } else if (newStatus == OrderStatus.ready) {
-          msg = 'Order #${order.orderNumber} Ready! Assigned rider notified for pickup.';
+          title = 'Order Ready for Pickup (#${order.orderNumber})';
+          desc = 'Assigned courier notified for immediate pickup.';
         } else {
-          msg = 'Order #${order.orderNumber} updated to ${newStatus.label}.';
+          title = 'Order Status Updated (#${order.orderNumber})';
+          desc = 'Order changed to ${newStatus.label}.';
         }
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(msg),
-            backgroundColor: AppColors.statusSuccess,
-            behavior: SnackBarBehavior.floating,
-            duration: const Duration(seconds: 3),
-          ),
+        context.read<NotificationController>().dispatchNotification(
+          context,
+          title: title,
+          message: desc,
+          type: NotificationType.order,
+          relatedOrderId: order.id,
+          toastVariant: AppToastVariant.success,
+          actionLabel: 'Details',
+          onAction: () => _openOrderDetails(order),
         );
       },
       failure: (msg, _) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(msg),
-            backgroundColor: AppColors.statusError,
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
+        AppToast.showError(context, title: 'Update Failed', message: msg);
       },
     );
   }
@@ -279,8 +282,8 @@ class _OrderListSkeleton extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 96),
       children: [
-        Row(
-          children: const [
+        const Row(
+          children: [
             ShimmerSkeleton(width: 90, height: 36, borderRadius: AppRadius.full),
             SizedBox(width: 8),
             ShimmerSkeleton(width: 90, height: 36, borderRadius: AppRadius.full),
@@ -291,9 +294,9 @@ class _OrderListSkeleton extends StatelessWidget {
         AppSpacing.vGap16,
         ...List.generate(
           3,
-          (index) => Padding(
-            padding: const EdgeInsets.only(bottom: 12.0),
-            child: const ShimmerSkeleton(
+          (index) => const Padding(
+            padding: EdgeInsets.only(bottom: 12.0),
+            child: ShimmerSkeleton(
               width: double.infinity,
               height: 160,
               borderRadius: AppRadius.card,

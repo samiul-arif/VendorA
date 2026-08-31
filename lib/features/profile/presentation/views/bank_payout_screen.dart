@@ -10,6 +10,9 @@ import '../../../../shared/components/app_card.dart';
 import '../../../../shared/components/app_text_field.dart';
 import '../../../../shared/components/app_bottom_sheet.dart';
 import '../../../../shared/components/app_circular_back_button.dart';
+import '../../../../shared/components/app_toast.dart';
+import '../../../notifications/presentation/controllers/notification_controller.dart';
+import '../../../notifications/domain/models/notification_type.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../controllers/profile_controller.dart';
 
@@ -79,22 +82,16 @@ class _BankPayoutScreenState extends State<BankPayoutScreen> {
               if (mounted) {
                 result.when(
                   success: (_) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Bank payout details updated successfully!'),
-                        backgroundColor: AppColors.statusSuccess,
-                        behavior: SnackBarBehavior.floating,
-                      ),
+                    context.read<NotificationController>().dispatchNotification(
+                      context,
+                      title: 'Bank Account Updated',
+                      message: 'Weekly payout deposits verified for ${bankNameController.text.trim()}.',
+                      type: NotificationType.payout,
+                      toastVariant: AppToastVariant.success,
                     );
                   },
                   failure: (msg, _) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(msg),
-                        backgroundColor: AppColors.statusError,
-                        behavior: SnackBarBehavior.floating,
-                      ),
-                    );
+                    AppToast.showError(context, title: 'Bank Verification Failed', message: msg);
                   },
                 );
               }

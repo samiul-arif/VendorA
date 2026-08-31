@@ -6,6 +6,9 @@ import '../../../../shared/components/app_button.dart';
 import '../../../../shared/components/app_text_field.dart';
 import '../../../../shared/components/app_circular_back_button.dart';
 import '../../../../shared/components/app_header_action_button.dart';
+import '../../../../shared/components/app_toast.dart';
+import '../../../notifications/presentation/controllers/notification_controller.dart';
+import '../../../notifications/domain/models/notification_type.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../controllers/profile_controller.dart';
 
@@ -73,23 +76,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         setState(() => _isSaving = false);
         result.when(
           success: (updated) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Profile information updated successfully!'),
-                backgroundColor: AppColors.statusSuccess,
-                behavior: SnackBarBehavior.floating,
-              ),
+            context.read<NotificationController>().dispatchNotification(
+              context,
+              title: 'Profile Updated',
+              message: 'Merchant business details saved successfully.',
+              type: NotificationType.system,
+              toastVariant: AppToastVariant.success,
             );
             Navigator.of(context).pop();
           },
           failure: (msg, _) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(msg),
-                backgroundColor: AppColors.statusError,
-                behavior: SnackBarBehavior.floating,
-              ),
-            );
+            AppToast.showError(context, title: 'Update Failed', message: msg);
           },
         );
       }

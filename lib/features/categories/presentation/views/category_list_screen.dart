@@ -11,6 +11,9 @@ import '../../../../shared/components/error_state_view.dart';
 import '../../../../shared/components/shimmer_skeleton.dart';
 import '../../../../shared/components/app_circular_back_button.dart';
 import '../../../../shared/components/app_header_action_button.dart';
+import '../../../../shared/components/app_toast.dart';
+import '../../../notifications/presentation/controllers/notification_controller.dart';
+import '../../../notifications/domain/models/notification_type.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../../domain/models/category_model.dart';
 import '../controllers/category_controller.dart';
@@ -77,26 +80,18 @@ class _CategoryListScreenState extends State<CategoryListScreen> {
 
           result.when(
             success: (_) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    isEdit
-                        ? 'Category "$name" updated successfully!'
-                        : 'Category "$name" added to menu!',
-                  ),
-                  backgroundColor: AppColors.statusSuccess,
-                  behavior: SnackBarBehavior.floating,
-                ),
+              context.read<NotificationController>().dispatchNotification(
+                context,
+                title: isEdit ? 'Category Updated' : 'Category Created',
+                message: isEdit
+                    ? 'Changes saved to category "$name".'
+                    : 'Category "$name" is now available for grouping items.',
+                type: NotificationType.stock,
+                toastVariant: AppToastVariant.success,
               );
             },
             failure: (msg, _) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(msg),
-                  backgroundColor: AppColors.statusError,
-                  behavior: SnackBarBehavior.floating,
-                ),
-              );
+              AppToast.showError(context, title: 'Category Failed', message: msg);
             },
           );
         },
@@ -116,28 +111,23 @@ class _CategoryListScreenState extends State<CategoryListScreen> {
 
     if (confirmed == true && mounted) {
       final categoryController = context.read<CategoryController>();
+      final catName = category.name;
       final result = await categoryController.deleteCategory(category.id);
 
       if (!mounted) return;
 
       result.when(
         success: (_) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Category "${category.name}" deleted.'),
-              backgroundColor: AppColors.statusSuccess,
-              behavior: SnackBarBehavior.floating,
-            ),
+          context.read<NotificationController>().dispatchNotification(
+            context,
+            title: 'Category Removed',
+            message: 'Category "$catName" has been deleted.',
+            type: NotificationType.stock,
+            toastVariant: AppToastVariant.warning,
           );
         },
         failure: (msg, _) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(msg),
-              backgroundColor: AppColors.statusError,
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
+          AppToast.showError(context, title: 'Delete Failed', message: msg);
         },
       );
     }
@@ -323,9 +313,9 @@ class _CategorySkeletonLoading extends StatelessWidget {
       children: [
         const ShimmerSkeleton(width: double.infinity, height: 48, borderRadius: AppRadius.full),
         AppSpacing.vGap16,
-        Row(
+        const Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: const [
+          children: [
             ShimmerSkeleton(width: 140, height: 16),
             ShimmerSkeleton(width: 80, height: 16),
           ],
@@ -333,9 +323,9 @@ class _CategorySkeletonLoading extends StatelessWidget {
         AppSpacing.vGap12,
         ...List.generate(
           4,
-          (index) => Padding(
-            padding: const EdgeInsets.only(bottom: 12.0),
-            child: const ShimmerSkeleton(
+          (index) => const Padding(
+            padding: EdgeInsets.only(bottom: 12.0),
+            child: ShimmerSkeleton(
               width: double.infinity,
               height: 110,
               borderRadius: AppRadius.card,

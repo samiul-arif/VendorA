@@ -8,6 +8,9 @@ import '../../../../shared/components/app_card.dart';
 import '../../../orders/domain/models/order_status.dart';
 import '../../../orders/presentation/controllers/order_controller.dart';
 import '../../../orders/presentation/views/order_details_screen.dart';
+import '../../../notifications/presentation/controllers/notification_controller.dart';
+import '../../../notifications/domain/models/notification_type.dart';
+import '../../../../shared/components/app_toast.dart';
 
 // Incoming Orders Stream Component (Screenshot 4 Matching)
 class IncomingOrdersStream extends StatelessWidget {
@@ -200,25 +203,27 @@ class IncomingOrdersStream extends StatelessWidget {
                             orderId: order.id,
                             newStatus: OrderStatus.preparing,
                           );
+                          if (!context.mounted) return;
+                          final notifController = context.read<NotificationController>();
                           result.when(
                             success: (_) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('Order #${order.orderNumber} Accepted! Moved to Preparing.'),
-                                  backgroundColor: AppColors.statusSuccess,
-                                  behavior: SnackBarBehavior.floating,
-                                  duration: const Duration(seconds: 2),
-                                ),
+                              notifController.dispatchNotification(
+                                context,
+                                title: 'Order Accepted (#${order.orderNumber})',
+                                message: 'Order has been moved to kitchen preparation queue.',
+                                type: NotificationType.order,
+                                relatedOrderId: order.id,
+                                toastVariant: AppToastVariant.success,
+                                actionLabel: 'View',
+                                onAction: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(builder: (_) => OrderDetailsScreen(orderId: order.id)),
+                                  );
+                                },
                               );
                             },
                             failure: (msg, _) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(msg),
-                                  backgroundColor: AppColors.statusError,
-                                  behavior: SnackBarBehavior.floating,
-                                ),
-                              );
+                              AppToast.showError(context, title: 'Action Failed', message: msg);
                             },
                           );
                         },
@@ -245,25 +250,27 @@ class IncomingOrdersStream extends StatelessWidget {
                             orderId: order.id,
                             newStatus: OrderStatus.ready,
                           );
+                          if (!context.mounted) return;
+                          final notifController = context.read<NotificationController>();
                           result.when(
                             success: (_) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('Order #${order.orderNumber} Ready! Assigned rider notified for immediate pickup.'),
-                                  backgroundColor: AppColors.statusSuccess,
-                                  behavior: SnackBarBehavior.floating,
-                                  duration: const Duration(seconds: 3),
-                                ),
+                              notifController.dispatchNotification(
+                                context,
+                                title: 'Order Ready for Pickup (#${order.orderNumber})',
+                                message: 'Assigned courier has been notified for immediate pickup.',
+                                type: NotificationType.order,
+                                relatedOrderId: order.id,
+                                toastVariant: AppToastVariant.success,
+                                actionLabel: 'View',
+                                onAction: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(builder: (_) => OrderDetailsScreen(orderId: order.id)),
+                                  );
+                                },
                               );
                             },
                             failure: (msg, _) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(msg),
-                                  backgroundColor: AppColors.statusError,
-                                  behavior: SnackBarBehavior.floating,
-                                ),
-                              );
+                              AppToast.showError(context, title: 'Action Failed', message: msg);
                             },
                           );
                         },

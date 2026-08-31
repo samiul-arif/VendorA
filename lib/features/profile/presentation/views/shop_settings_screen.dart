@@ -7,8 +7,11 @@ import '../../../../core/theme/app_typography.dart';
 import '../../../../shared/components/app_card.dart';
 import '../../../../shared/components/app_switch.dart';
 import '../../../../shared/components/shared_select_modal.dart';
+import '../../../../shared/components/app_toast.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../../../shop/presentation/controllers/shop_controller.dart';
+import '../../../notifications/presentation/controllers/notification_controller.dart';
+import '../../../notifications/domain/models/notification_type.dart';
 
 // Shop Information & Store Preferences Screen (Content-First Merchant Layout)
 class ShopSettingsScreen extends StatefulWidget {
@@ -50,24 +53,18 @@ class _ShopSettingsScreenState extends State<ShopSettingsScreen> {
             shopController.setActiveShop(session.activeShop!);
           }
           if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Switched store to "${session.activeShop?.name ?? ''}"'),
-                backgroundColor: AppColors.statusSuccess,
-                behavior: SnackBarBehavior.floating,
-              ),
+            context.read<NotificationController>().dispatchNotification(
+              context,
+              title: 'Active Store Switched',
+              message: 'Now managing "${session.activeShop?.name ?? ''}".',
+              type: NotificationType.system,
+              toastVariant: AppToastVariant.success,
             );
           }
         },
         failure: (msg, _) {
           if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(msg),
-                backgroundColor: AppColors.statusError,
-                behavior: SnackBarBehavior.floating,
-              ),
-            );
+            AppToast.showError(context, title: 'Store Switch Failed', message: msg);
           }
         },
       );

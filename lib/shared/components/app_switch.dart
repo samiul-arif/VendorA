@@ -55,10 +55,10 @@ class AppSwitch extends StatelessWidget {
                 child: Container(
                   width: 24,
                   height: 24,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     shape: BoxShape.circle,
                     color: Colors.white,
-                    boxShadow: const [
+                    boxShadow: [
                       BoxShadow(
                         color: Color(0x26000000),
                         offset: Offset(0, 2),

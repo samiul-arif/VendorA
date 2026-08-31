@@ -8,6 +8,9 @@ import '../../../../shared/components/empty_state_view.dart';
 import '../../../../shared/components/error_state_view.dart';
 import '../../../../shared/components/shimmer_skeleton.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
+import '../../../notifications/presentation/controllers/notification_controller.dart';
+import '../../../notifications/domain/models/notification_type.dart';
+import '../../../../shared/components/app_toast.dart';
 import '../../domain/models/product_model.dart';
 import '../controllers/product_controller.dart';
 import '../widgets/product_card.dart';
@@ -55,22 +58,16 @@ class _ProductListScreenState extends State<ProductListScreen> {
 
           result.when(
             success: (updated) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Restocked ${product.name} (+ $quantity units)!'),
-                  backgroundColor: AppColors.statusSuccess,
-                  behavior: SnackBarBehavior.floating,
-                ),
+              context.read<NotificationController>().dispatchNotification(
+                context,
+                title: 'Stock Updated',
+                message: 'Added +$quantity units to ${product.name}. Total stock: ${updated.stockQuantity}.',
+                type: NotificationType.stock,
+                toastVariant: AppToastVariant.success,
               );
             },
             failure: (msg, _) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(msg),
-                  backgroundColor: AppColors.statusError,
-                  behavior: SnackBarBehavior.floating,
-                ),
-              );
+              AppToast.showError(context, title: 'Restock Failed', message: msg);
             },
           );
         },
@@ -243,8 +240,8 @@ class _ProductGridSkeleton extends StatelessWidget {
       children: [
         const ShimmerSkeleton(width: double.infinity, height: 48, borderRadius: AppRadius.md),
         AppSpacing.vGap12,
-        Row(
-          children: const [
+        const Row(
+          children: [
             ShimmerSkeleton(width: 90, height: 36, borderRadius: AppRadius.full),
             SizedBox(width: 8),
             ShimmerSkeleton(width: 90, height: 36, borderRadius: AppRadius.full),

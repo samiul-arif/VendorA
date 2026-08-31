@@ -55,6 +55,11 @@ import '../../features/notifications/domain/usecases/mark_all_notifications_read
 import '../../features/notifications/domain/usecases/delete_notification_usecase.dart';
 import '../../features/notifications/data/repositories/mock_notification_repository.dart';
 import '../../features/notifications/presentation/controllers/notification_controller.dart';
+import '../../features/permissions/domain/repositories/permission_repository_interface.dart';
+import '../../features/permissions/domain/usecases/check_permission_usecase.dart';
+import '../../features/permissions/domain/usecases/request_permission_usecase.dart';
+import '../../features/permissions/data/repositories/mock_permission_repository.dart';
+import '../../features/permissions/presentation/controllers/permission_controller.dart';
 
 // Lightweight Service Locator for Dependency Injection
 class ServiceLocator {
@@ -294,6 +299,22 @@ class ServiceLocator {
       deleteNotificationUseCase: deleteNotificationUseCase,
     );
     instance.register<NotificationController>(notificationController);
+
+    // Permission Module Services & Controller
+    final permissionRepository = MockPermissionRepository();
+    instance.register<IPermissionRepository>(permissionRepository);
+
+    final checkPermissionUseCase = CheckPermissionUseCase(permissionRepository);
+    instance.register<CheckPermissionUseCase>(checkPermissionUseCase);
+
+    final requestPermissionUseCase = RequestPermissionUseCase(permissionRepository);
+    instance.register<RequestPermissionUseCase>(requestPermissionUseCase);
+
+    final permissionController = PermissionController(
+      checkPermissionUseCase: checkPermissionUseCase,
+      requestPermissionUseCase: requestPermissionUseCase,
+    );
+    instance.register<PermissionController>(permissionController);
   }
 }
 

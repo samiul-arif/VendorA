@@ -41,7 +41,7 @@ class NotificationTile extends StatelessWidget {
       background: Container(
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 20),
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: AppColors.statusError,
           borderRadius: AppRadius.card,
         ),

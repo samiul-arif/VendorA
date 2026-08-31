@@ -11,6 +11,7 @@ import '../../../../shared/components/app_button.dart';
 import '../../../../shared/components/app_card.dart';
 import '../../../../shared/components/app_text_field.dart';
 import '../../../../shared/components/app_bottom_sheet.dart';
+import '../../../../shared/components/app_toast.dart';
 import '../controllers/auth_controller.dart';
 import '../widgets/vendor_brand_header.dart';
 import '../widgets/demo_credentials_chip.dart';
@@ -63,19 +64,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
     result.when(
       success: (session) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Row(
-              children: [
-                const Icon(Icons.check_circle, color: Colors.white, size: 20),
-                const SizedBox(width: 10),
-                Text('Welcome back, ${session.vendor.name}!'),
-              ],
-            ),
-            backgroundColor: AppColors.statusSuccess,
-            behavior: SnackBarBehavior.floating,
-            shape: const RoundedRectangleBorder(borderRadius: AppRadius.md),
-          ),
+        AppToast.showSuccess(
+          context,
+          title: 'Welcome Back, ${session.vendor.name}!',
+          message: 'Signed in as ${session.activeShop?.name ?? "Merchant"}.',
         );
 
         // Clear stack and navigate to Main Dashboard Shell
@@ -83,19 +75,10 @@ class _LoginScreenState extends State<LoginScreen> {
       },
       failure: (message, exception) {
         setState(() => _inlineError = message);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Row(
-              children: [
-                const Icon(Icons.error_outline, color: Colors.white, size: 20),
-                const SizedBox(width: 10),
-                Expanded(child: Text(message)),
-              ],
-            ),
-            backgroundColor: AppColors.statusError,
-            behavior: SnackBarBehavior.floating,
-            shape: const RoundedRectangleBorder(borderRadius: AppRadius.md),
-          ),
+        AppToast.showError(
+          context,
+          title: 'Authentication Failed',
+          message: message,
         );
       },
     );
@@ -123,12 +106,10 @@ class _LoginScreenState extends State<LoginScreen> {
             text: 'Send Reset Link',
             onPressed: () {
               Navigator.of(context).pop();
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Password reset instructions sent to your email.'),
-                  backgroundColor: AppColors.statusInfo,
-                  behavior: SnackBarBehavior.floating,
-                ),
+              AppToast.showInfo(
+                context,
+                title: 'Reset Link Sent',
+                message: 'Password reset instructions have been sent to ${resetEmailController.text.trim()}.',
               );
             },
           ),

@@ -7,11 +7,15 @@ import '../../../../shared/components/shimmer_skeleton.dart';
 import '../../../../shared/components/app_circular_back_button.dart';
 import '../../../../shared/components/app_header_action_button.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
+import '../../../orders/presentation/views/order_details_screen.dart';
+import '../../../profile/presentation/views/bank_payout_screen.dart';
+import '../../domain/models/notification_model.dart';
+import '../../domain/models/notification_type.dart';
 import '../controllers/notification_controller.dart';
 import '../widgets/notification_tile.dart';
 import '../widgets/notification_filter_bar.dart';
 
-// Notification Center Screen
+// Notification Center Screen (Permanent Activity Log & Quick Destination Router)
 class NotificationCenterScreen extends StatefulWidget {
   const NotificationCenterScreen({super.key});
 
@@ -28,6 +32,25 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
       final shopId = authController.activeShop?.id ?? 'shop_01';
       context.read<NotificationController>().loadNotifications(shopId: shopId);
     });
+  }
+
+  void _handleNotificationTap(NotificationModel item) {
+    final controller = context.read<NotificationController>();
+    controller.markAsRead(item.id);
+
+    if (item.relatedOrderId != null && item.relatedOrderId!.isNotEmpty) {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => OrderDetailsScreen(orderId: item.relatedOrderId!),
+        ),
+      );
+    } else if (item.type == NotificationType.payout) {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => const BankPayoutScreen(),
+        ),
+      );
+    }
   }
 
   @override
@@ -114,7 +137,7 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
                               final item = notifications[index];
                               return NotificationTile(
                                 notification: item,
-                                onTap: () => controller.markAsRead(item.id),
+                                onTap: () => _handleNotificationTap(item),
                                 onDelete: () => controller.deleteNotification(item.id),
                               );
                             },

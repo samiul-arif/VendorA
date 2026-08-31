@@ -5,6 +5,9 @@ import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../features/auth/presentation/controllers/auth_controller.dart';
 import '../../../../features/shop/presentation/controllers/shop_controller.dart';
+import '../../../../features/notifications/presentation/controllers/notification_controller.dart';
+import '../../../../features/notifications/domain/models/notification_type.dart';
+import '../../../../shared/components/app_toast.dart';
 
 // Top Store Header with Open/Closed Status Toggle & Shop Switcher (Screenshot 4 Matching)
 class StoreStatusHeader extends StatelessWidget {
@@ -78,16 +81,25 @@ class StoreStatusHeader extends StatelessWidget {
           onTap: () {
             final nextStatus = !isStoreOpen;
             shopController.toggleStoreStatus(nextStatus);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  nextStatus ? 'Store Opened! Accepting incoming orders.' : 'Store Paused. Incoming orders paused.',
-                ),
-                backgroundColor: nextStatus ? AppColors.statusSuccess : AppColors.statusError,
-                behavior: SnackBarBehavior.floating,
-                duration: const Duration(seconds: 2),
-              ),
-            );
+            final notifController = context.read<NotificationController>();
+
+            if (nextStatus) {
+              notifController.dispatchNotification(
+                context,
+                title: 'Shop Opened',
+                message: 'Your kitchen is now accepting incoming orders.',
+                type: NotificationType.system,
+                toastVariant: AppToastVariant.success,
+              );
+            } else {
+              notifController.dispatchNotification(
+                context,
+                title: 'Shop Closed / Paused',
+                message: 'Store marked offline. Incoming orders are paused.',
+                type: NotificationType.system,
+                toastVariant: AppToastVariant.warning,
+              );
+            }
           },
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),

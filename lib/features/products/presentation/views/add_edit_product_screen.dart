@@ -13,7 +13,11 @@ import '../../../../shared/components/app_bottom_sheet.dart';
 import '../../../../shared/components/shared_select_modal.dart';
 import '../../../../shared/components/app_circular_back_button.dart';
 import '../../../../shared/components/app_header_action_button.dart';
+import '../../../../shared/components/app_toast.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
+import '../../../notifications/presentation/controllers/notification_controller.dart';
+import '../../../notifications/domain/models/notification_type.dart';
+import '../../../permissions/presentation/widgets/image_source_picker_bottom_sheet.dart';
 import '../../domain/models/product_model.dart';
 import '../controllers/product_controller.dart';
 
@@ -56,33 +60,6 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
     'Salads & Bowls',
     'Pizza',
     'Appetizers',
-  ];
-
-  final List<Map<String, String>> _sampleFoodGallery = const [
-    {
-      'title': 'Truffle Smash Burger',
-      'url': 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500&q=80',
-    },
-    {
-      'title': 'Crispy Onion Rings',
-      'url': 'https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=500&q=80',
-    },
-    {
-      'title': 'Gourmet French Fries',
-      'url': 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=500&q=80',
-    },
-    {
-      'title': 'Vanilla Milkshake',
-      'url': 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=500&q=80',
-    },
-    {
-      'title': 'Avocado Salad Bowl',
-      'url': 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&q=80',
-    },
-    {
-      'title': 'Crispy Chicken Tenders',
-      'url': 'https://images.unsplash.com/photo-1562967914-608f82629710?w=500&q=80',
-    },
   ];
 
   @override
@@ -230,7 +207,7 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                       foregroundColor: Colors.white,
                       elevation: 0,
                       padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(borderRadius: AppRadius.full),
+                      shape: const RoundedRectangleBorder(borderRadius: AppRadius.full),
                     ),
                     child: const Text(
                       'Allow Access',
@@ -250,139 +227,13 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
     AppBottomSheet.show(
       context: context,
       title: 'Select Product Photo',
-      subtitle: 'Upload a picture from your device gallery or curated stock',
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ListTile(
-            leading: Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.1),
-                borderRadius: AppRadius.md,
-              ),
-              child: const Icon(Icons.photo_library_rounded, color: AppColors.primary, size: 20),
-            ),
-            title: const Text('Device Photo Gallery', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
-            subtitle: const Text('Pick high-resolution food photo from camera roll', style: TextStyle(fontSize: 11)),
-            trailing: const Icon(Icons.chevron_right_rounded),
-            onTap: () {
-              Navigator.of(context).pop();
-              // Pick sample photo from library
-              setState(() {
-                _imageUrl = _sampleFoodGallery.first['url']!;
-              });
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Selected photo from gallery.'),
-                  backgroundColor: AppColors.statusSuccess,
-                  behavior: SnackBarBehavior.floating,
-                ),
-              );
-            },
-          ),
-          const Divider(height: 1),
-          ListTile(
-            leading: Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: const Color(0xFF10B981).withValues(alpha: 0.1),
-                borderRadius: AppRadius.md,
-              ),
-              child: const Icon(Icons.camera_alt_rounded, color: Color(0xFF10B981), size: 20),
-            ),
-            title: const Text('Take Picture with Camera', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
-            subtitle: const Text('Capture live freshly plated kitchen dish', style: TextStyle(fontSize: 11)),
-            trailing: const Icon(Icons.chevron_right_rounded),
-            onTap: () {
-              Navigator.of(context).pop();
-              setState(() {
-                _imageUrl = _sampleFoodGallery[1]['url']!;
-              });
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Captured photo with camera.'),
-                  backgroundColor: AppColors.statusSuccess,
-                  behavior: SnackBarBehavior.floating,
-                ),
-              );
-            },
-          ),
-          const Divider(height: 1),
-          ListTile(
-            leading: Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: const Color(0xFF6366F1).withValues(alpha: 0.1),
-                borderRadius: AppRadius.md,
-              ),
-              child: const Icon(Icons.collections_rounded, color: Color(0xFF6366F1), size: 20),
-            ),
-            title: const Text('Curated Chef Food Photos', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
-            subtitle: const Text('Select from royalty-free restaurant dish library', style: TextStyle(fontSize: 11)),
-            trailing: const Icon(Icons.chevron_right_rounded),
-            onTap: () {
-              Navigator.of(context).pop();
-              _showCuratedFoodGalleryModal();
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showCuratedFoodGalleryModal() {
-    AppBottomSheet.show(
-      context: context,
-      title: 'Curated Food Library',
-      subtitle: 'Tap any dish photo to apply to this menu item',
-      child: SizedBox(
-        height: 240,
-        child: GridView.builder(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3,
-            crossAxisSpacing: 10,
-            mainAxisSpacing: 10,
-          ),
-          itemCount: _sampleFoodGallery.length,
-          itemBuilder: (ctx, idx) {
-            final item = _sampleFoodGallery[idx];
-            return GestureDetector(
-              onTap: () {
-                Navigator.of(context).pop();
-                setState(() => _imageUrl = item['url']!);
-              },
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    Image.network(item['url']!, fit: BoxFit.cover),
-                    Positioned(
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                        color: Colors.black.withValues(alpha: 0.6),
-                        child: Text(
-                          item['title']!,
-                          style: const TextStyle(color: Colors.white, fontSize: 8, fontWeight: FontWeight.w700),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
-        ),
+      subtitle: 'Upload a picture with device camera, gallery, or curated stock',
+      child: ImageSourcePickerBottomSheet(
+        onImageSelected: (url) {
+          setState(() {
+            _imageUrl = url;
+          });
+        },
       ),
     );
   }
@@ -423,23 +274,17 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
         setState(() => _isSubmitting = false);
         result.when(
           success: (_) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Item "$name" updated successfully!'),
-                backgroundColor: AppColors.statusSuccess,
-                behavior: SnackBarBehavior.floating,
-              ),
+            context.read<NotificationController>().dispatchNotification(
+              context,
+              title: 'Product Updated',
+              message: '"$name" changes saved to store menu.',
+              type: NotificationType.stock,
+              toastVariant: AppToastVariant.success,
             );
             Navigator.of(context).pop();
           },
           failure: (msg, _) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(msg),
-                backgroundColor: AppColors.statusError,
-                behavior: SnackBarBehavior.floating,
-              ),
-            );
+            AppToast.showError(context, title: 'Update Failed', message: msg);
           },
         );
       }
@@ -465,23 +310,17 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
         setState(() => _isSubmitting = false);
         result.when(
           success: (_) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Item "$name" added to menu!'),
-                backgroundColor: AppColors.statusSuccess,
-                behavior: SnackBarBehavior.floating,
-              ),
+            context.read<NotificationController>().dispatchNotification(
+              context,
+              title: 'Product Added to Menu',
+              message: '"$name" ($quantity units) is now live for ordering.',
+              type: NotificationType.stock,
+              toastVariant: AppToastVariant.success,
             );
             Navigator.of(context).pop();
           },
           failure: (msg, _) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(msg),
-                backgroundColor: AppColors.statusError,
-                behavior: SnackBarBehavior.floating,
-              ),
-            );
+            AppToast.showError(context, title: 'Failed to Add Product', message: msg);
           },
         );
       }
@@ -501,28 +340,23 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
 
     if (confirmed == true && mounted) {
       final productController = context.read<ProductController>();
+      final productName = widget.productToEdit!.name;
       final result = await productController.deleteProduct(widget.productToEdit!.id);
 
       if (mounted) {
         result.when(
           success: (_) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('"${widget.productToEdit!.name}" deleted from menu.'),
-                backgroundColor: AppColors.statusError,
-                behavior: SnackBarBehavior.floating,
-              ),
+            context.read<NotificationController>().dispatchNotification(
+              context,
+              title: 'Product Removed',
+              message: '"$productName" deleted from store catalog.',
+              type: NotificationType.stock,
+              toastVariant: AppToastVariant.warning,
             );
             Navigator.of(context).pop();
           },
           failure: (msg, _) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(msg),
-                backgroundColor: AppColors.statusError,
-                behavior: SnackBarBehavior.floating,
-              ),
-            );
+            AppToast.showError(context, title: 'Delete Failed', message: msg);
           },
         );
       }

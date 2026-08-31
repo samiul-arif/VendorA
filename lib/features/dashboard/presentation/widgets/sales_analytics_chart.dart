@@ -105,7 +105,7 @@ class SalesAnalyticsChart extends StatelessWidget {
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 6, vertical: 2),
                                   margin: const EdgeInsets.only(bottom: 6),
-                                  decoration: BoxDecoration(
+                                  decoration: const BoxDecoration(
                                     color: AppColors.primary,
                                     borderRadius: AppRadius.sm,
                                   ),

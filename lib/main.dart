@@ -15,6 +15,7 @@ import 'features/categories/presentation/controllers/category_controller.dart';
 import 'features/orders/presentation/controllers/order_controller.dart';
 import 'features/profile/presentation/controllers/profile_controller.dart';
 import 'features/notifications/presentation/controllers/notification_controller.dart';
+import 'features/permissions/presentation/controllers/permission_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -46,6 +47,7 @@ class VendorApp extends StatelessWidget {
     final orderController = locate<OrderController>();
     final profileController = locate<ProfileController>();
     final notificationController = locate<NotificationController>();
+    final permissionController = locate<PermissionController>();
 
     final isAuthenticated = authController.isAuthenticated;
 
@@ -59,6 +61,7 @@ class VendorApp extends StatelessWidget {
         ChangeNotifierProvider<OrderController>.value(value: orderController),
         ChangeNotifierProvider<ProfileController>.value(value: profileController),
         ChangeNotifierProvider<NotificationController>.value(value: notificationController),
+        ChangeNotifierProvider<PermissionController>.value(value: permissionController),
       ],
       child: Consumer<ProfileController>(
         builder: (context, profile, _) {

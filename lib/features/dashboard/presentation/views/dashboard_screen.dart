@@ -9,6 +9,9 @@ import '../../../../shared/components/shared_select_modal.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../../../orders/presentation/controllers/order_controller.dart';
 import '../../../shop/presentation/controllers/shop_controller.dart';
+import '../../../notifications/presentation/controllers/notification_controller.dart';
+import '../../../notifications/domain/models/notification_type.dart';
+import '../../../../shared/components/app_toast.dart';
 import '../controllers/dashboard_controller.dart';
 import '../widgets/store_status_header.dart';
 import '../widgets/hero_earnings_card.dart';
@@ -86,24 +89,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
             context.read<OrderController>().loadOrders(shopId: session.activeShop!.id);
           }
           if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Switched store to "${session.activeShop?.name ?? ''}"'),
-                backgroundColor: AppColors.statusSuccess,
-                behavior: SnackBarBehavior.floating,
-              ),
+            context.read<NotificationController>().dispatchNotification(
+              context,
+              title: 'Switched Active Store',
+              message: 'Now viewing "${session.activeShop?.name ?? ''}".',
+              type: NotificationType.system,
+              toastVariant: AppToastVariant.success,
             );
           }
         },
         failure: (msg, _) {
           if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(msg),
-                backgroundColor: AppColors.statusError,
-                behavior: SnackBarBehavior.floating,
-              ),
-            );
+            AppToast.showError(context, title: 'Store Switch Failed', message: msg);
           }
         },
       );
@@ -177,29 +174,29 @@ class _DashboardSkeletonLoading extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 96),
-      children: [
+      children: const [
         Row(
           children: [
-            const ShimmerSkeleton(width: 44, height: 44, borderRadius: AppRadius.md),
+            ShimmerSkeleton(width: 44, height: 44, borderRadius: AppRadius.md),
             AppSpacing.hGap12,
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
+                children: [
                   ShimmerSkeleton(width: 100, height: 12),
                   SizedBox(height: 6),
                   ShimmerSkeleton(width: 180, height: 18),
                 ],
               ),
             ),
-            const ShimmerSkeleton(width: 70, height: 32, borderRadius: AppRadius.full),
+            ShimmerSkeleton(width: 70, height: 32, borderRadius: AppRadius.full),
           ],
         ),
         AppSpacing.vGap16,
-        const ShimmerSkeleton(width: double.infinity, height: 180, borderRadius: AppRadius.card),
+        ShimmerSkeleton(width: double.infinity, height: 180, borderRadius: AppRadius.card),
         AppSpacing.vGap16,
         Row(
-          children: const [
+          children: [
             Expanded(child: ShimmerSkeleton(width: double.infinity, height: 110, borderRadius: AppRadius.card)),
             SizedBox(width: 12),
             Expanded(child: ShimmerSkeleton(width: double.infinity, height: 110, borderRadius: AppRadius.card)),

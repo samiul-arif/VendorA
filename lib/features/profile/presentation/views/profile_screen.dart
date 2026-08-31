@@ -6,6 +6,7 @@ import '../../../../core/theme/app_typography.dart';
 import '../../../../core/routing/app_routes.dart';
 import '../../../../shared/components/app_dialog.dart';
 import '../../../../shared/components/app_card.dart';
+import '../../../../shared/components/app_toast.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../controllers/profile_controller.dart';
 import '../widgets/profile_header_card.dart';
@@ -135,8 +136,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 SettingsTileItem(
                   icon: Icons.storefront_rounded,
                   iconColor: AppColors.primary,
-                  title: 'Store Preferences & Hours',
-                  subtitle: 'Operating schedule, minimum order, auto-accept',
+                  title: 'Store Preference',
                   onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(builder: (_) => const ShopSettingsScreen()),
@@ -147,7 +147,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   icon: Icons.account_balance_rounded,
                   iconColor: const Color(0xFF10B981),
                   title: 'Bank & Payout Account',
-                  subtitle: 'Weekly settlement bank details & history',
                   onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(builder: (_) => const BankPayoutScreen()),
@@ -158,7 +157,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   icon: Icons.restaurant_menu_rounded,
                   iconColor: const Color(0xFFF59E0B),
                   title: 'Manage Menu Items',
-                  subtitle: 'Dishes, stock quantities & prices',
                   onTap: () {
                     Navigator.of(context).pushNamed(AppRoutes.products);
                   },
@@ -176,21 +174,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   icon: Icons.support_agent_rounded,
                   iconColor: const Color(0xFF3B82F6),
                   title: 'Merchant Support Hotline',
-                  subtitle: '24/7 dedicated partner assistance',
                   onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Contacting merchant partner support desk...'),
-                        behavior: SnackBarBehavior.floating,
-                      ),
+                    AppToast.showInfo(
+                      context,
+                      title: 'Support Desk',
+                      message: 'Connecting to priority merchant partner dispatch...',
                     );
+                  },
+                ),
+                SettingsTileItem(
+                  icon: Icons.security_rounded,
+                  iconColor: const Color(0xFF10B981),
+                  title: 'App Permissions & Privacy',
+                  onTap: () {
+                    Navigator.of(context).pushNamed(AppRoutes.permissions);
                   },
                 ),
                 SettingsTileItem(
                   icon: Icons.shield_outlined,
                   iconColor: const Color(0xFF8B5CF6),
                   title: 'Privacy Policy & Terms',
-                  subtitle: 'Legal and food safety compliance',
                   onTap: () {},
                 ),
                 SettingsTileItem(

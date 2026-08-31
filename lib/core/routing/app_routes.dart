@@ -45,4 +45,5 @@ class AppRoutes {
   static const String notificationPreferences = '/settings/notifications';
   static const String languageSettings = '/settings/language';
   static const String privacySettings = '/settings/privacy';
+  static const String permissions = '/settings/permissions';
 }
