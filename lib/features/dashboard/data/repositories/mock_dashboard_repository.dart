@@ -14,8 +14,7 @@ class MockDashboardRepository extends BaseMockRepository implements IDashboardRe
     averageTicketSize: 59.18,
     weeklyEarnings: 8940.00,
     nextPayoutAmount: 8940.00,
-    storeRating: 4.9,
-    totalReviews: 328,
+    fulfillmentRate: 98.5,
     lastUpdated: DateTime.now(),
   );
 

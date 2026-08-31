@@ -53,6 +53,7 @@ class ProductController extends BaseController {
   List<ProductModel> get products => _allProducts;
   String get selectedCategoryId => _selectedCategoryId;
   String get searchQuery => _searchQuery;
+  String? get activeShopId => _activeShopId;
 
   // Filtered Products based on search query and category
   List<ProductModel> get filteredProducts {

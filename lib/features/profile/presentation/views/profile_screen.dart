@@ -15,7 +15,7 @@ import 'edit_profile_screen.dart';
 import 'bank_payout_screen.dart';
 import 'shop_settings_screen.dart';
 
-// Vendor Profile & Global App Settings Screen (Tab 4 in MainShellScreen)
+// Vendor Profile & Global App Settings Screen (Content-First Merchant Layout)
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
@@ -66,34 +66,39 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     return Scaffold(
       backgroundColor: isDark ? AppColors.darkCanvas : AppColors.lightCanvas,
-      appBar: AppBar(
-        backgroundColor: isDark ? const Color(0xFF161B22) : const Color(0xFFFFFFFF),
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        centerTitle: false,
-        title: Text(
-          'Vendor Profile & Settings',
-          style: TextStyle(
-            fontWeight: FontWeight.w900,
-            fontSize: 18,
-            letterSpacing: -0.3,
-            color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
-          ),
-        ),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1.0),
-          child: Container(
-            color: isDark ? AppColors.darkBorder : const Color(0xFFEEF0F2),
-            height: 1.0,
-          ),
-        ),
-      ),
       body: SafeArea(
         bottom: false,
         child: ListView(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 100),
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 110),
           children: [
-            // Profile Header
+            // Content-First Header (Scrollable Merchant Title)
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Vendor Profile & Settings',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: -0.4,
+                    color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  'Merchant business details, payout account & preferences',
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: isDark ? AppColors.textMutedDark : const Color(0xFF6B7280),
+                  ),
+                ),
+              ],
+            ),
+
+            AppSpacing.vGap16,
+
+            // Profile Header Card
             ProfileHeaderCard(
               vendor: vendor,
               activeShop: activeShop,

@@ -5,7 +5,7 @@ import '../../../../core/utils/formatters.dart';
 import '../../../../shared/components/app_card.dart';
 import '../../domain/models/product_model.dart';
 
-// Product Card
+// Product Card (Compact High Information Density Grid Item)
 class ProductCard extends StatelessWidget {
   final ProductModel product;
   final ValueChanged<bool> onToggleAvailability;
@@ -29,23 +29,22 @@ class ProductCard extends StatelessWidget {
     final isPopular = product.isPopular;
 
     return AppCard(
-      padding: const EdgeInsets.all(10),
-      borderRadius: BorderRadius.circular(22),
+      padding: const EdgeInsets.all(8),
+      borderRadius: BorderRadius.circular(18),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Image Container with Floating Badges & Edit Action
+          // Product Image with Badges & Edit Button
           ClipRRect(
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(12),
             child: Container(
               width: double.infinity,
-              height: 96,
+              height: 88,
               color: isDark ? const Color(0xFF232A34) : const Color(0xFFF3F4F6),
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  // Product Image
                   Image.network(
                     product.imageUrl,
                     fit: BoxFit.cover,
@@ -54,19 +53,19 @@ class ProductCard extends StatelessWidget {
                     errorBuilder: (_, __, ___) => Center(
                       child: Icon(
                         Icons.restaurant_rounded,
-                        size: 28,
+                        size: 24,
                         color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
                       ),
                     ),
                   ),
 
-                  // Popular Badge Top-Left
+                  // Popular Badge
                   if (isPopular)
                     Positioned(
-                      top: 5,
-                      left: 5,
+                      top: 4,
+                      left: 4,
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
                         decoration: BoxDecoration(
                           color: Colors.black.withValues(alpha: 0.75),
                           borderRadius: AppRadius.full,
@@ -75,7 +74,7 @@ class ProductCard extends StatelessWidget {
                           'Popular',
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 8.5,
+                            fontSize: 8,
                             fontWeight: FontWeight.w800,
                           ),
                         ),
@@ -84,13 +83,13 @@ class ProductCard extends StatelessWidget {
 
                   // Edit Circular Button Top-Right
                   Positioned(
-                    top: 5,
-                    right: 5,
+                    top: 4,
+                    right: 4,
                     child: GestureDetector(
                       onTap: onEditTapped,
                       child: Container(
-                        width: 24,
-                        height: 24,
+                        width: 22,
+                        height: 22,
                         decoration: BoxDecoration(
                           color: Colors.black.withValues(alpha: 0.65),
                           shape: BoxShape.circle,
@@ -98,7 +97,7 @@ class ProductCard extends StatelessWidget {
                         child: const Center(
                           child: Icon(
                             Icons.edit_rounded,
-                            size: 12,
+                            size: 11,
                             color: Colors.white,
                           ),
                         ),
@@ -108,10 +107,10 @@ class ProductCard extends StatelessWidget {
 
                   // Stock Quantity Pill Bottom-Right
                   Positioned(
-                    bottom: 5,
-                    right: 5,
+                    bottom: 4,
+                    right: 4,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 5.5, vertical: 1.5),
+                      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
                       decoration: BoxDecoration(
                         color: isSoldOut
                             ? AppColors.statusError
@@ -122,7 +121,7 @@ class ProductCard extends StatelessWidget {
                         isSoldOut ? 'Sold Out' : 'Qty: ${product.stockQuantity}',
                         style: const TextStyle(
                           color: Colors.white,
-                          fontSize: 8.5,
+                          fontSize: 8,
                           fontWeight: FontWeight.w800,
                         ),
                       ),
@@ -133,13 +132,14 @@ class ProductCard extends StatelessWidget {
             ),
           ),
 
-          const SizedBox(height: 6),
+          const SizedBox(height: 5),
 
-          // Title (Tap to edit)
+          // Title
           GestureDetector(
             onTap: onEditTapped,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
                   product.name,
@@ -165,38 +165,34 @@ class ProductCard extends StatelessWidget {
             ),
           ),
 
-          // Horizontal Separator
+          // Subtle Horizontal Separator
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 6.0),
+            padding: const EdgeInsets.symmetric(vertical: 4.0),
             child: Divider(
               height: 1,
-              thickness: 1,
+              thickness: 0.8,
               color: isDark ? AppColors.darkDivider : const Color(0xFFF3F4F6),
             ),
           ),
 
-          // Footer: Price & 1-Tap Quick Stock Toggle
+          // Footer: Price & Stock Status Badge
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Price in Foodie Pink (#E21B70)
               Text(
                 Formatters.formatCurrency(product.price),
                 style: const TextStyle(
-                  fontSize: 12.5,
+                  fontSize: 12,
                   fontWeight: FontWeight.w900,
                   color: AppColors.primary,
                 ),
               ),
-
-              // 1-Tap In Stock / Sold Out Toggle Button
               GestureDetector(
-                onTap: () {
-                  onToggleAvailability(!product.isAvailable);
-                },
+                onTap: () => onToggleAvailability(!product.isAvailable),
                 child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 180),
-                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
+                  duration: const Duration(milliseconds: 150),
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   decoration: BoxDecoration(
                     color: isSoldOut
                         ? (isDark ? const Color(0xFF3B1414) : const Color(0xFFFEE2E2))
@@ -207,18 +203,18 @@ class ProductCard extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Container(
-                        width: 4.5,
-                        height: 4.5,
+                        width: 4,
+                        height: 4,
                         decoration: BoxDecoration(
                           color: isSoldOut ? AppColors.statusError : const Color(0xFF10B981),
                           shape: BoxShape.circle,
                         ),
                       ),
-                      const SizedBox(width: 3.5),
+                      const SizedBox(width: 3),
                       Text(
                         isSoldOut ? 'Sold Out' : 'In Stock',
                         style: TextStyle(
-                          fontSize: 8.5,
+                          fontSize: 8,
                           fontWeight: FontWeight.w800,
                           color: isSoldOut ? const Color(0xFFB91C1C) : const Color(0xFF047857),
                         ),

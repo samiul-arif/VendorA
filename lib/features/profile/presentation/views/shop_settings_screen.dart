@@ -10,7 +10,7 @@ import '../../../../shared/components/shared_select_modal.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../../../shop/presentation/controllers/shop_controller.dart';
 
-// Shop Information & Store Preferences Screen (Cleaned without extra fees/schedules)
+// Shop Information & Store Preferences Screen (Content-First Merchant Layout)
 class ShopSettingsScreen extends StatefulWidget {
   const ShopSettingsScreen({super.key});
 
@@ -87,34 +87,39 @@ class _ShopSettingsScreenState extends State<ShopSettingsScreen> {
 
     return Scaffold(
       backgroundColor: isDark ? AppColors.darkCanvas : AppColors.lightCanvas,
-      appBar: AppBar(
-        backgroundColor: isDark ? const Color(0xFF161B22) : const Color(0xFFFFFFFF),
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        centerTitle: false,
-        title: Text(
-          'Shop Information',
-          style: TextStyle(
-            fontWeight: FontWeight.w900,
-            fontSize: 18,
-            letterSpacing: -0.3,
-            color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
-          ),
-        ),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1.0),
-          child: Container(
-            color: isDark ? AppColors.darkBorder : const Color(0xFFEEF0F2),
-            height: 1.0,
-          ),
-        ),
-      ),
       body: SafeArea(
         bottom: false,
         child: ListView(
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 110),
           children: [
-            // Active Shop Switcher & Summary Card (Screenshots 1 & 2)
+            // Content-First Header (Scrollable Merchant Title)
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Shop Information',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: -0.4,
+                    color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  'Manage store preferences, terminal, and dispatch settings',
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: isDark ? AppColors.textMutedDark : const Color(0xFF6B7280),
+                  ),
+                ),
+              ],
+            ),
+
+            AppSpacing.vGap16,
+
+            // Active Shop Switcher & Summary Card
             AppCard(
               padding: const EdgeInsets.all(18),
               child: Column(
@@ -168,7 +173,7 @@ class _ShopSettingsScreenState extends State<ShopSettingsScreen> {
 
                   AppSpacing.vGap16,
 
-                  // Detail rows matching Screenshot 1 & 2:
+                  // Detail rows:
                   _buildDetailRow(
                     label: 'Operating Hours',
                     value: '${shop?.openingTime ?? "08:30 AM"} – ${shop?.closingTime ?? "11:00 PM"}',

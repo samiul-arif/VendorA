@@ -13,7 +13,7 @@ import '../controllers/order_controller.dart';
 import '../widgets/order_card.dart';
 import 'order_details_screen.dart';
 
-// Order Management Screen (Screenshot 3 Matching Layout)
+// Order Management Screen (Content-First Merchant Layout)
 class OrderListScreen extends StatefulWidget {
   const OrderListScreen({super.key});
 
@@ -116,28 +116,6 @@ class _OrderListScreenState extends State<OrderListScreen> {
 
     return Scaffold(
       backgroundColor: isDark ? AppColors.darkCanvas : AppColors.lightCanvas,
-      appBar: AppBar(
-        backgroundColor: isDark ? const Color(0xFF161B22) : const Color(0xFFFFFFFF),
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        centerTitle: false,
-        title: Text(
-          'Order Management',
-          style: TextStyle(
-            fontWeight: FontWeight.w900,
-            fontSize: 18,
-            letterSpacing: -0.3,
-            color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
-          ),
-        ),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1.0),
-          child: Container(
-            color: isDark ? AppColors.darkBorder : const Color(0xFFEEF0F2),
-            height: 1.0,
-          ),
-        ),
-      ),
       body: SafeArea(
         bottom: false,
         child: orderController.isLoading && allOrders.isEmpty
@@ -151,9 +129,43 @@ class _OrderListScreenState extends State<OrderListScreen> {
                     onRefresh: () async => _loadOrders(),
                     color: AppColors.primary,
                     child: ListView(
-                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 110),
+                      padding: const EdgeInsets.fromLTRB(16, 12, 16, 110),
                       children: [
-                        // Filter Pills Matching Screenshot 3: Active (6) | Completed | Cancelled
+                        // Content-First Header (Scrollable Merchant Title)
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Order Management',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: -0.4,
+                                color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: isDark ? const Color(0xFF0F3A2E) : const Color(0xFFECFDF5),
+                                borderRadius: AppRadius.full,
+                              ),
+                              child: Text(
+                                '${activeOrders.length} Active',
+                                style: const TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w800,
+                                  color: Color(0xFF059669),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        AppSpacing.vGap16,
+
+                        // Filter Pills: Active | Completed | Cancelled
                         Row(
                           children: [
                             _buildFilterPill(

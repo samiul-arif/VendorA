@@ -11,6 +11,8 @@ import '../../../../shared/components/app_switch.dart';
 import '../../../../shared/components/app_text_field.dart';
 import '../../../../shared/components/app_bottom_sheet.dart';
 import '../../../../shared/components/shared_select_modal.dart';
+import '../../../../shared/components/app_circular_back_button.dart';
+import '../../../../shared/components/app_header_action_button.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../../domain/models/product_model.dart';
 import '../controllers/product_controller.dart';
@@ -535,52 +537,34 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
     return Scaffold(
       backgroundColor: isDark ? AppColors.darkCanvas : AppColors.lightCanvas,
       appBar: AppBar(
-        leadingWidth: 90,
-        leading: GestureDetector(
-          onTap: () => Navigator.of(context).pop(),
-          child: Row(
-            children: const [
-              SizedBox(width: 12),
-              Icon(Icons.arrow_back_ios_new_rounded, size: 14, color: AppColors.primary),
-              SizedBox(width: 4),
-              Text(
-                'Products',
-                style: TextStyle(
-                  color: AppColors.primary,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 12,
-                ),
-              ),
-            ],
-          ),
-        ),
+        backgroundColor: isDark ? const Color(0xFF161B22) : const Color(0xFFFFFFFF),
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        leadingWidth: 56,
+        leading: const AppCircularBackButton(),
         title: Text(
-          widget.isEditMode ? 'EDIT PRODUCT' : 'NEW ITEM',
-          style: const TextStyle(
-            fontSize: 12,
+          widget.isEditMode ? 'Edit Product' : 'New Item',
+          style: TextStyle(
+            fontSize: 16,
             fontWeight: FontWeight.w900,
-            letterSpacing: 1.0,
+            letterSpacing: -0.2,
+            color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
           ),
         ),
         actions: [
-          TextButton(
-            onPressed: _isSubmitting ? null : _handleSave,
-            child: _isSubmitting
-                ? const SizedBox(
-                    width: 16,
-                    height: 16,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : const Text(
-                    'Save',
-                    style: TextStyle(
-                      color: AppColors.primary,
-                      fontWeight: FontWeight.w900,
-                      fontSize: 13,
-                    ),
-                  ),
+          AppHeaderActionButton(
+            text: 'Save',
+            isLoading: _isSubmitting,
+            onPressed: _handleSave,
           ),
         ],
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1.0),
+          child: Container(
+            color: isDark ? AppColors.darkBorder : const Color(0xFFEEF0F2),
+            height: 1.0,
+          ),
+        ),
       ),
       body: SafeArea(
         child: Form(

@@ -1,4 +1,4 @@
-/// Shop / Merchant Store Entity Model
+/// Shop / Merchant Store Entity Model (Vendor Operations Only)
 class ShopModel {
   final String id;
   final String vendorId;
@@ -13,9 +13,7 @@ class ShopModel {
   final bool autoAcceptOrders;
   final double deliveryFee;
   final double minimumOrderAmount;
-  final double rating;
-  final int totalReviews;
-  final String openingTime; // e.g. "09:00 AM"
+  final String openingTime; // e.g. "08:30 AM"
   final String closingTime; // e.g. "11:00 PM"
   final String primaryCategory;
   final DateTime createdAt;
@@ -34,9 +32,7 @@ class ShopModel {
     this.autoAcceptOrders = false,
     this.deliveryFee = 2.50,
     this.minimumOrderAmount = 10.0,
-    this.rating = 4.8,
-    this.totalReviews = 142,
-    this.openingTime = '09:00 AM',
+    this.openingTime = '08:30 AM',
     this.closingTime = '11:00 PM',
     this.primaryCategory = 'Restaurant & Cafe',
     required this.createdAt,
@@ -56,8 +52,6 @@ class ShopModel {
     bool? autoAcceptOrders,
     double? deliveryFee,
     double? minimumOrderAmount,
-    double? rating,
-    int? totalReviews,
     String? openingTime,
     String? closingTime,
     String? primaryCategory,
@@ -77,8 +71,6 @@ class ShopModel {
       autoAcceptOrders: autoAcceptOrders ?? this.autoAcceptOrders,
       deliveryFee: deliveryFee ?? this.deliveryFee,
       minimumOrderAmount: minimumOrderAmount ?? this.minimumOrderAmount,
-      rating: rating ?? this.rating,
-      totalReviews: totalReviews ?? this.totalReviews,
       openingTime: openingTime ?? this.openingTime,
       closingTime: closingTime ?? this.closingTime,
       primaryCategory: primaryCategory ?? this.primaryCategory,
@@ -101,8 +93,6 @@ class ShopModel {
       'autoAcceptOrders': autoAcceptOrders,
       'deliveryFee': deliveryFee,
       'minimumOrderAmount': minimumOrderAmount,
-      'rating': rating,
-      'totalReviews': totalReviews,
       'openingTime': openingTime,
       'closingTime': closingTime,
       'primaryCategory': primaryCategory,
@@ -125,9 +115,7 @@ class ShopModel {
       autoAcceptOrders: json['autoAcceptOrders'] as bool? ?? false,
       deliveryFee: (json['deliveryFee'] as num?)?.toDouble() ?? 2.50,
       minimumOrderAmount: (json['minimumOrderAmount'] as num?)?.toDouble() ?? 10.0,
-      rating: (json['rating'] as num?)?.toDouble() ?? 4.8,
-      totalReviews: json['totalReviews'] as int? ?? 0,
-      openingTime: json['openingTime'] as String? ?? '09:00 AM',
+      openingTime: json['openingTime'] as String? ?? '08:30 AM',
       closingTime: json['closingTime'] as String? ?? '11:00 PM',
       primaryCategory: json['primaryCategory'] as String? ?? 'Restaurant',
       createdAt: json['createdAt'] != null

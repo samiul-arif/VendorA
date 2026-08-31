@@ -5,7 +5,7 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../domain/models/dashboard_metrics.dart';
 
-// Hero Net Earnings Card with Food-Tech Gradient & Performance Badges (Screenshot 4 Matching)
+// Hero Net Earnings Card with Food-Tech Gradient & Performance Badges
 class HeroEarningsCard extends StatelessWidget {
   final DashboardMetrics? metrics;
   final VoidCallback? onAnalyticsTapped;
@@ -22,7 +22,7 @@ class HeroEarningsCard extends StatelessWidget {
     final growth = metrics?.earningsGrowthPercentage ?? 14.2;
     final ordersCount = metrics?.totalOrdersToday ?? 24;
     final avgTicket = metrics?.averageTicketSize ?? 59.18;
-    final rating = metrics?.storeRating ?? 4.9;
+    final fulfillment = metrics?.fulfillmentRate ?? 98.5;
 
     return Container(
       decoration: BoxDecoration(
@@ -50,7 +50,7 @@ class HeroEarningsCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Top Badge Matching Screenshot 4: TODAY'S OVERVIEW
+            // Top Badge: TODAY'S OVERVIEW
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4.5),
               decoration: BoxDecoration(
@@ -95,7 +95,7 @@ class HeroEarningsCard extends StatelessWidget {
 
             AppSpacing.vGap20,
 
-            // Sub-Metrics Row Matching Screenshot 4: 24 Orders | $59.18 Avg Ticket | 4.9 ★ Rating
+            // Sub-Metrics Row: 24 Orders | $59.18 Avg Ticket | 98.5% Fulfilled
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
@@ -110,8 +110,8 @@ class HeroEarningsCard extends StatelessWidget {
                 ),
                 _buildMetricDivider(),
                 _buildSubMetric(
-                  value: '$rating ★',
-                  label: 'Rating',
+                  value: '${fulfillment.toStringAsFixed(1)}%',
+                  label: 'Fulfilled',
                 ),
               ],
             ),

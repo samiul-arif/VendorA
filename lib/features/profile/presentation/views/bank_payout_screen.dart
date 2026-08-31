@@ -9,6 +9,7 @@ import '../../../../shared/components/app_button.dart';
 import '../../../../shared/components/app_card.dart';
 import '../../../../shared/components/app_text_field.dart';
 import '../../../../shared/components/app_bottom_sheet.dart';
+import '../../../../shared/components/app_circular_back_button.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../controllers/profile_controller.dart';
 
@@ -120,7 +121,27 @@ class _BankPayoutScreenState extends State<BankPayoutScreen> {
     return Scaffold(
       backgroundColor: isDark ? AppColors.darkCanvas : AppColors.lightCanvas,
       appBar: AppBar(
-        title: const Text('Bank & Payouts'),
+        backgroundColor: isDark ? const Color(0xFF161B22) : const Color(0xFFFFFFFF),
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        leadingWidth: 56,
+        leading: const AppCircularBackButton(),
+        title: Text(
+          'Bank & Payouts',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w900,
+            letterSpacing: -0.2,
+            color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+          ),
+        ),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1.0),
+          child: Container(
+            color: isDark ? AppColors.darkBorder : const Color(0xFFEEF0F2),
+            height: 1.0,
+          ),
+        ),
       ),
       body: SafeArea(
         child: ListView(

@@ -28,8 +28,7 @@ class ProfileHeaderCard extends StatelessWidget {
     final displayName = vendor?.name ?? 'Samiul Arif';
     final businessName = vendor?.businessName ?? 'Arif Food Enterprises LLC';
     final shopName = activeShop?.name ?? 'Foodie Hub Express';
-    final rating = activeShop?.rating ?? 4.9;
-    final totalReviews = activeShop?.totalReviews ?? 328;
+    final phone = activeShop?.phone ?? '+1 (555) 234-5678';
 
     return AppCard(
       padding: const EdgeInsets.all(20),
@@ -80,7 +79,7 @@ class ProfileHeaderCard extends StatelessWidget {
 
               AppSpacing.hGap16,
 
-              // Name, Business & Rating
+              // Name, Business & Store Phone
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -118,22 +117,22 @@ class ProfileHeaderCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
 
-                    AppSpacing.vGap6,
+                    AppSpacing.vGap4,
 
                     Row(
                       children: [
-                        const Icon(
-                          Icons.star_rounded,
-                          size: 16,
-                          color: AppColors.secondary,
+                        Icon(
+                          Icons.phone_outlined,
+                          size: 14,
+                          color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          '$rating ($totalReviews reviews)',
+                          phone,
                           style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w700,
-                            color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
                           ),
                         ),
                       ],

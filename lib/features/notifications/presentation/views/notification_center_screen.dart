@@ -4,6 +4,8 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/components/empty_state_view.dart';
 import '../../../../shared/components/shimmer_skeleton.dart';
+import '../../../../shared/components/app_circular_back_button.dart';
+import '../../../../shared/components/app_header_action_button.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../controllers/notification_controller.dart';
 import '../widgets/notification_tile.dart';
@@ -38,18 +40,35 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
     return Scaffold(
       backgroundColor: isDark ? AppColors.darkCanvas : AppColors.lightCanvas,
       appBar: AppBar(
-        title: const Text('Notifications'),
+        backgroundColor: isDark ? const Color(0xFF161B22) : const Color(0xFFFFFFFF),
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        leadingWidth: 56,
+        leading: const AppCircularBackButton(),
+        title: Text(
+          'Notifications',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w900,
+            letterSpacing: -0.2,
+            color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+          ),
+        ),
         actions: [
           if (controller.unreadCount > 0)
-            TextButton.icon(
+            AppHeaderActionButton(
+              text: 'Mark All Read',
+              icon: Icons.done_all_rounded,
               onPressed: () => controller.markAllAsRead(),
-              icon: const Icon(Icons.done_all_rounded, size: 18),
-              label: const Text(
-                'Mark All Read',
-                style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
-              ),
             ),
         ],
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1.0),
+          child: Container(
+            color: isDark ? AppColors.darkBorder : const Color(0xFFEEF0F2),
+            height: 1.0,
+          ),
+        ),
       ),
       body: SafeArea(
         bottom: false,

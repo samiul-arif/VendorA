@@ -1,4 +1,4 @@
-// Dashboard Metrics Summary Model
+// Dashboard Metrics Summary Model (Vendor Operations & Performance)
 class DashboardMetrics {
   final double totalEarningsToday;
   final double earningsGrowthPercentage;
@@ -7,8 +7,7 @@ class DashboardMetrics {
   final double averageTicketSize;
   final double weeklyEarnings;
   final double nextPayoutAmount;
-  final double storeRating;
-  final int totalReviews;
+  final double fulfillmentRate; // e.g. 98.5%
   final DateTime lastUpdated;
 
   const DashboardMetrics({
@@ -19,8 +18,7 @@ class DashboardMetrics {
     required this.averageTicketSize,
     required this.weeklyEarnings,
     required this.nextPayoutAmount,
-    required this.storeRating,
-    required this.totalReviews,
+    this.fulfillmentRate = 98.5,
     required this.lastUpdated,
   });
 
@@ -32,8 +30,7 @@ class DashboardMetrics {
     double? averageTicketSize,
     double? weeklyEarnings,
     double? nextPayoutAmount,
-    double? storeRating,
-    int? totalReviews,
+    double? fulfillmentRate,
     DateTime? lastUpdated,
   }) {
     return DashboardMetrics(
@@ -45,8 +42,7 @@ class DashboardMetrics {
       averageTicketSize: averageTicketSize ?? this.averageTicketSize,
       weeklyEarnings: weeklyEarnings ?? this.weeklyEarnings,
       nextPayoutAmount: nextPayoutAmount ?? this.nextPayoutAmount,
-      storeRating: storeRating ?? this.storeRating,
-      totalReviews: totalReviews ?? this.totalReviews,
+      fulfillmentRate: fulfillmentRate ?? this.fulfillmentRate,
       lastUpdated: lastUpdated ?? this.lastUpdated,
     );
   }
@@ -60,8 +56,7 @@ class DashboardMetrics {
       'averageTicketSize': averageTicketSize,
       'weeklyEarnings': weeklyEarnings,
       'nextPayoutAmount': nextPayoutAmount,
-      'storeRating': storeRating,
-      'totalReviews': totalReviews,
+      'fulfillmentRate': fulfillmentRate,
       'lastUpdated': lastUpdated.toIso8601String(),
     };
   }
@@ -76,8 +71,7 @@ class DashboardMetrics {
       averageTicketSize: (json['averageTicketSize'] as num?)?.toDouble() ?? 0.0,
       weeklyEarnings: (json['weeklyEarnings'] as num?)?.toDouble() ?? 0.0,
       nextPayoutAmount: (json['nextPayoutAmount'] as num?)?.toDouble() ?? 0.0,
-      storeRating: (json['storeRating'] as num?)?.toDouble() ?? 4.8,
-      totalReviews: json['totalReviews'] as int? ?? 0,
+      fulfillmentRate: (json['fulfillmentRate'] as num?)?.toDouble() ?? 98.5,
       lastUpdated: json['lastUpdated'] != null
           ? DateTime.parse(json['lastUpdated'] as String)
           : DateTime.now(),

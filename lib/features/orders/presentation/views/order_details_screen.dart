@@ -9,6 +9,7 @@ import '../../../../shared/components/app_button.dart';
 import '../../../../shared/components/app_card.dart';
 import '../../../../shared/components/app_dialog.dart';
 import '../../../../shared/components/status_badge.dart';
+import '../../../../shared/components/app_circular_back_button.dart';
 import '../../domain/models/order_model.dart';
 import '../../domain/models/order_status.dart';
 import '../controllers/order_controller.dart';
@@ -130,7 +131,20 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
     return Scaffold(
       backgroundColor: isDark ? AppColors.darkCanvas : AppColors.lightCanvas,
       appBar: AppBar(
-        title: Text('Order #${order.orderNumber}'),
+        backgroundColor: isDark ? const Color(0xFF161B22) : const Color(0xFFFFFFFF),
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        leadingWidth: 56,
+        leading: const AppCircularBackButton(),
+        title: Text(
+          'Order #${order.orderNumber}',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w900,
+            letterSpacing: -0.2,
+            color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+          ),
+        ),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
@@ -142,6 +156,13 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
             ),
           ),
         ],
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1.0),
+          child: Container(
+            color: isDark ? AppColors.darkBorder : const Color(0xFFEEF0F2),
+            height: 1.0,
+          ),
+        ),
       ),
       body: SafeArea(
         child: ListView(

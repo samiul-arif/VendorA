@@ -30,6 +30,7 @@ class OrderController extends BaseController {
   List<OrderModel> get allOrders => _allOrders;
   OrderStatus get selectedStatus => _selectedStatus;
   String get searchQuery => _searchQuery;
+  String? get activeShopId => _activeShopId;
   OrderModel? get selectedOrder => _selectedOrder;
 
   List<OrderModel> get filteredOrders {

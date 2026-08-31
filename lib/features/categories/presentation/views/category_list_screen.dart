@@ -9,6 +9,8 @@ import '../../../../shared/components/app_dialog.dart';
 import '../../../../shared/components/empty_state_view.dart';
 import '../../../../shared/components/error_state_view.dart';
 import '../../../../shared/components/shimmer_skeleton.dart';
+import '../../../../shared/components/app_circular_back_button.dart';
+import '../../../../shared/components/app_header_action_button.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../../domain/models/category_model.dart';
 import '../controllers/category_controller.dart';
@@ -151,14 +153,34 @@ class _CategoryListScreenState extends State<CategoryListScreen> {
     return Scaffold(
       backgroundColor: isDark ? AppColors.darkCanvas : AppColors.lightCanvas,
       appBar: AppBar(
-        title: const Text('Store Categories'),
+        backgroundColor: isDark ? const Color(0xFF161B22) : const Color(0xFFFFFFFF),
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        leadingWidth: 56,
+        leading: const AppCircularBackButton(),
+        title: Text(
+          'Store Categories',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w900,
+            letterSpacing: -0.2,
+            color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+          ),
+        ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.add_rounded, size: 24),
-            tooltip: 'Add Category',
+          AppHeaderActionButton(
+            text: 'Add Category',
+            icon: Icons.add_rounded,
             onPressed: () => _showAddEditBottomSheet(),
           ),
         ],
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1.0),
+          child: Container(
+            color: isDark ? AppColors.darkBorder : const Color(0xFFEEF0F2),
+            height: 1.0,
+          ),
+        ),
       ),
       body: SafeArea(
         bottom: false,

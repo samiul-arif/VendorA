@@ -16,7 +16,7 @@ import '../widgets/category_filter_bar.dart';
 import '../widgets/quick_restock_bottom_sheet.dart';
 import 'add_edit_product_screen.dart';
 
-// Product Catalog & Inventory Screen (Floating Action Button & Standard Input Search)
+// Product Catalog & Inventory Screen (Content-First Merchant Layout)
 class ProductListScreen extends StatefulWidget {
   const ProductListScreen({super.key});
 
@@ -95,42 +95,6 @@ class _ProductListScreenState extends State<ProductListScreen> {
 
     return Scaffold(
       backgroundColor: isDark ? AppColors.darkCanvas : AppColors.lightCanvas,
-      appBar: AppBar(
-        backgroundColor: isDark ? const Color(0xFF161B22) : const Color(0xFFFFFFFF),
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        centerTitle: false,
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'Product Catalog',
-              style: TextStyle(
-                fontWeight: FontWeight.w900,
-                fontSize: 18,
-                letterSpacing: -0.3,
-                color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
-              ),
-            ),
-            Text(
-              '${filteredProducts.length} items listed',
-              style: TextStyle(
-                fontSize: 10,
-                fontWeight: FontWeight.w600,
-                color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
-              ),
-            ),
-          ],
-        ),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1.0),
-          child: Container(
-            color: isDark ? AppColors.darkBorder : const Color(0xFFEEF0F2),
-            height: 1.0,
-          ),
-        ),
-      ),
       body: SafeArea(
         bottom: false,
         child: productController.isLoading && productController.products.isEmpty
@@ -146,6 +110,39 @@ class _ProductListScreenState extends State<ProductListScreen> {
                     child: ListView(
                       padding: const EdgeInsets.fromLTRB(16, 12, 16, 130),
                       children: [
+                        // Content-First Header (Scrollable Merchant Title)
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Product Catalog',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w900,
+                                    letterSpacing: -0.4,
+                                    color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  '${filteredProducts.length} items in inventory',
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w600,
+                                    color: isDark ? AppColors.textMutedDark : const Color(0xFF6B7280),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+
+                        AppSpacing.vGap16,
+
                         // Search Bar (Standard Input Box Style)
                         ProductSearchBar(
                           initialQuery: productController.searchQuery,
@@ -185,7 +182,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                             },
                           )
                         else
-                          // 2-Column Responsive Grid with Compact Ratio
+                          // 2-Column Responsive High Density Grid
                           GridView.builder(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
@@ -193,9 +190,9 @@ class _ProductListScreenState extends State<ProductListScreen> {
                             gridDelegate:
                                 const SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 2,
-                              crossAxisSpacing: 12,
-                              mainAxisSpacing: 12,
-                              childAspectRatio: 0.76,
+                              crossAxisSpacing: 10,
+                              mainAxisSpacing: 10,
+                              childAspectRatio: 0.88,
                             ),
                             itemBuilder: (context, index) {
                               final product = filteredProducts[index];
@@ -262,9 +259,9 @@ class _ProductGridSkeleton extends StatelessWidget {
           itemCount: 4,
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
-            crossAxisSpacing: 12,
-            mainAxisSpacing: 12,
-            childAspectRatio: 0.76,
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10,
+            childAspectRatio: 0.88,
           ),
           itemBuilder: (_, __) => const ShimmerSkeleton(
             width: double.infinity,
