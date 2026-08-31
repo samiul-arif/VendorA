@@ -3,22 +3,17 @@ import 'package:provider/provider.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_semantic_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
-import '../../../../core/theme/app_typography.dart';
 import '../../../../core/routing/app_routes.dart';
 import '../../../../shared/components/app_dialog.dart';
-import '../../../../shared/components/app_card.dart';
 import '../../../../shared/components/app_toast.dart';
-import '../../../notifications/presentation/controllers/notification_controller.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
-import '../controllers/profile_controller.dart';
+import '../../presentation/controllers/profile_controller.dart';
 import '../widgets/profile_header_card.dart';
-import '../widgets/settings_group_card.dart';
-import '../widgets/theme_mode_toggle_tile.dart';
 import 'edit_profile_screen.dart';
-import 'bank_payout_screen.dart';
 import 'shop_settings_screen.dart';
+import 'bank_payout_screen.dart';
 
-// Vendor Profile & Global App Settings Screen (Content-First Merchant Layout)
+/// Vendor Profile & Settings Screen matching Stitch brief (`settings/code.html` & `vendor_profile_with_account_settings_link/code.html`)
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
@@ -27,6 +22,10 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  bool _pushNotifications = true;
+  bool _darkMode = false;
+  bool _biometricLogin = true;
+
   @override
   void initState() {
     super.initState();
@@ -41,9 +40,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void _handleLogout() async {
     final confirmed = await AppDialog.showConfirmation(
       context: context,
-      title: 'Log Out of Merchant Account',
-      message: 'Are you sure you want to log out? You will need your credentials to sign in again.',
-      confirmText: 'Log Out',
+      title: 'Sign Out of Merchant Account',
+      message: 'Are you sure you want to sign out? You will need your credentials to access your store portal again.',
+      confirmText: 'Sign Out',
       isDestructive: true,
     );
 
@@ -63,36 +62,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     final colors = context.appColors;
     final authController = context.watch<AuthController>();
-    final notifController = context.watch<NotificationController>();
     final vendor = authController.vendor;
 
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: colors.surface,
       body: SafeArea(
         bottom: false,
         child: ListView(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 110),
+          padding: const EdgeInsets.fromLTRB(18, 14, 18, 120),
           children: [
-            // Content-First Header (Scrollable Merchant Title)
+            // Page Header: "Settings" + Subtitle
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Vendor Profile',
+                  'Settings',
                   style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 24,
                     fontWeight: FontWeight.w900,
-                    letterSpacing: -0.4,
                     color: colors.textPrimary,
+                    letterSpacing: -0.4,
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  'Merchant business details, payout account & preferences',
+                  'Manage your app-level preferences and account settings.',
                   style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    color: colors.textMuted,
+                    fontSize: 12.5,
+                    color: colors.textSecondary,
                   ),
                 ),
               ],
@@ -100,7 +97,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             AppSpacing.vGap16,
 
-            // Profile Header Card
+            // 1. Profile Overview Hero Card (Bento Style)
             ProfileHeaderCard(
               vendor: vendor,
               onEditTapped: () {
@@ -110,153 +107,377 @@ class _ProfileScreenState extends State<ProfileScreen> {
               },
             ),
 
-            AppSpacing.vGap20,
+            AppSpacing.vGap24,
 
-            // Appearance & Interface
-            Text(
-              'APPEARANCE & INTERFACE',
-              style: AppTypography.labelSmall.copyWith(
-                fontWeight: FontWeight.w800,
-                letterSpacing: 1.0,
-                color: colors.textMuted,
+            // 2. Account Section
+            _buildSectionHeader('ACCOUNT', colors),
+            AppSpacing.vGap8,
+            Container(
+              decoration: BoxDecoration(
+                color: colors.surface,
+                borderRadius: BorderRadius.circular(18),
+                border: Border.all(color: colors.borderSubtle),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF15171C).withValues(alpha: 0.04),
+                    blurRadius: 16,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              clipBehavior: Clip.antiAlias,
+              child: Column(
+                children: [
+                  _buildNavTile(
+                    icon: Icons.person_outline_rounded,
+                    iconBg: colors.primaryContainer.withValues(alpha: 0.15),
+                    iconColor: colors.primary,
+                    title: 'Profile Details',
+                    subtitle: 'Update your personal information & contact',
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => const EditProfileScreen()),
+                      );
+                    },
+                    colors: colors,
+                  ),
+                  _buildDivider(colors),
+                  _buildNavTile(
+                    icon: Icons.storefront_rounded,
+                    iconBg: colors.surfaceSubtle,
+                    iconColor: colors.textPrimary,
+                    title: 'Shop Management',
+                    subtitle: 'Manage storefront details, location & banner',
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => const ShopSettingsScreen()),
+                      );
+                    },
+                    colors: colors,
+                  ),
+                  _buildDivider(colors),
+                  _buildNavTile(
+                    icon: Icons.account_balance_rounded,
+                    iconBg: colors.surfaceSubtle,
+                    iconColor: const Color(0xFF006B57),
+                    title: 'Bank & Payout Account',
+                    subtitle: 'Manage revenue withdrawal methods',
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => const BankPayoutScreen()),
+                      );
+                    },
+                    colors: colors,
+                  ),
+                  _buildDivider(colors),
+                  _buildNavTile(
+                    icon: Icons.analytics_outlined,
+                    iconBg: colors.surfaceSubtle,
+                    iconColor: colors.primary,
+                    title: 'Analytics & Reports',
+                    subtitle: 'View performance and order metrics',
+                    onTap: () {
+                      AppToast.showInfo(
+                        context,
+                        title: 'Analytics & Reports',
+                        message: 'Weekly earnings and metrics available on home dashboard.',
+                      );
+                    },
+                    colors: colors,
+                  ),
+                ],
               ),
             ),
+
+            AppSpacing.vGap24,
+
+            // 3. Preferences Section (Switches matching Stitch)
+            _buildSectionHeader('PREFERENCES', colors),
             AppSpacing.vGap8,
-            const AppCard(
-              padding: EdgeInsets.zero,
-              child: ThemeModeToggleTile(),
+            Container(
+              decoration: BoxDecoration(
+                color: colors.surface,
+                borderRadius: BorderRadius.circular(18),
+                border: Border.all(color: colors.borderSubtle),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF15171C).withValues(alpha: 0.04),
+                    blurRadius: 16,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              clipBehavior: Clip.antiAlias,
+              child: Column(
+                children: [
+                  _buildSwitchTile(
+                    icon: Icons.notifications_active_outlined,
+                    title: 'Push Notifications',
+                    subtitle: 'Receive real-time alerts for incoming orders',
+                    value: _pushNotifications,
+                    onChanged: (val) => setState(() => _pushNotifications = val),
+                    colors: colors,
+                  ),
+                  _buildDivider(colors),
+                  _buildSwitchTile(
+                    icon: Icons.dark_mode_outlined,
+                    title: 'Dark Mode',
+                    subtitle: 'Switch to sleek dark theme appearance',
+                    value: _darkMode,
+                    onChanged: (val) => setState(() => _darkMode = val),
+                    colors: colors,
+                  ),
+                  _buildDivider(colors),
+                  _buildSwitchTile(
+                    icon: Icons.fingerprint_rounded,
+                    title: 'Biometric Login',
+                    subtitle: 'Quick access via fingerprint or Face ID',
+                    value: _biometricLogin,
+                    onChanged: (val) => setState(() => _biometricLogin = val),
+                    colors: colors,
+                  ),
+                ],
+              ),
             ),
 
-            AppSpacing.vGap20,
+            AppSpacing.vGap24,
 
-            // Store & Operations Group
-            SettingsGroupCard(
-              title: 'Store Operations',
-              items: [
-                SettingsTileItem(
-                  icon: Icons.notifications_active_rounded,
-                  iconColor: colors.primary,
-                  title: 'Notification Center',
-                  trailing: notifController.unreadCount > 0
-                      ? Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: colors.primary,
-                            borderRadius: AppRadius.full,
-                          ),
-                          child: Text(
-                            '${notifController.unreadCount} new',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 10,
-                              fontWeight: FontWeight.w800,
-                            ),
-                          ),
-                        )
-                      : null,
-                  onTap: () {
-                    Navigator.of(context).pushNamed(AppRoutes.notifications);
-                  },
-                ),
-                SettingsTileItem(
-                  icon: Icons.storefront_rounded,
-                  iconColor: const Color(0xFF6366F1),
-                  title: 'Store Preference',
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const ShopSettingsScreen()),
-                    );
-                  },
-                ),
-                SettingsTileItem(
-                  icon: Icons.account_balance_rounded,
-                  iconColor: const Color(0xFF10B981),
-                  title: 'Bank & Payout Account',
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const BankPayoutScreen()),
-                    );
-                  },
-                ),
-                SettingsTileItem(
-                  icon: Icons.restaurant_menu_rounded,
-                  iconColor: const Color(0xFFF59E0B),
-                  title: 'Manage Menu Items',
-                  onTap: () {
-                    Navigator.of(context).pushNamed(AppRoutes.products);
-                  },
-                ),
-              ],
+            // 4. Support & Legal Section
+            _buildSectionHeader('SUPPORT & LEGAL', colors),
+            AppSpacing.vGap8,
+            Container(
+              decoration: BoxDecoration(
+                color: colors.surface,
+                borderRadius: BorderRadius.circular(18),
+                border: Border.all(color: colors.borderSubtle),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF15171C).withValues(alpha: 0.04),
+                    blurRadius: 16,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              clipBehavior: Clip.antiAlias,
+              child: Column(
+                children: [
+                  _buildNavTile(
+                    icon: Icons.help_outline_rounded,
+                    iconBg: colors.surfaceSubtle,
+                    iconColor: colors.textPrimary,
+                    title: 'Help Center',
+                    subtitle: 'Guides, FAQs, and live merchant chat',
+                    onTap: () {
+                      AppToast.showInfo(
+                        context,
+                        title: 'Help Center',
+                        message: 'Opening partner support articles...',
+                      );
+                    },
+                    colors: colors,
+                  ),
+                  _buildDivider(colors),
+                  _buildNavTile(
+                    icon: Icons.policy_outlined,
+                    iconBg: colors.surfaceSubtle,
+                    iconColor: colors.textPrimary,
+                    title: 'Privacy Policy',
+                    subtitle: 'How we manage merchant and order data',
+                    onTap: () {},
+                    colors: colors,
+                  ),
+                  _buildDivider(colors),
+                  _buildNavTile(
+                    icon: Icons.description_outlined,
+                    iconBg: colors.surfaceSubtle,
+                    iconColor: colors.textPrimary,
+                    title: 'Terms of Service',
+                    subtitle: 'Merchant marketplace terms & conditions',
+                    onTap: () {},
+                    colors: colors,
+                  ),
+                ],
+              ),
             ),
 
-            AppSpacing.vGap20,
+            AppSpacing.vGap24,
 
-            // Support & About
-            SettingsGroupCard(
-              title: 'Support & System',
-              items: [
-                SettingsTileItem(
-                  icon: Icons.support_agent_rounded,
-                  iconColor: const Color(0xFF3B82F6),
-                  title: 'Merchant Support Hotline',
-                  onTap: () {
-                    AppToast.showInfo(
-                      context,
-                      title: 'Support Desk',
-                      message: 'Connecting to priority merchant partner dispatch...',
-                    );
-                  },
-                ),
-                SettingsTileItem(
-                  icon: Icons.auto_awesome_rounded,
-                  iconColor: const Color(0xFFEC4899),
-                  title: 'App Tour & Feature Showcase',
-                  onTap: () {
-                    Navigator.of(context).pushNamed(
-                      AppRoutes.onboarding,
-                      arguments: true, // isTourMode = true
-                    );
-                  },
-                ),
-                SettingsTileItem(
-                  icon: Icons.security_rounded,
-                  iconColor: const Color(0xFF10B981),
-                  title: 'App Permissions & Privacy',
-                  onTap: () {
-                    Navigator.of(context).pushNamed(AppRoutes.permissions);
-                  },
-                ),
-                SettingsTileItem(
-                  icon: Icons.shield_outlined,
-                  iconColor: const Color(0xFF8B5CF6),
-                  title: 'Privacy Policy & Terms',
-                  onTap: () {},
-                ),
-                SettingsTileItem(
-                  icon: Icons.info_outline_rounded,
-                  iconColor: colors.textMuted,
-                  title: 'App Version',
-                  trailing: Text(
-                    'v1.0.0 (Build 240)',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
-                      color: colors.textMuted,
-                    ),
+            // 5. Sign Out Button
+            SizedBox(
+              height: 48,
+              child: ElevatedButton.icon(
+                onPressed: _handleLogout,
+                icon: Icon(Icons.logout_rounded, size: 18, color: colors.error),
+                label: Text(
+                  'Sign Out',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w800,
+                    color: colors.error,
                   ),
                 ),
-                SettingsTileItem(
-                  icon: Icons.logout_rounded,
-                  iconColor: colors.error,
-                  title: 'Sign Out',
-                  isDestructive: true,
-                  onTap: _handleLogout,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: colors.errorBg,
+                  elevation: 0,
+                  shape: const RoundedRectangleBorder(borderRadius: AppRadius.full),
                 ),
-              ],
+              ),
+            ),
+
+            AppSpacing.vGap20,
+
+            // 6. App Version & Build
+            Center(
+              child: Text(
+                'Lumina Vendor App v2.4.1 (Build 482)',
+                style: TextStyle(
+                  fontSize: 11.5,
+                  fontWeight: FontWeight.w600,
+                  color: colors.textMuted,
+                ),
+              ),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildSectionHeader(String title, AppSemanticColors colors) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: Text(
+        title,
+        style: TextStyle(
+          fontSize: 11.5,
+          fontWeight: FontWeight.w900,
+          color: colors.primary,
+          letterSpacing: 0.6,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavTile({
+    required IconData icon,
+    required Color iconBg,
+    required Color iconColor,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+    required AppSemanticColors colors,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        child: Row(
+          children: [
+            Container(
+              width: 38,
+              height: 38,
+              decoration: BoxDecoration(
+                color: iconBg,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, size: 20, color: iconColor),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w800,
+                      color: colors.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      fontSize: 11.5,
+                      color: colors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(Icons.chevron_right_rounded, size: 20, color: colors.textMuted),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSwitchTile({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required bool value,
+    required ValueChanged<bool> onChanged,
+    required AppSemanticColors colors,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Row(
+        children: [
+          Container(
+            width: 38,
+            height: 38,
+            decoration: BoxDecoration(
+              color: colors.surfaceSubtle,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, size: 20, color: colors.textPrimary),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w800,
+                    color: colors.textPrimary,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  subtitle,
+                  style: TextStyle(
+                    fontSize: 11.5,
+                    color: colors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Transform.scale(
+            scale: 0.85,
+            child: Switch.adaptive(
+              value: value,
+              activeThumbColor: const Color(0xFF006B57),
+              activeTrackColor: const Color(0xFF75F9D6),
+              onChanged: onChanged,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDivider(AppSemanticColors colors) {
+    return Divider(
+      height: 1,
+      thickness: 1,
+      color: colors.borderSubtle,
+      indent: 68,
     );
   }
 }
