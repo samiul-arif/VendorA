@@ -204,8 +204,8 @@ class IncomingOrdersStream extends StatelessWidget {
                           Row(
                             children: [
                               if (order.status == OrderStatus.pending)
-                                ElevatedButton(
-                                  onPressed: () async {
+                                InkWell(
+                                  onTap: () async {
                                     final result = await orderController.updateStatus(
                                       orderId: order.id,
                                       newStatus: OrderStatus.preparing,
@@ -226,40 +226,43 @@ class IncomingOrdersStream extends StatelessWidget {
                                       },
                                     );
                                   },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: colors.primary,
-                                    foregroundColor: Colors.white,
+                                  borderRadius: AppRadius.full,
+                                  child: Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                                    minimumSize: Size.zero,
-                                    shape: const RoundedRectangleBorder(borderRadius: AppRadius.full),
-                                    elevation: 0,
-                                  ),
-                                  child: const Text(
-                                    'Accept',
-                                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800),
+                                    decoration: BoxDecoration(
+                                      color: colors.primary,
+                                      borderRadius: AppRadius.full,
+                                    ),
+                                    child: const Text(
+                                      'Accept',
+                                      style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w800),
+                                    ),
                                   ),
                                 ),
                               if (order.status == OrderStatus.pending) const SizedBox(width: 8),
-                              OutlinedButton(
-                                onPressed: () {
+                              InkWell(
+                                onTap: () {
                                   Navigator.of(context).push(
                                     MaterialPageRoute(
                                       builder: (_) => OrderDetailsScreen(orderId: order.id),
                                     ),
                                   );
                                 },
-                                style: OutlinedButton.styleFrom(
-                                  side: BorderSide(color: colors.borderSubtle),
+                                borderRadius: AppRadius.full,
+                                child: Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                                  minimumSize: Size.zero,
-                                  shape: const RoundedRectangleBorder(borderRadius: AppRadius.full),
-                                ),
-                                child: Text(
-                                  'Details',
-                                  style: TextStyle(
-                                    color: colors.textPrimary,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w700,
+                                  decoration: BoxDecoration(
+                                    color: colors.surface,
+                                    borderRadius: AppRadius.full,
+                                    border: Border.all(color: colors.borderSubtle),
+                                  ),
+                                  child: Text(
+                                    'Details',
+                                    style: TextStyle(
+                                      color: colors.textPrimary,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w700,
+                                    ),
                                   ),
                                 ),
                               ),
