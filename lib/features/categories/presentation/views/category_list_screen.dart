@@ -43,11 +43,8 @@ class _CategoryListScreenState extends State<CategoryListScreen> {
   void _loadCategories() {
     final authController = context.read<AuthController>();
     final categoryController = context.read<CategoryController>();
-    final activeShop = authController.activeShop;
-
-    if (activeShop != null) {
-      categoryController.loadCategories(shopId: activeShop.id);
-    }
+    final shopId = authController.activeShop?.id ?? 'shop_01';
+    categoryController.loadCategories(shopId: shopId);
   }
 
   void _showAddEditBottomSheet([CategoryModel? category]) {

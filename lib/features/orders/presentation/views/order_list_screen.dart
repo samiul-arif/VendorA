@@ -43,11 +43,8 @@ class _OrderListScreenState extends State<OrderListScreen> {
   void _loadOrders() {
     final authController = context.read<AuthController>();
     final orderController = context.read<OrderController>();
-    final activeShop = authController.activeShop;
-
-    if (activeShop != null) {
-      orderController.loadOrders(shopId: activeShop.id);
-    }
+    final shopId = authController.activeShop?.id ?? 'shop_01';
+    orderController.loadOrders(shopId: shopId);
   }
 
   void _openOrderDetails(OrderModel order) {

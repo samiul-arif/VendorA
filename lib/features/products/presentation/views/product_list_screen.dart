@@ -37,11 +37,8 @@ class _ProductListScreenState extends State<ProductListScreen> {
   void _loadProducts() {
     final authController = context.read<AuthController>();
     final productController = context.read<ProductController>();
-    final activeShop = authController.activeShop;
-
-    if (activeShop != null) {
-      productController.loadProducts(shopId: activeShop.id);
-    }
+    final shopId = authController.activeShop?.id ?? 'shop_01';
+    productController.loadProducts(shopId: shopId);
   }
 
   void _showRestockModal(ProductModel product) {

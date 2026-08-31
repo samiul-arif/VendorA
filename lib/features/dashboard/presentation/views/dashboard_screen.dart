@@ -8,6 +8,7 @@ import '../../../../shared/components/app_bottom_sheet.dart';
 import '../../../../shared/components/shimmer_skeleton.dart';
 import '../../../../shared/components/error_state_view.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
+import '../../../orders/presentation/controllers/order_controller.dart';
 import '../../../shop/presentation/controllers/shop_controller.dart';
 import '../controllers/dashboard_controller.dart';
 import '../widgets/store_status_header.dart';
@@ -42,19 +43,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final authController = context.read<AuthController>();
     final dashboardController = context.read<DashboardController>();
     final shopController = context.read<ShopController>();
+    final orderController = context.read<OrderController>();
 
+    final shopId = authController.activeShop?.id ?? 'shop_01';
     final activeShop = authController.activeShop;
+
     if (activeShop != null) {
       shopController.setActiveShop(activeShop);
-      dashboardController.loadDashboard(shopId: activeShop.id);
     }
+    dashboardController.loadDashboard(shopId: shopId);
+    orderController.loadOrders(shopId: shopId);
   }
 
   void _showShopSwitcherModal() {
     final authController = context.read<AuthController>();
     final shopController = context.read<ShopController>();
     final availableShops = authController.availableShops;
-    final currentShopId = shopController.currentShop?.id ?? authController.activeShop?.id;
+    final currentShopId = shopController.currentShop?.id ?? authController.activeShop?.id ?? 'shop_01';
 
     AppBottomSheet.show(
       context: context,
@@ -75,6 +80,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     if (session.activeShop != null) {
                       shopController.setActiveShop(session.activeShop!);
                       context.read<DashboardController>().loadDashboard(shopId: session.activeShop!.id);
+                      context.read<OrderController>().loadOrders(shopId: session.activeShop!.id);
                     }
                   },
                   failure: (msg, _) {

@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:uuid/uuid.dart';
 import '../../../../core/network/base_mock_repository.dart';
 import '../../../../core/storage/session_storage.dart';
@@ -155,13 +154,27 @@ class MockAuthRepository extends BaseMockRepository implements IAuthRepository {
           try {
             _inMemorySession = UserSession.fromJson(sessionJson);
             return _inMemorySession;
-          } catch (_) {
-            return null;
-          }
+          } catch (_) {}
         }
-        return null;
+
+        // Auto-seed active session with primary store for instant merchant accessibility
+        final defaultSession = UserSession(
+          token: 'mock_jwt_token_initial',
+          refreshToken: 'mock_refresh_token_initial',
+          vendor: _defaultVendor,
+          activeShop: _mockShops.first,
+          availableShops: _mockShops,
+          expiresAt: DateTime.now().add(const Duration(days: 30)),
+        );
+
+        _inMemorySession = defaultSession;
+        await _sessionStorage.saveAuthToken(defaultSession.token);
+        await _sessionStorage.saveCurrentShopId(_mockShops.first.id);
+        await _sessionStorage.saveSessionData(defaultSession.toJson());
+
+        return defaultSession;
       },
-      customDelayMs: 150,
+      customDelayMs: 100,
     );
   }
 
@@ -189,7 +202,7 @@ class MockAuthRepository extends BaseMockRepository implements IAuthRepository {
 
         return updatedSession;
       },
-      customDelayMs: 400,
+      customDelayMs: 300,
     );
   }
 
@@ -199,10 +212,9 @@ class MockAuthRepository extends BaseMockRepository implements IAuthRepository {
   }) async {
     return executeMock(
       operation: () async {
-        // Simulated password reset trigger
         return;
       },
-      customDelayMs: 500,
+      customDelayMs: 400,
     );
   }
 
