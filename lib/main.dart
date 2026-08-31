@@ -13,6 +13,7 @@ import 'features/dashboard/presentation/controllers/dashboard_controller.dart';
 import 'features/shop/presentation/controllers/shop_controller.dart';
 import 'features/products/presentation/controllers/product_controller.dart';
 import 'features/categories/presentation/controllers/category_controller.dart';
+import 'features/orders/presentation/controllers/order_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -42,6 +43,7 @@ class VendorApp extends StatelessWidget {
     final shopController = locate<ShopController>();
     final productController = locate<ProductController>();
     final categoryController = locate<CategoryController>();
+    final orderController = locate<OrderController>();
 
     final isDark = sessionStorage.isDarkMode();
     final isAuthenticated = authController.isAuthenticated;
@@ -53,6 +55,7 @@ class VendorApp extends StatelessWidget {
         ChangeNotifierProvider<ShopController>.value(value: shopController),
         ChangeNotifierProvider<ProductController>.value(value: productController),
         ChangeNotifierProvider<CategoryController>.value(value: categoryController),
+        ChangeNotifierProvider<OrderController>.value(value: orderController),
       ],
       child: MaterialApp(
         title: AppConstants.appName,

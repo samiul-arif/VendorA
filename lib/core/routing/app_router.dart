@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'app_routes.dart';
 import '../../features/auth/presentation/views/login_screen.dart';
 import '../../features/navigation/views/main_shell_screen.dart';
+import '../../features/orders/presentation/views/order_list_screen.dart';
+import '../../features/orders/presentation/views/order_details_screen.dart';
 import '../../features/products/domain/models/product_model.dart';
 import '../../features/products/presentation/views/add_edit_product_screen.dart';
 import '../../features/categories/presentation/views/category_list_screen.dart';
@@ -37,9 +39,10 @@ class AppRouter {
         );
 
       case AppRoutes.orderDetails:
+        final orderId = args is String ? args : '';
         return _buildPageRoute(
           settings: settings,
-          builder: (_) => _PlaceholderScreen(title: 'Order Details', subtitle: 'Args: $args'),
+          builder: (_) => OrderDetailsScreen(orderId: orderId),
         );
 
       case AppRoutes.products:

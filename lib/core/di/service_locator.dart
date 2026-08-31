@@ -34,6 +34,12 @@ import '../../features/categories/domain/usecases/update_category_usecase.dart';
 import '../../features/categories/domain/usecases/delete_category_usecase.dart';
 import '../../features/categories/data/repositories/mock_category_repository.dart';
 import '../../features/categories/presentation/controllers/category_controller.dart';
+import '../../features/orders/domain/repositories/order_repository_interface.dart';
+import '../../features/orders/domain/usecases/get_orders_usecase.dart';
+import '../../features/orders/domain/usecases/get_order_details_usecase.dart';
+import '../../features/orders/domain/usecases/update_order_status_usecase.dart';
+import '../../features/orders/data/repositories/mock_order_repository.dart';
+import '../../features/orders/presentation/controllers/order_controller.dart';
 
 // Lightweight Service Locator for Dependency Injection
 class ServiceLocator {
@@ -200,6 +206,26 @@ class ServiceLocator {
       deleteCategoryUseCase: deleteCategoryUseCase,
     );
     instance.register<CategoryController>(categoryController);
+
+    // Order Module Services & Use Cases
+    final orderRepository = MockOrderRepository();
+    instance.register<IOrderRepository>(orderRepository);
+
+    final getOrdersUseCase = GetOrdersUseCase(orderRepository);
+    instance.register<GetOrdersUseCase>(getOrdersUseCase);
+
+    final getOrderDetailsUseCase = GetOrderDetailsUseCase(orderRepository);
+    instance.register<GetOrderDetailsUseCase>(getOrderDetailsUseCase);
+
+    final updateOrderStatusUseCase = UpdateOrderStatusUseCase(orderRepository);
+    instance.register<UpdateOrderStatusUseCase>(updateOrderStatusUseCase);
+
+    final orderController = OrderController(
+      getOrdersUseCase: getOrdersUseCase,
+      getOrderDetailsUseCase: getOrderDetailsUseCase,
+      updateOrderStatusUseCase: updateOrderStatusUseCase,
+    );
+    instance.register<OrderController>(orderController);
   }
 }
 

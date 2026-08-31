@@ -3,10 +3,9 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../shared/components/app_card.dart';
-import '../../../shared/components/stat_card.dart';
 import '../../../shared/components/status_badge.dart';
-import '../../../shared/components/app_switch.dart';
 import '../../dashboard/presentation/views/dashboard_screen.dart';
+import '../../orders/presentation/views/order_list_screen.dart';
 import '../../products/presentation/views/product_list_screen.dart';
 import '../widgets/floating_nav_bar.dart';
 
@@ -42,7 +41,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
       icon: Icons.receipt_long_outlined,
       selectedIcon: Icons.receipt_long_rounded,
       label: 'Orders',
-      badgeCount: 3, // Mock active incoming orders count
+      badgeCount: 2, // Live active incoming orders count
     ),
     NavItem(
       icon: Icons.restaurant_menu_outlined,
@@ -79,19 +78,14 @@ class _MainShellScreenState extends State<MainShellScreen> {
                 onNavigateTab: (index) => setState(() => _currentIndex = index),
               ),
 
-              // Tab 1: Orders Tab Placeholder
-              _TabPlaceholder(
-                title: 'Order Management',
-                subtitle: 'Manage active, completed, and incoming customer orders.',
-                icon: Icons.receipt_long_rounded,
-                accentColor: AppColors.secondary,
-              ),
+              // Tab 1: Real Order Management Screen
+              const OrderListScreen(),
 
               // Tab 2: Real Product Catalog & Inventory Screen
               const ProductListScreen(),
 
               // Tab 3: Shop Settings Placeholder
-              _TabPlaceholder(
+              const _TabPlaceholder(
                 title: 'Shop Settings',
                 subtitle: 'Manage store hours, open/close toggle, and delivery radius.',
                 icon: Icons.storefront_rounded,
@@ -99,7 +93,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
               ),
 
               // Tab 4: Vendor Profile Placeholder
-              _TabPlaceholder(
+              const _TabPlaceholder(
                 title: 'Vendor Profile',
                 subtitle: 'Account preferences, business details, and secure logout.',
                 icon: Icons.person_rounded,
@@ -144,7 +138,7 @@ class _TabPlaceholder extends StatefulWidget {
 }
 
 class _TabPlaceholderState extends State<_TabPlaceholder> {
-  bool _isShopOpen = true;
+  final bool _isShopOpen = true;
 
   @override
   Widget build(BuildContext context) {
