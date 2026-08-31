@@ -86,7 +86,7 @@ enum OrderStatus {
   String? get nextActionLabel {
     switch (this) {
       case OrderStatus.pending:
-        return 'Accept Order';
+        return 'Accept';
       case OrderStatus.accepted:
         return 'Start Preparing';
       case OrderStatus.preparing:

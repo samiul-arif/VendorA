@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
+import '../../../../core/theme/app_semantic_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/formatters.dart';
@@ -104,8 +104,7 @@ class _BankPayoutScreenState extends State<BankPayoutScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final colors = context.appColors;
     final profileController = context.watch<ProfileController>();
     final account = profileController.bankAccount;
 
@@ -116,9 +115,9 @@ class _BankPayoutScreenState extends State<BankPayoutScreen> {
     ];
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkCanvas : AppColors.lightCanvas,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: isDark ? const Color(0xFF161B22) : const Color(0xFFFFFFFF),
+        backgroundColor: colors.surface,
         elevation: 0,
         scrolledUnderElevation: 0,
         leadingWidth: 56,
@@ -129,13 +128,13 @@ class _BankPayoutScreenState extends State<BankPayoutScreen> {
             fontSize: 16,
             fontWeight: FontWeight.w900,
             letterSpacing: -0.2,
-            color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+            color: colors.textPrimary,
           ),
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1.0),
           child: Container(
-            color: isDark ? AppColors.darkBorder : const Color(0xFFEEF0F2),
+            color: colors.borderSubtle,
             height: 1.0,
           ),
         ),
@@ -146,7 +145,14 @@ class _BankPayoutScreenState extends State<BankPayoutScreen> {
           children: [
             // Next Scheduled Payout Card
             AppCard(
-              gradient: isDark ? AppColors.darkCardGradient : AppColors.primaryGradient,
+              gradient: LinearGradient(
+                colors: [
+                  colors.primary,
+                  colors.primary.withValues(alpha: 0.85),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
               padding: const EdgeInsets.all(22),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -209,15 +215,15 @@ class _BankPayoutScreenState extends State<BankPayoutScreen> {
                   style: AppTypography.labelSmall.copyWith(
                     fontWeight: FontWeight.w800,
                     letterSpacing: 1.0,
-                    color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
+                    color: colors.textMuted,
                   ),
                 ),
                 GestureDetector(
                   onTap: _openEditBankModal,
-                  child: const Text(
+                  child: Text(
                     'Edit Details',
                     style: TextStyle(
-                      color: AppColors.primary,
+                      color: colors.primary,
                       fontSize: 12,
                       fontWeight: FontWeight.w800,
                     ),
@@ -239,12 +245,12 @@ class _BankPayoutScreenState extends State<BankPayoutScreen> {
                         width: 44,
                         height: 44,
                         decoration: BoxDecoration(
-                          color: isDark ? const Color(0xFF0F3A2E) : AppColors.statusSuccessBg,
+                          color: colors.successBg,
                           borderRadius: AppRadius.md,
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.account_balance_rounded,
-                          color: AppColors.statusSuccess,
+                          color: colors.success,
                           size: 22,
                         ),
                       ),
@@ -257,13 +263,13 @@ class _BankPayoutScreenState extends State<BankPayoutScreen> {
                               account?.bankName ?? 'Chase Bank N.A.',
                               style: AppTypography.titleSmall.copyWith(
                                 fontWeight: FontWeight.w800,
-                                color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                                color: colors.textPrimary,
                               ),
                             ),
                             Text(
                               account?.maskedAccountNumber ?? '•••• •••• 4829',
                               style: AppTypography.bodySmall.copyWith(
-                                color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
+                                color: colors.textMuted,
                               ),
                             ),
                           ],
@@ -272,22 +278,22 @@ class _BankPayoutScreenState extends State<BankPayoutScreen> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                         decoration: BoxDecoration(
-                          color: isDark ? const Color(0xFF0F3A2E) : AppColors.statusSuccessBg,
+                          color: colors.successBg,
                           borderRadius: AppRadius.full,
                         ),
-                        child: const Text(
+                        child: Text(
                           'Verified',
                           style: TextStyle(
                             fontSize: 10,
                             fontWeight: FontWeight.w800,
-                            color: AppColors.statusSuccess,
+                            color: colors.success,
                           ),
                         ),
                       ),
                     ],
                   ),
                   AppSpacing.vGap12,
-                  Divider(height: 1, color: isDark ? AppColors.darkDivider : AppColors.lightDivider),
+                  Divider(height: 1, color: colors.divider),
                   AppSpacing.vGap12,
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -295,12 +301,16 @@ class _BankPayoutScreenState extends State<BankPayoutScreen> {
                       Text(
                         'Account Holder',
                         style: AppTypography.bodySmall.copyWith(
-                          color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
+                          color: colors.textMuted,
                         ),
                       ),
                       Text(
                         account?.accountHolderName ?? 'Arif Food Enterprises LLC',
-                        style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12),
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 12,
+                          color: colors.textPrimary,
+                        ),
                       ),
                     ],
                   ),
@@ -316,7 +326,7 @@ class _BankPayoutScreenState extends State<BankPayoutScreen> {
               style: AppTypography.labelSmall.copyWith(
                 fontWeight: FontWeight.w800,
                 letterSpacing: 1.0,
-                color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
+                color: colors.textMuted,
               ),
             ),
 
@@ -333,10 +343,10 @@ class _BankPayoutScreenState extends State<BankPayoutScreen> {
                         width: 38,
                         height: 38,
                         decoration: BoxDecoration(
-                          color: isDark ? const Color(0xFF232A34) : AppColors.lightSurfaceSubtle,
+                          color: colors.surfaceSubtle,
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: const Icon(Icons.arrow_downward_rounded, size: 18, color: AppColors.statusSuccess),
+                        child: Icon(Icons.arrow_downward_rounded, size: 18, color: colors.success),
                       ),
                       AppSpacing.hGap12,
                       Expanded(
@@ -347,13 +357,13 @@ class _BankPayoutScreenState extends State<BankPayoutScreen> {
                               p['date'] as String,
                               style: AppTypography.titleSmall.copyWith(
                                 fontWeight: FontWeight.w700,
-                                color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                                color: colors.textPrimary,
                               ),
                             ),
                             Text(
                               'Ref: ${p['ref']}',
                               style: AppTypography.bodySmall.copyWith(
-                                color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
+                                color: colors.textMuted,
                               ),
                             ),
                           ],
@@ -363,7 +373,7 @@ class _BankPayoutScreenState extends State<BankPayoutScreen> {
                         Formatters.formatCurrency(p['amount'] as double),
                         style: AppTypography.titleSmall.copyWith(
                           fontWeight: FontWeight.w800,
-                          color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                          color: colors.textPrimary,
                         ),
                       ),
                     ],

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
+import '../../../../core/theme/app_semantic_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/components/app_button.dart';
@@ -35,8 +35,7 @@ class _QuickRestockBottomSheetState extends State<QuickRestockBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final colors = context.appColors;
 
     final chips = [5, 10, 25, 50];
 
@@ -52,7 +51,7 @@ class _QuickRestockBottomSheetState extends State<QuickRestockBottomSheet> {
               height: 48,
               decoration: BoxDecoration(
                 borderRadius: AppRadius.md,
-                color: isDark ? const Color(0xFF232A34) : AppColors.borderLight,
+                color: colors.surfaceSubtle,
               ),
               child: ClipRRect(
                 borderRadius: AppRadius.md,
@@ -72,17 +71,17 @@ class _QuickRestockBottomSheetState extends State<QuickRestockBottomSheet> {
                     widget.product.name,
                     style: AppTypography.titleSmall.copyWith(
                       fontWeight: FontWeight.w800,
-                      color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                      color: colors.textPrimary,
                     ),
                   ),
                   Text(
                     'Current Stock: ${widget.product.stockQuantity} units',
                     style: AppTypography.bodySmall.copyWith(
                       color: widget.product.isOutOfStock
-                          ? AppColors.statusError
+                          ? colors.error
                           : (widget.product.isLowStock
-                              ? AppColors.statusWarning
-                              : AppColors.statusSuccess),
+                              ? colors.warning
+                              : colors.success),
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -98,7 +97,7 @@ class _QuickRestockBottomSheetState extends State<QuickRestockBottomSheet> {
           'Select Restock Quantity',
           style: AppTypography.labelMedium.copyWith(
             fontWeight: FontWeight.w700,
-            color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+            color: colors.textPrimary,
           ),
         ),
 
@@ -125,13 +124,13 @@ class _QuickRestockBottomSheetState extends State<QuickRestockBottomSheet> {
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     decoration: BoxDecoration(
                       color: isSelected
-                          ? AppColors.primary
-                          : (isDark ? const Color(0xFF232A34) : AppColors.borderLight),
+                          ? colors.primary
+                          : colors.surfaceSubtle,
                       borderRadius: AppRadius.full,
                       boxShadow: isSelected
                           ? [
                               BoxShadow(
-                                color: AppColors.primary.withValues(alpha: 0.3),
+                                color: colors.primary.withValues(alpha: 0.3),
                                 offset: const Offset(0, 3),
                                 blurRadius: 8,
                               ),
@@ -144,7 +143,7 @@ class _QuickRestockBottomSheetState extends State<QuickRestockBottomSheet> {
                         style: AppTypography.labelMedium.copyWith(
                           color: isSelected
                               ? Colors.white
-                              : (isDark ? AppColors.textPrimaryDark : AppColors.inkPrimary),
+                              : colors.textPrimary,
                           fontWeight: FontWeight.w800,
                         ),
                       ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
+import '../../../../core/theme/app_semantic_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/theme/app_spacing.dart';
 
@@ -10,8 +10,7 @@ class VendorBrandHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final colors = context.appColors;
 
     return Column(
       children: [
@@ -20,11 +19,18 @@ class VendorBrandHeader extends StatelessWidget {
           width: 76,
           height: 76,
           decoration: BoxDecoration(
-            gradient: AppColors.primaryGradient,
+            gradient: LinearGradient(
+              colors: [
+                colors.primary,
+                colors.primary.withValues(alpha: 0.85),
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
             borderRadius: BorderRadius.circular(22),
             boxShadow: [
               BoxShadow(
-                color: AppColors.primary.withValues(alpha: 0.35),
+                color: colors.primary.withValues(alpha: 0.35),
                 offset: const Offset(0, 8),
                 blurRadius: 20,
               ),
@@ -45,13 +51,13 @@ class VendorBrandHeader extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF4A0A26) : AppColors.primaryTint,
+            color: colors.primaryContainer,
             borderRadius: AppRadius.full,
           ),
           child: Text(
             'FOODPANDA MERCHANT PARTNER',
             style: AppTypography.labelSmall.copyWith(
-              color: AppColors.primary,
+              color: colors.primary,
               fontWeight: FontWeight.w800,
               letterSpacing: 0.6,
             ),
@@ -64,7 +70,7 @@ class VendorBrandHeader extends StatelessWidget {
         Text(
           'Welcome Back!',
           style: AppTypography.displayMedium.copyWith(
-            color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+            color: colors.textPrimary,
             fontWeight: FontWeight.w800,
           ),
           textAlign: TextAlign.center,
@@ -76,7 +82,7 @@ class VendorBrandHeader extends StatelessWidget {
         Text(
           'Sign in to manage your store, orders & sales',
           style: AppTypography.bodyMedium.copyWith(
-            color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+            color: colors.textSecondary,
           ),
           textAlign: TextAlign.center,
         ),

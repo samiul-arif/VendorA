@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_semantic_colors.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/theme/app_spacing.dart';
 import 'app_button.dart';
@@ -23,8 +23,7 @@ class ErrorStateView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final colors = context.appColors;
 
     return Center(
       child: Padding(
@@ -36,20 +35,20 @@ class ErrorStateView extends StatelessWidget {
               width: 72,
               height: 72,
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF3B1414) : AppColors.statusErrorBg,
+                color: colors.errorBg,
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 icon,
                 size: 34,
-                color: AppColors.statusError,
+                color: colors.error,
               ),
             ),
             AppSpacing.vGap20,
             Text(
               title ?? 'Something Went Wrong',
               style: AppTypography.headlineSmall.copyWith(
-                color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                color: colors.textPrimary,
               ),
               textAlign: TextAlign.center,
             ),
@@ -57,7 +56,7 @@ class ErrorStateView extends StatelessWidget {
             Text(
               message,
               style: AppTypography.bodyMedium.copyWith(
-                color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+                color: colors.textSecondary,
               ),
               textAlign: TextAlign.center,
             ),

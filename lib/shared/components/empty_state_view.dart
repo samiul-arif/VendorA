@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_semantic_colors.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/theme/app_spacing.dart';
 import 'app_button.dart';
@@ -25,10 +25,9 @@ class EmptyStateView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final colors = context.appColors;
 
-    final primaryColor = iconColor ?? AppColors.primary;
+    final primaryColor = iconColor ?? colors.primary;
 
     return Center(
       child: Padding(
@@ -40,7 +39,7 @@ class EmptyStateView extends StatelessWidget {
               width: 80,
               height: 80,
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF2E1A2A) : AppColors.primaryTint,
+                color: colors.primaryContainer,
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -53,7 +52,7 @@ class EmptyStateView extends StatelessWidget {
             Text(
               title,
               style: AppTypography.headlineMedium.copyWith(
-                color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                color: colors.textPrimary,
               ),
               textAlign: TextAlign.center,
             ),
@@ -61,7 +60,7 @@ class EmptyStateView extends StatelessWidget {
             Text(
               description,
               style: AppTypography.bodyMedium.copyWith(
-                color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+                color: colors.textSecondary,
               ),
               textAlign: TextAlign.center,
             ),

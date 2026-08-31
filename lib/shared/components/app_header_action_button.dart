@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radius.dart';
+import '../../core/theme/app_semantic_colors.dart';
 
 // Styled Primary Header Action Button (Replaces Plain Text Actions in Top Bars)
 class AppHeaderActionButton extends StatelessWidget {
@@ -21,6 +21,7 @@ class AppHeaderActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     final isClickable = isEnabled && !isLoading && onPressed != null;
 
     return Padding(
@@ -34,12 +35,12 @@ class AppHeaderActionButton extends StatelessWidget {
             duration: const Duration(milliseconds: 150),
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
             decoration: BoxDecoration(
-              color: isClickable ? AppColors.primary : AppColors.primary.withValues(alpha: 0.5),
+              color: isClickable ? colors.primary : colors.primary.withValues(alpha: 0.5),
               borderRadius: AppRadius.full,
               boxShadow: isClickable
                   ? [
                       BoxShadow(
-                        color: AppColors.primary.withValues(alpha: 0.25),
+                        color: colors.primary.withValues(alpha: 0.25),
                         blurRadius: 6,
                         offset: const Offset(0, 2),
                       ),

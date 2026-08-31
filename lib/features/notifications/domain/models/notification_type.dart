@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_semantic_colors.dart';
 
 // Notification Types and Visual Meta Helpers
 enum NotificationType {
@@ -34,16 +34,16 @@ enum NotificationType {
     }
   }
 
-  Color get color {
+  Color color(AppSemanticColors colors) {
     switch (this) {
       case NotificationType.order:
-        return AppColors.primary;
+        return colors.primary;
       case NotificationType.payout:
-        return const Color(0xFF10B981);
+        return colors.success;
       case NotificationType.system:
-        return const Color(0xFF3B82F6);
+        return colors.info;
       case NotificationType.stock:
-        return const Color(0xFFF59E0B);
+        return colors.warning;
     }
   }
 

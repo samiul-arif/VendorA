@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radius.dart';
+import '../../core/theme/app_semantic_colors.dart';
 import '../../core/theme/app_spacing.dart';
 
 // Custom Animated Toggle Switch (for Shop Open/Closed & Preferences)
@@ -24,11 +24,10 @@ class AppSwitch extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final colors = context.appColors;
 
-    final primaryActiveColor = activeColor ?? AppColors.primary;
-    final inactiveTrackColor = isDark ? AppColors.darkSurfaceSubtle : const Color(0xFFE5E7EB);
+    final primaryActiveColor = activeColor ?? colors.primary;
+    final inactiveTrackColor = colors.surfaceSubtle;
 
     return ConstrainedBox(
       constraints: AppSpacing.minTouchConstraints,
@@ -55,13 +54,13 @@ class AppSwitch extends StatelessWidget {
                 child: Container(
                   width: 24,
                   height: 24,
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: Colors.white,
                     boxShadow: [
                       BoxShadow(
-                        color: Color(0x26000000),
-                        offset: Offset(0, 2),
+                        color: Colors.black.withValues(alpha: 0.15),
+                        offset: const Offset(0, 2),
                         blurRadius: 4,
                       ),
                     ],
@@ -74,14 +73,14 @@ class AppSwitch extends StatelessWidget {
                             child: CircularProgressIndicator(
                               strokeWidth: 2.0,
                               valueColor: AlwaysStoppedAnimation<Color>(
-                                value ? primaryActiveColor : AppColors.textSecondaryLight,
+                                value ? primaryActiveColor : colors.textMuted,
                               ),
                             ),
                           )
                         : Icon(
                             value ? Icons.check : Icons.close,
                             size: 14,
-                            color: value ? primaryActiveColor : AppColors.textMutedLight,
+                            color: value ? primaryActiveColor : colors.textMuted,
                           ),
                   ),
                 ),
@@ -94,7 +93,7 @@ class AppSwitch extends StatelessWidget {
                 style: TextStyle(
                   color: value
                       ? primaryActiveColor
-                      : (isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight),
+                      : colors.textSecondary,
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                 ),

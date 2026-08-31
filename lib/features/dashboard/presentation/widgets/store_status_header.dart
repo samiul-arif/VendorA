@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
+import '../../../../core/theme/app_semantic_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../features/auth/presentation/controllers/auth_controller.dart';
 import '../../../../features/shop/presentation/controllers/shop_controller.dart';
 import '../../../../features/notifications/presentation/controllers/notification_controller.dart';
 import '../../../../features/notifications/domain/models/notification_type.dart';
 import '../../../../shared/components/app_toast.dart';
-
 import '../../../../core/routing/app_routes.dart';
 
 // Top Store Header with Open/Closed Status Toggle, Notification Bell & Shop Switcher
@@ -22,8 +21,8 @@ class StoreStatusHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final colors = context.appColors;
+    final isDark = context.isDark;
 
     final authController = context.watch<AuthController>();
     final shopController = context.watch<ShopController>();
@@ -52,7 +51,7 @@ class StoreStatusHeader extends StatelessWidget {
               Text(
                 'Store Manager',
                 style: AppTypography.labelSmall.copyWith(
-                  color: isDark ? AppColors.textSecondaryDark : const Color(0xFF6B7280),
+                  color: colors.textSecondary,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -65,14 +64,14 @@ class StoreStatusHeader extends StatelessWidget {
                     style: AppTypography.titleMedium.copyWith(
                       fontWeight: FontWeight.w900,
                       fontSize: 18,
-                      color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                      color: colors.textPrimary,
                     ),
                   ),
                   const SizedBox(width: 4),
                   Icon(
                     Icons.keyboard_arrow_down_rounded,
                     size: 20,
-                    color: isDark ? AppColors.textMutedDark : const Color(0xFF9CA3AF),
+                    color: colors.textMuted,
                   ),
                 ],
               ),
@@ -93,10 +92,10 @@ class StoreStatusHeader extends StatelessWidget {
                 width: 38,
                 height: 38,
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF1E242C) : Colors.white,
+                  color: colors.surface,
                   borderRadius: AppRadius.full,
                   border: Border.all(
-                    color: isDark ? AppColors.darkBorder : const Color(0xFFE5E7EB),
+                    color: colors.borderSubtle,
                     width: 1.0,
                   ),
                   boxShadow: [
@@ -114,8 +113,8 @@ class StoreStatusHeader extends StatelessWidget {
                       unreadCount > 0 ? Icons.notifications_active_rounded : Icons.notifications_none_rounded,
                       size: 19,
                       color: unreadCount > 0
-                          ? AppColors.primary
-                          : (isDark ? AppColors.textSecondaryDark : const Color(0xFF4B5563)),
+                          ? colors.primary
+                          : colors.textSecondary,
                     ),
                     if (unreadCount > 0)
                       Positioned(
@@ -125,10 +124,10 @@ class StoreStatusHeader extends StatelessWidget {
                           width: 8,
                           height: 8,
                           decoration: BoxDecoration(
-                            color: AppColors.primary,
+                            color: colors.primary,
                             shape: BoxShape.circle,
                             border: Border.all(
-                              color: isDark ? const Color(0xFF1E242C) : Colors.white,
+                              color: colors.surface,
                               width: 1.5,
                             ),
                           ),
@@ -171,11 +170,13 @@ class StoreStatusHeader extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 8),
                 decoration: BoxDecoration(
                   color: isStoreOpen
-                      ? (isDark ? const Color(0xFF0F3A2E) : const Color(0xFFECFDF5))
-                      : (isDark ? const Color(0xFF3B1414) : const Color(0xFFFEF2F2)),
+                      ? colors.successBg
+                      : colors.errorBg,
                   borderRadius: AppRadius.full,
                   border: Border.all(
-                    color: isStoreOpen ? const Color(0xFFA7F3D0) : const Color(0xFFFECACA),
+                    color: isStoreOpen
+                        ? colors.success.withValues(alpha: 0.3)
+                        : colors.error.withValues(alpha: 0.3),
                     width: 1.0,
                   ),
                 ),
@@ -186,7 +187,7 @@ class StoreStatusHeader extends StatelessWidget {
                       width: 7,
                       height: 7,
                       decoration: BoxDecoration(
-                        color: isStoreOpen ? const Color(0xFF10B981) : const Color(0xFFEF4444),
+                        color: isStoreOpen ? colors.success : colors.error,
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -194,7 +195,7 @@ class StoreStatusHeader extends StatelessWidget {
                     Text(
                       isStoreOpen ? 'Open' : 'Closed',
                       style: TextStyle(
-                        color: isStoreOpen ? const Color(0xFF059669) : const Color(0xFFDC2626),
+                        color: isStoreOpen ? colors.success : colors.error,
                         fontWeight: FontWeight.w800,
                         fontSize: 12,
                       ),

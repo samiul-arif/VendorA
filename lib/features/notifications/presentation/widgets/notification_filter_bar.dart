@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
+import '../../../../core/theme/app_semantic_colors.dart';
 import '../../domain/models/notification_type.dart';
 
 // Horizontal Filter Chips for Notification Categories
@@ -16,8 +16,7 @@ class NotificationFilterBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final colors = context.appColors;
 
     final filters = [
       {'label': 'All', 'type': null},
@@ -45,13 +44,13 @@ class NotificationFilterBar extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? (isDark ? Colors.white : AppColors.ctaPrimary)
-                      : (isDark ? const Color(0xFF232A34) : AppColors.lightSurfaceSubtle),
+                      ? colors.ctaPrimary
+                      : colors.surfaceSubtle,
                   borderRadius: AppRadius.full,
                   border: Border.all(
                     color: isSelected
                         ? Colors.transparent
-                        : (isDark ? AppColors.darkBorder : AppColors.borderLight),
+                        : colors.border,
                   ),
                 ),
                 child: Text(
@@ -60,8 +59,8 @@ class NotificationFilterBar extends StatelessWidget {
                     fontSize: 12,
                     fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
                     color: isSelected
-                        ? (isDark ? AppColors.ctaPrimary : Colors.white)
-                        : (isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight),
+                        ? colors.ctaPrimaryText
+                        : colors.textSecondary,
                   ),
                 ),
               ),

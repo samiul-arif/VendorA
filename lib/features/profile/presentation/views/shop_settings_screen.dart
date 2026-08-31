@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
+import '../../../../core/theme/app_semantic_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../shared/components/app_card.dart';
@@ -73,8 +73,7 @@ class _ShopSettingsScreenState extends State<ShopSettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final colors = context.appColors;
     final shopController = context.watch<ShopController>();
     final authController = context.watch<AuthController>();
 
@@ -83,7 +82,7 @@ class _ShopSettingsScreenState extends State<ShopSettingsScreen> {
     final autoAccept = shop?.autoAcceptOrders ?? true;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkCanvas : AppColors.lightCanvas,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         bottom: false,
         child: ListView(
@@ -99,7 +98,7 @@ class _ShopSettingsScreenState extends State<ShopSettingsScreen> {
                     fontSize: 20,
                     fontWeight: FontWeight.w900,
                     letterSpacing: -0.4,
-                    color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                    color: colors.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 2),
@@ -108,7 +107,7 @@ class _ShopSettingsScreenState extends State<ShopSettingsScreen> {
                   style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
-                    color: isDark ? AppColors.textMutedDark : const Color(0xFF6B7280),
+                    color: colors.textMuted,
                   ),
                 ),
               ],
@@ -126,7 +125,7 @@ class _ShopSettingsScreenState extends State<ShopSettingsScreen> {
                     'Active Shop Switcher',
                     style: AppTypography.labelSmall.copyWith(
                       fontWeight: FontWeight.w700,
-                      color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+                      color: colors.textSecondary,
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -137,10 +136,10 @@ class _ShopSettingsScreenState extends State<ShopSettingsScreen> {
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                       decoration: BoxDecoration(
-                        color: isDark ? const Color(0xFF232A34) : AppColors.lightSurfaceSubtle,
+                        color: colors.surfaceSubtle,
                         borderRadius: AppRadius.md,
                         border: Border.all(
-                          color: isDark ? AppColors.darkBorder : AppColors.borderLight,
+                          color: colors.borderSubtle,
                         ),
                       ),
                       child: Row(
@@ -152,7 +151,7 @@ class _ShopSettingsScreenState extends State<ShopSettingsScreen> {
                               style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w800,
-                                color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                                color: colors.textPrimary,
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -161,7 +160,7 @@ class _ShopSettingsScreenState extends State<ShopSettingsScreen> {
                           Icon(
                             Icons.keyboard_arrow_down_rounded,
                             size: 20,
-                            color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
+                            color: colors.textMuted,
                           ),
                         ],
                       ),
@@ -174,26 +173,26 @@ class _ShopSettingsScreenState extends State<ShopSettingsScreen> {
                   _buildDetailRow(
                     label: 'Operating Hours',
                     value: '${shop?.openingTime ?? "08:30 AM"} – ${shop?.closingTime ?? "11:00 PM"}',
-                    isDark: isDark,
+                    colors: colors,
                   ),
                   const SizedBox(height: 10),
                   _buildDetailRow(
                     label: 'Delivery Radius',
                     value: '5.0 km',
-                    isDark: isDark,
+                    colors: colors,
                   ),
                   const SizedBox(height: 10),
                   _buildDetailRow(
                     label: 'Auto-Accept Orders',
                     value: autoAccept ? 'Enabled' : 'Disabled',
-                    valueColor: autoAccept ? const Color(0xFF10B981) : AppColors.statusError,
-                    isDark: isDark,
+                    valueColor: autoAccept ? colors.success : colors.error,
+                    colors: colors,
                   ),
                   const SizedBox(height: 10),
                   _buildDetailRow(
                     label: 'Device Terminal',
                     value: 'Sunmi V2 Pro / iOS',
-                    isDark: isDark,
+                    colors: colors,
                   ),
                 ],
               ),
@@ -207,7 +206,7 @@ class _ShopSettingsScreenState extends State<ShopSettingsScreen> {
               style: AppTypography.labelSmall.copyWith(
                 fontWeight: FontWeight.w800,
                 letterSpacing: 1.0,
-                color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
+                color: colors.textMuted,
               ),
             ),
             AppSpacing.vGap8,
@@ -228,7 +227,7 @@ class _ShopSettingsScreenState extends State<ShopSettingsScreen> {
                           Text(
                             isOpen ? 'Accepting customer orders' : 'Store marked offline',
                             style: AppTypography.bodySmall.copyWith(
-                              color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
+                              color: colors.textMuted,
                             ),
                           ),
                         ],
@@ -259,7 +258,7 @@ class _ShopSettingsScreenState extends State<ShopSettingsScreen> {
                       ),
                     ],
                   ),
-                  Divider(height: 24, color: isDark ? AppColors.darkDivider : AppColors.lightDivider),
+                  Divider(height: 24, color: colors.divider),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -273,7 +272,7 @@ class _ShopSettingsScreenState extends State<ShopSettingsScreen> {
                           Text(
                             'Instantly dispatch to kitchen queue',
                             style: AppTypography.bodySmall.copyWith(
-                              color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
+                              color: colors.textMuted,
                             ),
                           ),
                         ],
@@ -301,7 +300,7 @@ class _ShopSettingsScreenState extends State<ShopSettingsScreen> {
     required String label,
     required String value,
     Color? valueColor,
-    required bool isDark,
+    required AppSemanticColors colors,
   }) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -310,7 +309,7 @@ class _ShopSettingsScreenState extends State<ShopSettingsScreen> {
           label,
           style: TextStyle(
             fontSize: 12,
-            color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+            color: colors.textSecondary,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -319,7 +318,7 @@ class _ShopSettingsScreenState extends State<ShopSettingsScreen> {
           style: TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w800,
-            color: valueColor ?? (isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight),
+            color: valueColor ?? colors.textPrimary,
           ),
         ),
       ],

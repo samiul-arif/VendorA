@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
+import '../../../core/theme/app_semantic_colors.dart';
 import '../../../core/theme/app_shadows.dart';
 
 // Navigation Item Configuration
@@ -33,8 +33,8 @@ class FloatingNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final colors = context.appColors;
+    final isDark = context.isDark;
 
     final bottomPadding = MediaQuery.of(context).padding.bottom;
 
@@ -44,11 +44,11 @@ class FloatingNavBar extends StatelessWidget {
         height: 62,
         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF1A1F26).withValues(alpha: 0.95) : Colors.white.withValues(alpha: 0.95),
+          color: colors.surface.withValues(alpha: 0.95),
           borderRadius: AppRadius.full,
           boxShadow: isDark ? AppShadows.darkCard : AppShadows.floating,
           border: Border.all(
-            color: isDark ? AppColors.darkBorder : const Color(0xFFE5E7EB),
+            color: colors.borderSubtle,
             width: 1.0,
           ),
         ),
@@ -61,7 +61,6 @@ class FloatingNavBar extends StatelessWidget {
             return _NavBarItemWidget(
               item: item,
               isSelected: isSelected,
-              isDark: isDark,
               onTap: () => onTap(index),
             );
           }),
@@ -74,13 +73,11 @@ class FloatingNavBar extends StatelessWidget {
 class _NavBarItemWidget extends StatefulWidget {
   final NavItem item;
   final bool isSelected;
-  final bool isDark;
   final VoidCallback onTap;
 
   const _NavBarItemWidget({
     required this.item,
     required this.isSelected,
-    required this.isDark,
     required this.onTap,
   });
 
@@ -93,17 +90,11 @@ class _NavBarItemWidgetState extends State<_NavBarItemWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final activeBgColor = widget.isDark
-        ? Colors.white
-        : const Color(0xFF141414);
+    final colors = context.appColors;
 
-    final activeFgColor = widget.isDark
-        ? const Color(0xFF141414)
-        : Colors.white;
-
-    final inactiveFgColor = widget.isDark
-        ? const Color(0xFF9CA3AF)
-        : const Color(0xFF6B7280);
+    final activeBgColor = colors.ctaPrimary;
+    final activeFgColor = colors.ctaPrimaryText;
+    final inactiveFgColor = colors.textSecondary;
 
     return GestureDetector(
       onTapDown: (_) => setState(() => _isPressed = true),
@@ -144,18 +135,18 @@ class _NavBarItemWidgetState extends State<_NavBarItemWidget> {
                       child: Container(
                         padding: const EdgeInsets.all(3),
                         decoration: BoxDecoration(
-                          color: AppColors.primary,
+                          color: colors.primary,
                           shape: BoxShape.circle,
                           border: Border.all(
-                            color: widget.isDark ? const Color(0xFF1A1F26) : Colors.white,
+                            color: colors.surface,
                             width: 1.5,
                           ),
                         ),
                         constraints: const BoxConstraints(minWidth: 14, minHeight: 14),
                         child: Text(
                           '${widget.item.badgeCount}',
-                          style: const TextStyle(
-                            color: Colors.white,
+                          style: TextStyle(
+                            color: colors.textInverse,
                             fontSize: 8,
                             fontWeight: FontWeight.w900,
                             height: 1.0,

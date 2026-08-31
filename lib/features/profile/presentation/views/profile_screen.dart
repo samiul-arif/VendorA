@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
+import '../../../../core/theme/app_semantic_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/routing/app_routes.dart';
@@ -61,15 +61,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final colors = context.appColors;
     final authController = context.watch<AuthController>();
     final notifController = context.watch<NotificationController>();
     final vendor = authController.vendor;
     final activeShop = authController.activeShop;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkCanvas : AppColors.lightCanvas,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         bottom: false,
         child: ListView(
@@ -80,12 +79,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Vendor Profile & Settings',
+                  'Vendor Profile',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w900,
                     letterSpacing: -0.4,
-                    color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                    color: colors.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 2),
@@ -94,7 +93,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
-                    color: isDark ? AppColors.textMutedDark : const Color(0xFF6B7280),
+                    color: colors.textMuted,
                   ),
                 ),
               ],
@@ -121,7 +120,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               style: AppTypography.labelSmall.copyWith(
                 fontWeight: FontWeight.w800,
                 letterSpacing: 1.0,
-                color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
+                color: colors.textMuted,
               ),
             ),
             AppSpacing.vGap8,
@@ -138,14 +137,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
               items: [
                 SettingsTileItem(
                   icon: Icons.notifications_active_rounded,
-                  iconColor: AppColors.primary,
+                  iconColor: colors.primary,
                   title: 'Notification Center',
-                  subtitle: 'Order dispatch alerts, payouts & activity history',
                   trailing: notifController.unreadCount > 0
                       ? Container(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                          decoration: const BoxDecoration(
-                            color: AppColors.primary,
+                          decoration: BoxDecoration(
+                            color: colors.primary,
                             borderRadius: AppRadius.full,
                           ),
                           child: Text(
@@ -227,20 +225,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 SettingsTileItem(
                   icon: Icons.info_outline_rounded,
-                  iconColor: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
+                  iconColor: colors.textMuted,
                   title: 'App Version',
                   trailing: Text(
                     'v1.0.0 (Build 240)',
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w700,
-                      color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
+                      color: colors.textMuted,
                     ),
                   ),
                 ),
                 SettingsTileItem(
                   icon: Icons.logout_rounded,
-                  iconColor: AppColors.statusError,
+                  iconColor: colors.error,
                   title: 'Sign Out',
                   isDestructive: true,
                   onTap: _handleLogout,

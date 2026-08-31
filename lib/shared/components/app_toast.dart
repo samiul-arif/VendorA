@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radius.dart';
+import '../../core/theme/app_semantic_colors.dart';
 
 // Toast Variants
 enum AppToastVariant {
@@ -10,42 +10,29 @@ enum AppToastVariant {
   warning,
   info;
 
-  Color get color {
+  Color color(AppSemanticColors colors) {
     switch (this) {
       case AppToastVariant.success:
-        return const Color(0xFF10B981);
+        return colors.success;
       case AppToastVariant.error:
-        return AppColors.statusError;
+        return colors.error;
       case AppToastVariant.warning:
-        return const Color(0xFFF59E0B);
+        return colors.warning;
       case AppToastVariant.info:
-        return AppColors.primary;
+        return colors.primary;
     }
   }
 
-  Color get backgroundColorLight {
+  Color backgroundColor(AppSemanticColors colors) {
     switch (this) {
       case AppToastVariant.success:
-        return const Color(0xFFECFDF5);
+        return colors.successBg;
       case AppToastVariant.error:
-        return const Color(0xFFFEF2F2);
+        return colors.errorBg;
       case AppToastVariant.warning:
-        return const Color(0xFFFFFBEB);
+        return colors.warningBg;
       case AppToastVariant.info:
-        return AppColors.primaryTint;
-    }
-  }
-
-  Color get backgroundColorDark {
-    switch (this) {
-      case AppToastVariant.success:
-        return const Color(0xFF0F3A2E);
-      case AppToastVariant.error:
-        return const Color(0xFF3B1414);
-      case AppToastVariant.warning:
-        return const Color(0xFF3A2E0F);
-      case AppToastVariant.info:
-        return const Color(0xFF3B1425);
+        return colors.primaryContainer;
     }
   }
 
@@ -58,7 +45,7 @@ enum AppToastVariant {
       case AppToastVariant.warning:
         return Icons.warning_amber_rounded;
       case AppToastVariant.info:
-        return Icons.notifications_active_rounded;
+        return Icons.info_rounded;
     }
   }
 }
@@ -269,7 +256,10 @@ class _ToastOverlayWidgetState extends State<_ToastOverlayWidget>
   @override
   Widget build(BuildContext context) {
     final topPadding = MediaQuery.of(context).padding.top;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.appColors;
+    final isDark = context.isDark;
+    final variantColor = widget.variant.color(colors);
+    final variantBg = widget.variant.backgroundColor(colors);
 
     return Positioned(
       top: topPadding + 10,
@@ -295,10 +285,10 @@ class _ToastOverlayWidgetState extends State<_ToastOverlayWidget>
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                   decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF1E242C) : Colors.white,
+                    color: colors.surface,
                     borderRadius: BorderRadius.circular(18),
                     border: Border.all(
-                      color: isDark ? AppColors.darkBorder : const Color(0xFFE5E7EB),
+                      color: colors.borderSubtle,
                       width: 1.0,
                     ),
                     boxShadow: [
@@ -318,16 +308,14 @@ class _ToastOverlayWidgetState extends State<_ToastOverlayWidget>
                         width: 36,
                         height: 36,
                         decoration: BoxDecoration(
-                          color: isDark
-                              ? widget.variant.backgroundColorDark
-                              : widget.variant.backgroundColorLight,
+                          color: variantBg,
                           shape: BoxShape.circle,
                         ),
                         child: Center(
                           child: Icon(
                             widget.variant.icon,
                             size: 20,
-                            color: widget.variant.color,
+                            color: variantColor,
                           ),
                         ),
                       ),
@@ -345,9 +333,7 @@ class _ToastOverlayWidgetState extends State<_ToastOverlayWidget>
                               style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w800,
-                                color: isDark
-                                    ? AppColors.textPrimaryDark
-                                    : AppColors.textPrimaryLight,
+                                color: colors.textPrimary,
                                 letterSpacing: -0.2,
                               ),
                               maxLines: 1,
@@ -360,9 +346,7 @@ class _ToastOverlayWidgetState extends State<_ToastOverlayWidget>
                                 style: TextStyle(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w500,
-                                  color: isDark
-                                      ? AppColors.textSecondaryDark
-                                      : const Color(0xFF4B5563),
+                                  color: colors.textSecondary,
                                   height: 1.25,
                                 ),
                                 maxLines: 2,
@@ -384,7 +368,7 @@ class _ToastOverlayWidgetState extends State<_ToastOverlayWidget>
                           child: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                             decoration: BoxDecoration(
-                              color: widget.variant.color.withValues(alpha: 0.12),
+                              color: variantColor.withValues(alpha: 0.12),
                               borderRadius: AppRadius.full,
                             ),
                             child: Text(
@@ -392,7 +376,7 @@ class _ToastOverlayWidgetState extends State<_ToastOverlayWidget>
                               style: TextStyle(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w800,
-                                color: widget.variant.color,
+                                color: variantColor,
                               ),
                             ),
                           ),
@@ -411,9 +395,7 @@ class _ToastOverlayWidgetState extends State<_ToastOverlayWidget>
                           child: Icon(
                             Icons.close_rounded,
                             size: 16,
-                            color: isDark
-                                ? AppColors.textMutedDark
-                                : const Color(0xFF9CA3AF),
+                            color: colors.textMuted,
                           ),
                         ),
                       ),

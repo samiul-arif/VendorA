@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radius.dart';
+import '../../core/theme/app_semantic_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
 import 'app_bottom_sheet.dart';
@@ -70,8 +70,7 @@ class _SharedSelectModalState<T> extends State<SharedSelectModal<T>> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final colors = context.appColors;
 
     final filteredOptions = widget.options.where((opt) {
       if (_searchQuery.isEmpty) return true;
@@ -87,17 +86,17 @@ class _SharedSelectModalState<T> extends State<SharedSelectModal<T>> {
           Container(
             margin: const EdgeInsets.only(bottom: 12),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF232A34) : AppColors.lightSurfaceSubtle,
+              color: colors.surfaceSubtle,
               borderRadius: AppRadius.md,
               border: Border.all(
-                color: isDark ? AppColors.darkBorder : AppColors.borderLight,
+                color: colors.border,
               ),
             ),
             child: TextField(
               onChanged: (val) => setState(() => _searchQuery = val),
               style: TextStyle(
                 fontSize: 13,
-                color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                color: colors.textPrimary,
               ),
               decoration: const InputDecoration(
                 hintText: 'Search options...',
@@ -116,7 +115,7 @@ class _SharedSelectModalState<T> extends State<SharedSelectModal<T>> {
             itemCount: filteredOptions.length,
             separatorBuilder: (_, __) => Divider(
               height: 1,
-              color: isDark ? AppColors.darkDivider : AppColors.lightDivider,
+              color: colors.divider,
             ),
             itemBuilder: (context, index) {
               final item = filteredOptions[index];
@@ -136,13 +135,13 @@ class _SharedSelectModalState<T> extends State<SharedSelectModal<T>> {
                           decoration: BoxDecoration(
                             color: item.iconColor != null
                                 ? item.iconColor!.withValues(alpha: 0.12)
-                                : (isDark ? const Color(0xFF232A34) : AppColors.primaryTint),
+                                : colors.primaryContainer,
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Icon(
                             item.icon,
                             size: 18,
-                            color: item.iconColor ?? AppColors.primary,
+                            color: item.iconColor ?? colors.primary,
                           ),
                         ),
                         AppSpacing.hGap12,
@@ -157,8 +156,8 @@ class _SharedSelectModalState<T> extends State<SharedSelectModal<T>> {
                               style: AppTypography.titleSmall.copyWith(
                                 fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
                                 color: isSelected
-                                    ? AppColors.primary
-                                    : (isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight),
+                                    ? colors.primary
+                                    : colors.textPrimary,
                               ),
                             ),
                             if (item.subtitle != null) ...[
@@ -166,7 +165,7 @@ class _SharedSelectModalState<T> extends State<SharedSelectModal<T>> {
                               Text(
                                 item.subtitle!,
                                 style: AppTypography.bodySmall.copyWith(
-                                  color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
+                                  color: colors.textMuted,
                                 ),
                               ),
                             ],
@@ -178,8 +177,8 @@ class _SharedSelectModalState<T> extends State<SharedSelectModal<T>> {
                         Container(
                           width: 22,
                           height: 22,
-                          decoration: const BoxDecoration(
-                            color: AppColors.primary,
+                          decoration: BoxDecoration(
+                            color: colors.primary,
                             shape: BoxShape.circle,
                           ),
                           child: const Icon(
@@ -195,7 +194,7 @@ class _SharedSelectModalState<T> extends State<SharedSelectModal<T>> {
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             border: Border.all(
-                              color: isDark ? AppColors.darkBorder : AppColors.borderLight,
+                              color: colors.border,
                               width: 1.5,
                             ),
                           ),

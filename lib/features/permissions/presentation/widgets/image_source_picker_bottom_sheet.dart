@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
+import '../../../../core/theme/app_semantic_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/components/app_toast.dart';
 import '../../domain/models/app_permission_type.dart';
@@ -116,8 +116,7 @@ class ImageSourcePickerBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final colors = context.appColors;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -143,18 +142,18 @@ class ImageSourcePickerBottomSheet extends StatelessWidget {
             style: TextStyle(
               fontWeight: FontWeight.w800,
               fontSize: 14,
-              color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+              color: colors.textPrimary,
             ),
           ),
-          subtitle: const Text(
+          subtitle: Text(
             'Capture live freshly prepared kitchen dish',
-            style: TextStyle(fontSize: 11),
+            style: TextStyle(fontSize: 11, color: colors.textMuted),
           ),
-          trailing: const Icon(Icons.chevron_right_rounded, size: 20),
+          trailing: Icon(Icons.chevron_right_rounded, size: 20, color: colors.textMuted),
           onTap: () => _handleCameraSelection(context),
         ),
 
-        const Divider(height: 1),
+        Divider(height: 1, color: colors.divider),
 
         // Photos Gallery Tile
         ListTile(
@@ -177,18 +176,18 @@ class ImageSourcePickerBottomSheet extends StatelessWidget {
             style: TextStyle(
               fontWeight: FontWeight.w800,
               fontSize: 14,
-              color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+              color: colors.textPrimary,
             ),
           ),
-          subtitle: const Text(
+          subtitle: Text(
             'Select high-res food photo from device gallery',
-            style: TextStyle(fontSize: 11),
+            style: TextStyle(fontSize: 11, color: colors.textMuted),
           ),
-          trailing: const Icon(Icons.chevron_right_rounded, size: 20),
+          trailing: Icon(Icons.chevron_right_rounded, size: 20, color: colors.textMuted),
           onTap: () => _handleGallerySelection(context),
         ),
 
-        const Divider(height: 1),
+        Divider(height: 1, color: colors.divider),
 
         // Curated Library Tile
         ListTile(
@@ -197,12 +196,12 @@ class ImageSourcePickerBottomSheet extends StatelessWidget {
             width: 42,
             height: 42,
             decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.12),
+              color: colors.primaryContainer,
               borderRadius: AppRadius.md,
             ),
-            child: const Icon(
+            child: Icon(
               Icons.collections_rounded,
-              color: AppColors.primary,
+              color: colors.primary,
               size: 20,
             ),
           ),
@@ -211,14 +210,14 @@ class ImageSourcePickerBottomSheet extends StatelessWidget {
             style: TextStyle(
               fontWeight: FontWeight.w800,
               fontSize: 14,
-              color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+              color: colors.textPrimary,
             ),
           ),
-          subtitle: const Text(
+          subtitle: Text(
             'Choose from pre-loaded gourmet restaurant assets',
-            style: TextStyle(fontSize: 11),
+            style: TextStyle(fontSize: 11, color: colors.textMuted),
           ),
-          trailing: const Icon(Icons.chevron_right_rounded, size: 20),
+          trailing: Icon(Icons.chevron_right_rounded, size: 20, color: colors.textMuted),
           onTap: () {
             Navigator.of(context).pop();
             _showCuratedFoodGrid(context);
@@ -233,10 +232,10 @@ class ImageSourcePickerBottomSheet extends StatelessWidget {
       context: context,
       backgroundColor: Colors.transparent,
       builder: (ctx) {
-        final isDark = Theme.of(ctx).brightness == Brightness.dark;
+        final colors = ctx.appColors;
         return Container(
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF1E242C) : Colors.white,
+            color: colors.surface,
             borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
           ),
           padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
@@ -247,7 +246,7 @@ class ImageSourcePickerBottomSheet extends StatelessWidget {
                 width: 36,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: isDark ? AppColors.darkBorder : const Color(0xFFE5E7EB),
+                  color: colors.borderSubtle,
                   borderRadius: AppRadius.full,
                 ),
               ),
@@ -257,7 +256,7 @@ class ImageSourcePickerBottomSheet extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w900,
-                  color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                  color: colors.textPrimary,
                 ),
               ),
               AppSpacing.vGap16,

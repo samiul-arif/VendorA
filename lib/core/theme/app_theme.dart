@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'app_colors.dart';
+import 'app_semantic_colors.dart';
 import 'app_typography.dart';
 import 'app_radius.dart';
 import 'app_spacing.dart';
@@ -178,6 +179,11 @@ class AppTheme {
         thickness: 1.0,
         space: 1.0,
       ),
+
+      // Semantic Theme Extensions
+      extensions: const [
+        AppSemanticColors.light,
+      ],
     );
   }
 
@@ -348,6 +354,11 @@ class AppTheme {
         thickness: 1.0,
         space: 1.0,
       ),
+
+      // Semantic Theme Extensions
+      extensions: const [
+        AppSemanticColors.dark,
+      ],
     );
   }
 }

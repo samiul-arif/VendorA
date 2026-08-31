@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
+import '../../../../core/theme/app_semantic_colors.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../../shared/components/app_card.dart';
 import '../../domain/models/product_model.dart';
@@ -22,8 +22,7 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final colors = context.appColors;
 
     final isSoldOut = !product.isAvailable || product.stockQuantity == 0;
     final isPopular = product.isPopular;
@@ -41,7 +40,7 @@ class ProductCard extends StatelessWidget {
             child: Container(
               width: double.infinity,
               height: 98,
-              color: isDark ? const Color(0xFF232A34) : const Color(0xFFF3F4F6),
+              color: colors.surfaceSubtle,
               child: Stack(
                 fit: StackFit.expand,
                 children: [
@@ -54,7 +53,7 @@ class ProductCard extends StatelessWidget {
                       child: Icon(
                         Icons.restaurant_rounded,
                         size: 24,
-                        color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
+                        color: colors.textMuted,
                       ),
                     ),
                   ),
@@ -113,7 +112,7 @@ class ProductCard extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
                       decoration: BoxDecoration(
                         color: isSoldOut
-                            ? AppColors.statusError
+                            ? colors.error
                             : Colors.black.withValues(alpha: 0.75),
                         borderRadius: BorderRadius.circular(4),
                       ),
@@ -146,7 +145,7 @@ class ProductCard extends StatelessWidget {
                   style: TextStyle(
                     fontWeight: FontWeight.w800,
                     fontSize: 12,
-                    color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                    color: colors.textPrimary,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -156,7 +155,7 @@ class ProductCard extends StatelessWidget {
                   product.description.isNotEmpty ? product.description : 'Fresh kitchen specialty',
                   style: TextStyle(
                     fontSize: 9.5,
-                    color: isDark ? AppColors.textMutedDark : const Color(0xFF6B7280),
+                    color: colors.textMuted,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -172,7 +171,7 @@ class ProductCard extends StatelessWidget {
           Divider(
             height: 1,
             thickness: 0.8,
-            color: isDark ? AppColors.darkDivider : const Color(0xFFF3F4F6),
+            color: colors.divider,
           ),
 
           const SizedBox(height: 6),
@@ -184,10 +183,10 @@ class ProductCard extends StatelessWidget {
             children: [
               Text(
                 Formatters.formatCurrency(product.price),
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w900,
-                  color: AppColors.primary,
+                  color: colors.primary,
                 ),
               ),
               GestureDetector(
@@ -197,8 +196,8 @@ class ProductCard extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   decoration: BoxDecoration(
                     color: isSoldOut
-                        ? (isDark ? const Color(0xFF3B1414) : const Color(0xFFFEE2E2))
-                        : (isDark ? const Color(0xFF0F3A2E) : const Color(0xFFD1FAE5)),
+                        ? colors.errorBg
+                        : colors.successBg,
                     borderRadius: AppRadius.full,
                   ),
                   child: Row(
@@ -208,7 +207,7 @@ class ProductCard extends StatelessWidget {
                         width: 4,
                         height: 4,
                         decoration: BoxDecoration(
-                          color: isSoldOut ? AppColors.statusError : const Color(0xFF10B981),
+                          color: isSoldOut ? colors.error : colors.success,
                           shape: BoxShape.circle,
                         ),
                       ),
@@ -218,7 +217,7 @@ class ProductCard extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 8,
                           fontWeight: FontWeight.w800,
-                          color: isSoldOut ? const Color(0xFFB91C1C) : const Color(0xFF047857),
+                          color: isSoldOut ? colors.error : colors.success,
                         ),
                       ),
                     ],

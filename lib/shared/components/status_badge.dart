@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radius.dart';
+import '../../core/theme/app_semantic_colors.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/theme/app_spacing.dart';
 
@@ -47,10 +47,8 @@ class StatusBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-
-    final config = _resolveConfig(isDark);
+    final colors = context.appColors;
+    final config = _resolveConfig(colors);
 
     return Container(
       padding: padding,
@@ -88,141 +86,141 @@ class StatusBadge extends StatelessWidget {
     );
   }
 
-  _BadgeStyleConfig _resolveConfig(bool isDark) {
+  _BadgeStyleConfig _resolveConfig(AppSemanticColors colors) {
     switch (type) {
       case BadgeType.pending:
         return _BadgeStyleConfig(
           defaultLabel: 'Pending',
-          backgroundColor: isDark ? const Color(0xFF3B2A10) : AppColors.statusWarningBg,
-          borderColor: isDark ? const Color(0xFF5A3E14) : const Color(0xFFFDE68A),
-          textColor: isDark ? const Color(0xFFFBBF24) : const Color(0xFFD97706),
-          dotColor: AppColors.statusWarning,
+          backgroundColor: colors.orderPendingBg,
+          borderColor: colors.orderPending.withValues(alpha: 0.3),
+          textColor: colors.orderPending,
+          dotColor: colors.orderPending,
         );
 
       case BadgeType.accepted:
         return _BadgeStyleConfig(
           defaultLabel: 'Accepted',
-          backgroundColor: isDark ? const Color(0xFF13294B) : AppColors.statusInfoBg,
-          borderColor: isDark ? const Color(0xFF1E3A8A) : const Color(0xFFBFDBFE),
-          textColor: isDark ? const Color(0xFF60A5FA) : const Color(0xFF2563EB),
-          dotColor: AppColors.statusInfo,
+          backgroundColor: colors.orderAcceptedBg,
+          borderColor: colors.orderAccepted.withValues(alpha: 0.3),
+          textColor: colors.orderAccepted,
+          dotColor: colors.orderAccepted,
         );
 
       case BadgeType.preparing:
         return _BadgeStyleConfig(
           defaultLabel: 'Preparing',
-          backgroundColor: isDark ? const Color(0xFF2E1A47) : const Color(0xFFF5F3FF),
-          borderColor: isDark ? const Color(0xFF4C1D95) : const Color(0xFFDDD6FE),
-          textColor: isDark ? const Color(0xFFA78BFA) : const Color(0xFF7C3AED),
-          dotColor: const Color(0xFF8B5CF6),
+          backgroundColor: colors.orderPreparingBg,
+          borderColor: colors.orderPreparing.withValues(alpha: 0.3),
+          textColor: colors.orderPreparing,
+          dotColor: colors.orderPreparing,
         );
 
       case BadgeType.ready:
         return _BadgeStyleConfig(
           defaultLabel: 'Ready for Pickup',
-          backgroundColor: isDark ? const Color(0xFF0F3A2E) : AppColors.statusSuccessBg,
-          borderColor: isDark ? const Color(0xFF065F46) : const Color(0xFFA7F3D0),
-          textColor: isDark ? const Color(0xFF34D399) : const Color(0xFF059669),
-          dotColor: AppColors.statusSuccess,
+          backgroundColor: colors.orderReadyBg,
+          borderColor: colors.orderReady.withValues(alpha: 0.3),
+          textColor: colors.orderReady,
+          dotColor: colors.orderReady,
         );
 
       case BadgeType.delivered:
         return _BadgeStyleConfig(
           defaultLabel: 'Delivered',
-          backgroundColor: isDark ? const Color(0xFF0F3A2E) : const Color(0xFFECFDF5),
-          borderColor: isDark ? const Color(0xFF065F46) : const Color(0xFFA7F3D0),
-          textColor: isDark ? const Color(0xFF34D399) : const Color(0xFF047857),
-          dotColor: const Color(0xFF059669),
+          backgroundColor: colors.orderDeliveredBg,
+          borderColor: colors.orderDelivered.withValues(alpha: 0.3),
+          textColor: colors.orderDelivered,
+          dotColor: colors.orderDelivered,
         );
 
       case BadgeType.cancelled:
         return _BadgeStyleConfig(
           defaultLabel: 'Cancelled',
-          backgroundColor: isDark ? const Color(0xFF3B1414) : AppColors.statusErrorBg,
-          borderColor: isDark ? const Color(0xFF7F1D1D) : const Color(0xFFFECACA),
-          textColor: isDark ? const Color(0xFFF87171) : const Color(0xFFDC2626),
-          dotColor: AppColors.statusError,
+          backgroundColor: colors.orderCancelledBg,
+          borderColor: colors.orderCancelled.withValues(alpha: 0.3),
+          textColor: colors.orderCancelled,
+          dotColor: colors.orderCancelled,
         );
 
       case BadgeType.open:
         return _BadgeStyleConfig(
           defaultLabel: 'Open',
-          backgroundColor: isDark ? const Color(0xFF0F3A2E) : AppColors.statusSuccessBg,
-          borderColor: isDark ? const Color(0xFF065F46) : const Color(0xFFA7F3D0),
-          textColor: isDark ? const Color(0xFF34D399) : const Color(0xFF059669),
-          dotColor: AppColors.statusSuccess,
+          backgroundColor: colors.successBg,
+          borderColor: colors.success.withValues(alpha: 0.3),
+          textColor: colors.success,
+          dotColor: colors.success,
         );
 
       case BadgeType.closed:
         return _BadgeStyleConfig(
           defaultLabel: 'Closed',
-          backgroundColor: isDark ? AppColors.darkSurfaceSubtle : const Color(0xFFF3F4F6),
-          borderColor: isDark ? AppColors.darkBorder : const Color(0xFFE5E7EB),
-          textColor: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
-          dotColor: AppColors.textMutedLight,
+          backgroundColor: colors.surfaceSubtle,
+          borderColor: colors.borderSubtle,
+          textColor: colors.textSecondary,
+          dotColor: colors.textMuted,
         );
 
       case BadgeType.inStock:
         return _BadgeStyleConfig(
           defaultLabel: 'In Stock',
-          backgroundColor: isDark ? const Color(0xFF0F3A2E) : AppColors.statusSuccessBg,
-          borderColor: isDark ? const Color(0xFF065F46) : const Color(0xFFA7F3D0),
-          textColor: isDark ? const Color(0xFF34D399) : const Color(0xFF059669),
-          dotColor: AppColors.statusSuccess,
+          backgroundColor: colors.successBg,
+          borderColor: colors.success.withValues(alpha: 0.3),
+          textColor: colors.success,
+          dotColor: colors.success,
         );
 
       case BadgeType.outOfStock:
         return _BadgeStyleConfig(
           defaultLabel: 'Out of Stock',
-          backgroundColor: isDark ? const Color(0xFF3B1414) : AppColors.statusErrorBg,
-          borderColor: isDark ? const Color(0xFF7F1D1D) : const Color(0xFFFECACA),
-          textColor: isDark ? const Color(0xFFF87171) : const Color(0xFFDC2626),
-          dotColor: AppColors.statusError,
+          backgroundColor: colors.errorBg,
+          borderColor: colors.error.withValues(alpha: 0.3),
+          textColor: colors.error,
+          dotColor: colors.error,
         );
 
       case BadgeType.featured:
         return _BadgeStyleConfig(
           defaultLabel: 'Featured',
-          backgroundColor: isDark ? const Color(0xFF4A0A26) : AppColors.primaryTint,
-          borderColor: isDark ? const Color(0xFF831843) : const Color(0xFFFBCFE8),
-          textColor: AppColors.primary,
-          dotColor: AppColors.primary,
+          backgroundColor: colors.primaryContainer,
+          borderColor: colors.primary.withValues(alpha: 0.3),
+          textColor: colors.primary,
+          dotColor: colors.primary,
         );
 
       case BadgeType.success:
         return _BadgeStyleConfig(
           defaultLabel: 'Success',
-          backgroundColor: isDark ? const Color(0xFF0F3A2E) : AppColors.statusSuccessBg,
-          borderColor: isDark ? const Color(0xFF065F46) : const Color(0xFFA7F3D0),
-          textColor: isDark ? const Color(0xFF34D399) : const Color(0xFF059669),
-          dotColor: AppColors.statusSuccess,
+          backgroundColor: colors.successBg,
+          borderColor: colors.success.withValues(alpha: 0.3),
+          textColor: colors.success,
+          dotColor: colors.success,
         );
 
       case BadgeType.warning:
         return _BadgeStyleConfig(
           defaultLabel: 'Warning',
-          backgroundColor: isDark ? const Color(0xFF3B2A10) : AppColors.statusWarningBg,
-          borderColor: isDark ? const Color(0xFF5A3E14) : const Color(0xFFFDE68A),
-          textColor: isDark ? const Color(0xFFFBBF24) : const Color(0xFFD97706),
-          dotColor: AppColors.statusWarning,
+          backgroundColor: colors.warningBg,
+          borderColor: colors.warning.withValues(alpha: 0.3),
+          textColor: colors.warning,
+          dotColor: colors.warning,
         );
 
       case BadgeType.error:
         return _BadgeStyleConfig(
           defaultLabel: 'Error',
-          backgroundColor: isDark ? const Color(0xFF3B1414) : AppColors.statusErrorBg,
-          borderColor: isDark ? const Color(0xFF7F1D1D) : const Color(0xFFFECACA),
-          textColor: isDark ? const Color(0xFFF87171) : const Color(0xFFDC2626),
-          dotColor: AppColors.statusError,
+          backgroundColor: colors.errorBg,
+          borderColor: colors.error.withValues(alpha: 0.3),
+          textColor: colors.error,
+          dotColor: colors.error,
         );
 
       case BadgeType.info:
         return _BadgeStyleConfig(
           defaultLabel: 'Info',
-          backgroundColor: isDark ? const Color(0xFF13294B) : AppColors.statusInfoBg,
-          borderColor: isDark ? const Color(0xFF1E3A8A) : const Color(0xFFBFDBFE),
-          textColor: isDark ? const Color(0xFF60A5FA) : const Color(0xFF2563EB),
-          dotColor: AppColors.statusInfo,
+          backgroundColor: colors.infoBg,
+          borderColor: colors.info.withValues(alpha: 0.3),
+          textColor: colors.info,
+          dotColor: colors.info,
         );
     }
   }

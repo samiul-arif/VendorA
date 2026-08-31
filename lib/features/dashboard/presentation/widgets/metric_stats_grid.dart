@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
+import '../../../../core/theme/app_semantic_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/components/app_card.dart';
 import '../../domain/models/dashboard_metrics.dart';
@@ -20,8 +20,7 @@ class MetricStatsGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final colors = context.appColors;
 
     final activeOrders = metrics?.activeOrdersCount ?? 18;
     final nextPayout = metrics?.nextPayoutAmount ?? 8940.00;
@@ -45,13 +44,13 @@ class MetricStatsGrid extends StatelessWidget {
                       width: 40,
                       height: 40,
                       decoration: BoxDecoration(
-                        color: isDark ? const Color(0xFF381223) : const Color(0xFFFFF0F6),
+                        color: colors.primaryContainer,
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: const Center(
+                      child: Center(
                         child: Icon(
                           Icons.shopping_bag_outlined,
-                          color: AppColors.primary,
+                          color: colors.primary,
                           size: 20,
                         ),
                       ),
@@ -61,13 +60,13 @@ class MetricStatsGrid extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
                       decoration: BoxDecoration(
-                        color: isDark ? const Color(0xFF0F3A2E) : const Color(0xFFECFDF5),
+                        color: colors.successBg,
                         borderRadius: AppRadius.full,
                       ),
-                      child: const Text(
+                      child: Text(
                         '+3 new',
                         style: TextStyle(
-                          color: Color(0xFF059669),
+                          color: colors.success,
                           fontSize: 10,
                           fontWeight: FontWeight.w800,
                         ),
@@ -83,7 +82,7 @@ class MetricStatsGrid extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 26,
                     fontWeight: FontWeight.w900,
-                    color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                    color: colors.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 2),
@@ -92,7 +91,7 @@ class MetricStatsGrid extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
-                    color: isDark ? AppColors.textMutedDark : const Color(0xFF6B7280),
+                    color: colors.textMuted,
                   ),
                 ),
               ],
@@ -119,13 +118,13 @@ class MetricStatsGrid extends StatelessWidget {
                       width: 40,
                       height: 40,
                       decoration: BoxDecoration(
-                        color: isDark ? const Color(0xFF0F3A2E) : const Color(0xFFE6F7F3),
+                        color: colors.infoBg,
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: const Center(
+                      child: Center(
                         child: Icon(
                           Icons.credit_card_rounded,
-                          color: Color(0xFF2FBF9F),
+                          color: colors.info,
                           size: 20,
                         ),
                       ),
@@ -135,13 +134,13 @@ class MetricStatsGrid extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
                       decoration: BoxDecoration(
-                        color: isDark ? const Color(0xFF1E293B) : const Color(0xFFEFF6FF),
+                        color: colors.orderAcceptedBg,
                         borderRadius: AppRadius.full,
                       ),
-                      child: const Text(
+                      child: Text(
                         'Weekly',
                         style: TextStyle(
-                          color: Color(0xFF2563EB),
+                          color: colors.orderAccepted,
                           fontSize: 10,
                           fontWeight: FontWeight.w800,
                         ),
@@ -157,7 +156,7 @@ class MetricStatsGrid extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 26,
                     fontWeight: FontWeight.w900,
-                    color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                    color: colors.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 2),
@@ -166,7 +165,7 @@ class MetricStatsGrid extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
-                    color: isDark ? AppColors.textMutedDark : const Color(0xFF6B7280),
+                    color: colors.textMuted,
                   ),
                 ),
               ],

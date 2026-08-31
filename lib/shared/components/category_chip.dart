@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radius.dart';
+import '../../core/theme/app_semantic_colors.dart';
 import '../../core/theme/app_typography.dart';
 
 // Category / Filter Pill Chip
@@ -22,25 +22,15 @@ class CategoryChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final colors = context.appColors;
 
     // Colors
-    final Color bgColor = isSelected
-        ? (isDark ? AppColors.textPrimaryDark : AppColors.ctaPrimary)
-        : (isDark ? AppColors.darkSurface : AppColors.lightSurface);
-
-    final Color fgColor = isSelected
-        ? (isDark ? AppColors.ctaPrimary : AppColors.ctaPrimaryText)
-        : (isDark ? AppColors.textSecondaryDark : AppColors.textPrimaryLight);
-
+    final Color bgColor = isSelected ? colors.ctaPrimary : colors.surface;
+    final Color fgColor = isSelected ? colors.ctaPrimaryText : colors.textPrimary;
     final Color countBg = isSelected
-        ? (isDark ? const Color(0x33000000) : const Color(0x33FFFFFF))
-        : (isDark ? AppColors.darkSurfaceSubtle : AppColors.lightCanvas);
-
-    final Color countFg = isSelected
-        ? fgColor
-        : (isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight);
+        ? colors.ctaPrimaryText.withValues(alpha: 0.2)
+        : colors.surfaceSubtle;
+    final Color countFg = isSelected ? fgColor : colors.textSecondary;
 
     return ConstrainedBox(
       constraints: const BoxConstraints(minHeight: 40),
@@ -58,7 +48,7 @@ class CategoryChip extends StatelessWidget {
               border: isSelected
                   ? null
                   : Border.all(
-                      color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+                      color: colors.border,
                       width: 1.0,
                     ),
             ),

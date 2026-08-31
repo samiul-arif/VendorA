@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radius.dart';
+import '../../core/theme/app_semantic_colors.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/theme/app_spacing.dart';
 
@@ -48,12 +48,11 @@ class AppBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final colors = context.appColors;
 
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? AppColors.darkSurface : AppColors.lightSurface,
+        color: colors.surface,
         borderRadius: AppRadius.sheetTop,
       ),
       child: SafeArea(
@@ -69,7 +68,7 @@ class AppBottomSheet extends StatelessWidget {
                 width: 44,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: isDark ? AppColors.darkBorder : const Color(0xFFD1D5DB),
+                  color: colors.borderSubtle,
                   borderRadius: AppRadius.full,
                 ),
               ),
@@ -89,7 +88,7 @@ class AppBottomSheet extends StatelessWidget {
                             Text(
                               title!,
                               style: AppTypography.headlineSmall.copyWith(
-                                color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                                color: colors.textPrimary,
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
@@ -98,7 +97,7 @@ class AppBottomSheet extends StatelessWidget {
                             Text(
                               subtitle!,
                               style: AppTypography.bodySmall.copyWith(
-                                color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+                                color: colors.textSecondary,
                               ),
                             ),
                           ],
@@ -109,7 +108,7 @@ class AppBottomSheet extends StatelessWidget {
                     if (showCloseButton)
                       IconButton(
                         icon: const Icon(Icons.close_rounded, size: 22),
-                        color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+                        color: colors.textSecondary,
                         onPressed: () => Navigator.of(context).pop(),
                         tooltip: 'Close',
                       ),
@@ -117,7 +116,7 @@ class AppBottomSheet extends StatelessWidget {
                 ),
               ),
               Divider(
-                color: isDark ? AppColors.darkDivider : AppColors.lightDivider,
+                color: colors.divider,
                 height: 1,
               ),
               AppSpacing.vGap16,

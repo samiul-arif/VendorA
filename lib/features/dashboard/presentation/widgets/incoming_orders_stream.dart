@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
+import '../../../../core/theme/app_semantic_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../../shared/components/app_card.dart';
@@ -23,8 +23,7 @@ class IncomingOrdersStream extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final colors = context.appColors;
     final orderController = context.watch<OrderController>();
 
     final liveOrders = orderController.allOrders
@@ -48,15 +47,15 @@ class IncomingOrdersStream extends StatelessWidget {
                 fontWeight: FontWeight.w800,
                 fontSize: 11,
                 letterSpacing: 0.8,
-                color: isDark ? AppColors.textMutedDark : const Color(0xFF6B7280),
+                color: colors.textMuted,
               ),
             ),
             GestureDetector(
               onTap: onViewAllTapped,
               child: Text(
                 'View All (${orderController.allOrders.length})',
-                style: const TextStyle(
-                  color: AppColors.primary,
+                style: TextStyle(
+                  color: colors.primary,
                   fontWeight: FontWeight.w800,
                   fontSize: 11,
                 ),
@@ -77,10 +76,10 @@ class IncomingOrdersStream extends StatelessWidget {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF2E1A2A) : const Color(0xFFFFF0F6),
+                    color: colors.primaryContainer,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.check_circle_outline_rounded, color: AppColors.primary, size: 20),
+                  child: Icon(Icons.check_circle_outline_rounded, color: colors.primary, size: 20),
                 ),
                 AppSpacing.hGap12,
                 Expanded(
@@ -92,14 +91,14 @@ class IncomingOrdersStream extends StatelessWidget {
                         style: TextStyle(
                           fontWeight: FontWeight.w800,
                           fontSize: 13,
-                          color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                          color: colors.textPrimary,
                         ),
                       ),
                       Text(
                         'New customer orders will appear here in real time.',
                         style: TextStyle(
                           fontSize: 11,
-                          color: isDark ? AppColors.textMutedDark : const Color(0xFF6B7280),
+                          color: colors.textMuted,
                         ),
                       ),
                     ],
@@ -145,7 +144,7 @@ class IncomingOrdersStream extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w900,
-                                  color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                                  color: colors.textPrimary,
                                 ),
                               ),
                               const SizedBox(width: 8),
@@ -154,8 +153,8 @@ class IncomingOrdersStream extends StatelessWidget {
                                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2.5),
                                 decoration: BoxDecoration(
                                   color: isNew
-                                      ? (isDark ? const Color(0xFF1E293B) : const Color(0xFFEFF6FF))
-                                      : (isDark ? const Color(0xFF382914) : const Color(0xFFFFFBEB)),
+                                      ? colors.orderPendingBg
+                                      : colors.orderPreparingBg,
                                   borderRadius: AppRadius.full,
                                 ),
                                 child: Text(
@@ -163,7 +162,7 @@ class IncomingOrdersStream extends StatelessWidget {
                                   style: TextStyle(
                                     fontSize: 9.5,
                                     fontWeight: FontWeight.w800,
-                                    color: isNew ? const Color(0xFF2563EB) : const Color(0xFFD97706),
+                                    color: isNew ? colors.orderPending : colors.orderPreparing,
                                   ),
                                 ),
                               ),
@@ -174,7 +173,7 @@ class IncomingOrdersStream extends StatelessWidget {
                             order.itemsSummary,
                             style: TextStyle(
                               fontSize: 11,
-                              color: isDark ? AppColors.textSecondaryDark : const Color(0xFF6B7280),
+                              color: colors.textSecondary,
                               fontWeight: FontWeight.w500,
                             ),
                             maxLines: 1,
@@ -186,7 +185,7 @@ class IncomingOrdersStream extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.w900,
-                              color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                              color: colors.textPrimary,
                             ),
                           ),
                         ],
@@ -229,8 +228,8 @@ class IncomingOrdersStream extends StatelessWidget {
                         },
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 7),
-                          decoration: const BoxDecoration(
-                            color: AppColors.primary,
+                          decoration: BoxDecoration(
+                            color: colors.primary,
                             borderRadius: AppRadius.full,
                           ),
                           child: const Text(
@@ -277,13 +276,13 @@ class IncomingOrdersStream extends StatelessWidget {
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
                           decoration: BoxDecoration(
-                            color: isDark ? Colors.white : AppColors.ctaPrimary,
+                            color: colors.ctaPrimary,
                             borderRadius: AppRadius.full,
                           ),
                           child: Text(
                             'Ready',
                             style: TextStyle(
-                              color: isDark ? AppColors.inkPrimary : Colors.white,
+                              color: colors.ctaPrimaryText,
                               fontSize: 11,
                               fontWeight: FontWeight.w800,
                             ),

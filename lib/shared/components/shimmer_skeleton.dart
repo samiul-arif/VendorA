@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_radius.dart';
+import '../../core/theme/app_semantic_colors.dart';
 
 // Animated Shimmer Skeleton Placeholder (ui-ux-pro-max loading feedback)
 class ShimmerSkeleton extends StatefulWidget {
@@ -63,11 +64,10 @@ class _ShimmerSkeletonState extends State<ShimmerSkeleton>
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final colors = context.appColors;
 
-    final baseColor = isDark ? const Color(0xFF1E242C) : const Color(0xFFE8ECEF);
-    final highlightColor = isDark ? const Color(0xFF2B333E) : const Color(0xFFF7F9FA);
+    final baseColor = colors.shimmerBase;
+    final highlightColor = colors.shimmerHighlight;
 
     return AnimatedBuilder(
       animation: _controller,

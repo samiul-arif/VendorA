@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_semantic_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/components/empty_state_view.dart';
 import '../../../../shared/components/shimmer_skeleton.dart';
@@ -55,15 +55,14 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final colors = context.appColors;
     final controller = context.watch<NotificationController>();
     final notifications = controller.filteredNotifications;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkCanvas : AppColors.lightCanvas,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: isDark ? const Color(0xFF161B22) : const Color(0xFFFFFFFF),
+        backgroundColor: colors.surface,
         elevation: 0,
         scrolledUnderElevation: 0,
         leadingWidth: 56,
@@ -74,7 +73,7 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
             fontSize: 16,
             fontWeight: FontWeight.w900,
             letterSpacing: -0.2,
-            color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+            color: colors.textPrimary,
           ),
         ),
         actions: [
@@ -88,7 +87,7 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1.0),
           child: Container(
-            color: isDark ? AppColors.darkBorder : const Color(0xFFEEF0F2),
+            color: colors.borderSubtle,
             height: 1.0,
           ),
         ),
@@ -108,7 +107,7 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
             // Content List
             Expanded(
               child: RefreshIndicator(
-                color: AppColors.primary,
+                color: colors.primary,
                 onRefresh: () => controller.loadNotifications(forceRefresh: true),
                 child: controller.isLoading
                     ? ListView.separated(

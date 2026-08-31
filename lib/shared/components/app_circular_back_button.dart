@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_semantic_colors.dart';
 import '../../core/theme/app_shadows.dart';
 
 // macOS/iOS-Inspired Premium Circular Back Button Component
@@ -15,7 +15,8 @@ class AppCircularBackButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.appColors;
+    final isDark = context.isDark;
 
     return Center(
       child: Material(
@@ -31,10 +32,10 @@ class AppCircularBackButton extends StatelessWidget {
               width: 36,
               height: 36,
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF1E242C) : Colors.white,
+                color: colors.surface,
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: isDark ? AppColors.darkBorder : const Color(0xFFE5E7EB),
+                  color: colors.borderSubtle,
                   width: 1.0,
                 ),
                 boxShadow: isDark
@@ -53,8 +54,7 @@ class AppCircularBackButton extends StatelessWidget {
                   child: Icon(
                     Icons.arrow_back_ios_new_rounded,
                     size: 15,
-                    color: iconColor ??
-                        (isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight),
+                    color: iconColor ?? colors.textPrimary,
                   ),
                 ),
               ),

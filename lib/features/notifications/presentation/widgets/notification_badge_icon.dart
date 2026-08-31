@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_semantic_colors.dart';
 import '../../../../core/routing/app_routes.dart';
 import '../controllers/notification_controller.dart';
 
@@ -10,6 +10,7 @@ class NotificationBadgeIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     final notificationController = context.watch<NotificationController>();
     final count = notificationController.unreadCount;
 
@@ -29,8 +30,8 @@ class NotificationBadgeIcon extends StatelessWidget {
             right: 8,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-              decoration: const BoxDecoration(
-                color: AppColors.primary,
+              decoration: BoxDecoration(
+                color: colors.primary,
                 shape: BoxShape.circle,
               ),
               constraints: const BoxConstraints(
@@ -40,8 +41,8 @@ class NotificationBadgeIcon extends StatelessWidget {
               child: Center(
                 child: Text(
                   count > 99 ? '99+' : count.toString(),
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: colors.textInverse,
                     fontSize: 9,
                     fontWeight: FontWeight.w800,
                     height: 1.0,

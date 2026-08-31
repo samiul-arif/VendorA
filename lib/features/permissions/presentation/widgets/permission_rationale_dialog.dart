@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
+import '../../../../core/theme/app_semantic_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../domain/models/app_permission_type.dart';
@@ -35,8 +35,7 @@ class PermissionRationaleDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final colors = context.appColors;
 
     return Dialog(
       backgroundColor: Colors.transparent,
@@ -44,14 +43,14 @@ class PermissionRationaleDialog extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF1E242C) : Colors.white,
+          color: colors.surface,
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
-            color: isDark ? AppColors.darkBorder : const Color(0xFFE5E7EB),
+            color: colors.borderSubtle,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.12),
+              color: Colors.black.withValues(alpha: context.isDark ? 0.4 : 0.12),
               blurRadius: 28,
               offset: const Offset(0, 10),
             ),
@@ -84,7 +83,7 @@ class PermissionRationaleDialog extends StatelessWidget {
               permissionType.title,
               style: AppTypography.titleMedium.copyWith(
                 fontWeight: FontWeight.w900,
-                color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                color: colors.textPrimary,
                 letterSpacing: -0.3,
               ),
               textAlign: TextAlign.center,
@@ -97,7 +96,7 @@ class PermissionRationaleDialog extends StatelessWidget {
               permissionType.rationalePrompt,
               style: TextStyle(
                 fontSize: 12,
-                color: isDark ? AppColors.textSecondaryDark : const Color(0xFF4B5563),
+                color: colors.textSecondary,
                 height: 1.4,
               ),
               textAlign: TextAlign.center,
@@ -112,7 +111,7 @@ class PermissionRationaleDialog extends StatelessWidget {
               child: ElevatedButton(
                 onPressed: onAllow,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
+                  backgroundColor: colors.primary,
                   foregroundColor: Colors.white,
                   elevation: 0,
                   shape: const RoundedRectangleBorder(
@@ -142,7 +141,7 @@ class PermissionRationaleDialog extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
-                    color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
+                    color: colors.textMuted,
                   ),
                 ),
               ),

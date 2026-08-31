@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
+import '../../../../core/theme/app_semantic_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/routing/app_routes.dart';
@@ -30,9 +30,9 @@ class NotificationTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final colors = context.appColors;
     final type = notification.type;
+    final iconColor = type.color(colors);
 
     return Dismissible(
       key: Key(notification.id),
@@ -41,8 +41,8 @@ class NotificationTile extends StatelessWidget {
       background: Container(
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 20),
-        decoration: const BoxDecoration(
-          color: AppColors.statusError,
+        decoration: BoxDecoration(
+          color: colors.error,
           borderRadius: AppRadius.card,
         ),
         child: const Icon(Icons.delete_outline_rounded, color: Colors.white, size: 24),
@@ -51,13 +51,13 @@ class NotificationTile extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         backgroundColor: notification.isRead
             ? null
-            : (isDark ? const Color(0xFF251A24) : const Color(0xFFFFF5F8)),
+            : colors.primaryContainer,
         child: InkWell(
           onTap: () {
             onTap();
             if (notification.relatedOrderId != null) {
               Navigator.of(context).pushNamed(
-                AppRoutes.orderDetails,
+                 AppRoutes.orderDetails,
                 arguments: notification.relatedOrderId,
               );
             }
@@ -71,10 +71,10 @@ class NotificationTile extends StatelessWidget {
                 width: 42,
                 height: 42,
                 decoration: BoxDecoration(
-                  color: type.color.withValues(alpha: 0.12),
+                  color: iconColor.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(type.icon, size: 20, color: type.color),
+                child: Icon(type.icon, size: 20, color: iconColor),
               ),
 
               AppSpacing.hGap14,
@@ -91,7 +91,7 @@ class NotificationTile extends StatelessWidget {
                             notification.title,
                             style: AppTypography.titleSmall.copyWith(
                               fontWeight: notification.isRead ? FontWeight.w600 : FontWeight.w800,
-                              color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                              color: colors.textPrimary,
                             ),
                           ),
                         ),
@@ -100,8 +100,8 @@ class NotificationTile extends StatelessWidget {
                           Container(
                             width: 8,
                             height: 8,
-                            decoration: const BoxDecoration(
-                              color: AppColors.primary,
+                            decoration: BoxDecoration(
+                              color: colors.primary,
                               shape: BoxShape.circle,
                             ),
                           ),
@@ -112,7 +112,7 @@ class NotificationTile extends StatelessWidget {
                     Text(
                       notification.message,
                       style: AppTypography.bodySmall.copyWith(
-                        color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+                        color: colors.textSecondary,
                         height: 1.35,
                       ),
                     ),
@@ -122,7 +122,7 @@ class NotificationTile extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
-                        color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
+                        color: colors.textMuted,
                       ),
                     ),
                   ],

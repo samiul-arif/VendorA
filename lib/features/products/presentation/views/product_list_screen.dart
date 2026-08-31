@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
+import '../../../../core/theme/app_semantic_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/components/app_bottom_sheet.dart';
 import '../../../../shared/components/empty_state_view.dart';
@@ -85,13 +85,12 @@ class _ProductListScreenState extends State<ProductListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final colors = context.appColors;
     final productController = context.watch<ProductController>();
     final filteredProducts = productController.filteredProducts;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkCanvas : AppColors.lightCanvas,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         bottom: false,
         child: productController.isLoading && productController.products.isEmpty
@@ -103,7 +102,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                   )
                 : RefreshIndicator(
                     onRefresh: () async => _loadProducts(),
-                    color: AppColors.primary,
+                    color: colors.primary,
                     child: ListView(
                       padding: const EdgeInsets.fromLTRB(16, 12, 16, 130),
                       children: [
@@ -121,7 +120,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                     fontSize: 20,
                                     fontWeight: FontWeight.w900,
                                     letterSpacing: -0.4,
-                                    color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                                    color: colors.textPrimary,
                                   ),
                                 ),
                                 const SizedBox(height: 2),
@@ -130,7 +129,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                   style: TextStyle(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w600,
-                                    color: isDark ? AppColors.textMutedDark : const Color(0xFF6B7280),
+                                    color: colors.textMuted,
                                   ),
                                 ),
                               ],
@@ -215,8 +214,8 @@ class _ProductListScreenState extends State<ProductListScreen> {
         padding: const EdgeInsets.only(bottom: 74.0),
         child: FloatingActionButton.extended(
           onPressed: () => _openAddEditScreen(),
-          backgroundColor: isDark ? Colors.white : AppColors.ctaPrimary,
-          foregroundColor: isDark ? AppColors.ctaPrimary : Colors.white,
+          backgroundColor: colors.ctaPrimary,
+          foregroundColor: colors.ctaPrimaryText,
           elevation: 4,
           icon: const Icon(Icons.add_rounded, size: 20),
           label: const Text(

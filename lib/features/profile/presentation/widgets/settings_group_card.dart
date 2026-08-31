@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_semantic_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../shared/components/app_card.dart';
@@ -17,8 +17,7 @@ class SettingsGroupCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final colors = context.appColors;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -30,7 +29,7 @@ class SettingsGroupCard extends StatelessWidget {
             style: AppTypography.labelSmall.copyWith(
               fontWeight: FontWeight.w800,
               letterSpacing: 1.0,
-              color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
+              color: colors.textMuted,
             ),
           ),
         ),
@@ -58,13 +57,13 @@ class SettingsGroupCard extends StatelessWidget {
                             decoration: BoxDecoration(
                               color: item.iconColor != null
                                   ? item.iconColor!.withValues(alpha: 0.12)
-                                  : (isDark ? const Color(0xFF232A34) : AppColors.primaryTint),
+                                  : colors.primaryContainer,
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Icon(
                               item.icon,
                               size: 20,
-                              color: item.iconColor ?? AppColors.primary,
+                              color: item.iconColor ?? colors.primary,
                             ),
                           ),
 
@@ -80,8 +79,8 @@ class SettingsGroupCard extends StatelessWidget {
                                   style: AppTypography.titleSmall.copyWith(
                                     fontWeight: FontWeight.w700,
                                     color: item.isDestructive
-                                        ? AppColors.statusError
-                                        : (isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight),
+                                        ? colors.error
+                                        : colors.textPrimary,
                                   ),
                                 ),
                                 if (item.subtitle != null) ...[
@@ -89,7 +88,7 @@ class SettingsGroupCard extends StatelessWidget {
                                   Text(
                                     item.subtitle!,
                                     style: AppTypography.bodySmall.copyWith(
-                                      color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
+                                      color: colors.textMuted,
                                     ),
                                   ),
                                 ],
@@ -104,7 +103,7 @@ class SettingsGroupCard extends StatelessWidget {
                             Icon(
                               Icons.chevron_right_rounded,
                               size: 20,
-                              color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
+                              color: colors.textMuted,
                             ),
                         ],
                       ),
@@ -115,7 +114,7 @@ class SettingsGroupCard extends StatelessWidget {
                       height: 1,
                       indent: 68,
                       endIndent: 16,
-                      color: isDark ? AppColors.darkDivider : AppColors.lightDivider,
+                      color: colors.divider,
                     ),
                 ],
               );

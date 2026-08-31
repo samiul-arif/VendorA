@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
+import '../../../../core/theme/app_semantic_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../controllers/profile_controller.dart';
@@ -12,8 +12,7 @@ class ThemeModeToggleTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final colors = context.appColors;
     final profileController = context.watch<ProfileController>();
     final currentMode = profileController.themeMode;
 
@@ -34,13 +33,13 @@ class ThemeModeToggleTile extends StatelessWidget {
                 width: 38,
                 height: 38,
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF381223) : AppColors.primaryTint,
+                  color: colors.primaryContainer,
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.palette_outlined,
                   size: 20,
-                  color: AppColors.primary,
+                  color: colors.primary,
                 ),
               ),
               AppSpacing.hGap14,
@@ -52,7 +51,7 @@ class ThemeModeToggleTile extends StatelessWidget {
                       'App Display Theme',
                       style: AppTypography.titleSmall.copyWith(
                         fontWeight: FontWeight.w700,
-                        color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                        color: colors.textPrimary,
                       ),
                     ),
                     Text(
@@ -60,7 +59,7 @@ class ThemeModeToggleTile extends StatelessWidget {
                           ? 'Synchronized with device system settings'
                           : (currentMode == ThemeMode.dark ? 'Dark night theme active' : 'Bright daylight theme active'),
                       style: AppTypography.bodySmall.copyWith(
-                        color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
+                        color: colors.textMuted,
                       ),
                     ),
                   ],
@@ -75,10 +74,10 @@ class ThemeModeToggleTile extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(4),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF232A34) : AppColors.lightSurfaceSubtle,
+              color: colors.surfaceSubtle,
               borderRadius: AppRadius.full,
               border: Border.all(
-                color: isDark ? AppColors.darkBorder : AppColors.borderLight,
+                color: colors.borderSubtle,
               ),
             ),
             child: Row(
@@ -96,7 +95,7 @@ class ThemeModeToggleTile extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(vertical: 8),
                       decoration: BoxDecoration(
                         color: isSelected
-                            ? (isDark ? Colors.white : AppColors.ctaPrimary)
+                            ? colors.ctaPrimary
                             : Colors.transparent,
                         borderRadius: AppRadius.full,
                         boxShadow: isSelected
@@ -116,8 +115,8 @@ class ThemeModeToggleTile extends StatelessWidget {
                             icon,
                             size: 16,
                             color: isSelected
-                                ? (isDark ? AppColors.ctaPrimary : Colors.white)
-                                : (isDark ? AppColors.textMutedDark : AppColors.textMutedLight),
+                                ? colors.ctaPrimaryText
+                                : colors.textMuted,
                           ),
                           const SizedBox(width: 6),
                           Text(
@@ -126,8 +125,8 @@ class ThemeModeToggleTile extends StatelessWidget {
                               fontSize: 12,
                               fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
                               color: isSelected
-                                  ? (isDark ? AppColors.ctaPrimary : Colors.white)
-                                  : (isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight),
+                                  ? colors.ctaPrimaryText
+                                  : colors.textSecondary,
                             ),
                           ),
                         ],

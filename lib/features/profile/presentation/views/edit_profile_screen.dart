@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_semantic_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/components/app_button.dart';
 import '../../../../shared/components/app_text_field.dart';
@@ -97,13 +97,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final colors = context.appColors;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkCanvas : AppColors.lightCanvas,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: isDark ? const Color(0xFF161B22) : const Color(0xFFFFFFFF),
+        backgroundColor: colors.surface,
         elevation: 0,
         scrolledUnderElevation: 0,
         leadingWidth: 56,
@@ -114,7 +113,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             fontSize: 16,
             fontWeight: FontWeight.w900,
             letterSpacing: -0.2,
-            color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+            color: colors.textPrimary,
           ),
         ),
         actions: [
@@ -127,7 +126,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1.0),
           child: Container(
-            color: isDark ? AppColors.darkBorder : const Color(0xFFEEF0F2),
+            color: colors.borderSubtle,
             height: 1.0,
           ),
         ),
@@ -147,16 +146,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       height: 84,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: isDark ? const Color(0xFF2E1A2A) : AppColors.primaryTint,
-                        border: Border.all(color: AppColors.primary, width: 2.5),
+                        color: colors.primaryContainer,
+                        border: Border.all(color: colors.primary, width: 2.5),
                       ),
-                      child: const Center(
+                      child: Center(
                         child: Text(
                           'A',
                           style: TextStyle(
                             fontSize: 34,
                             fontWeight: FontWeight.w800,
-                            color: AppColors.primary,
+                            color: colors.primary,
                           ),
                         ),
                       ),
@@ -166,14 +165,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       right: 0,
                       child: Container(
                         padding: const EdgeInsets.all(6),
-                        decoration: const BoxDecoration(
-                          color: AppColors.ctaPrimary,
+                        decoration: BoxDecoration(
+                          color: colors.ctaPrimary,
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.camera_alt_rounded,
                           size: 14,
-                          color: Colors.white,
+                          color: colors.ctaPrimaryText,
                         ),
                       ),
                     ),

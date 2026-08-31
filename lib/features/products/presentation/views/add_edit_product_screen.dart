@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
+import '../../../../core/theme/app_semantic_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../shared/components/app_button.dart';
@@ -40,26 +40,25 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
   final _formKey = GlobalKey<FormState>();
 
   late TextEditingController _nameController;
+  late TextEditingController _descController;
   late TextEditingController _priceController;
   late TextEditingController _quantityController;
-  late TextEditingController _descController;
 
-  String _selectedCategory = 'Burgers';
-  String _imageUrl = '';
-  bool _isAvailable = true;
-  bool _isPopular = false;
+  late String _selectedCategory;
+  late bool _isAvailable;
+  late bool _isPopular;
+  late String _imageUrl;
+
   bool _isSubmitting = false;
-  bool _hasPhotoPermission = false; // System photo permission state
+  bool _hasPhotoPermission = false;
 
-  final List<String> _presetCategories = const [
+  final List<String> _defaultCategories = [
     'Burgers',
-    'Main Course',
-    'Sides',
     'Beverages',
+    'Snacks',
     'Desserts',
-    'Salads & Bowls',
-    'Pizza',
-    'Appetizers',
+    'Combos',
+    'Sides',
   ];
 
   @override
@@ -68,40 +67,36 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
     final p = widget.productToEdit;
 
     _nameController = TextEditingController(text: p?.name ?? '');
-    _priceController = TextEditingController(text: p != null ? p.price.toStringAsFixed(2) : '');
-    _quantityController = TextEditingController(text: (p?.stockQuantity ?? 25).toString());
     _descController = TextEditingController(text: p?.description ?? '');
+    _priceController = TextEditingController(text: p != null ? p.price.toStringAsFixed(2) : '');
+    _quantityController = TextEditingController(text: p != null ? p.stockQuantity.toString() : '20');
 
     _selectedCategory = p?.categoryName ?? 'Burgers';
-    _imageUrl = p?.imageUrl ?? '';
     _isAvailable = p?.isAvailable ?? true;
     _isPopular = p?.isPopular ?? false;
+    _imageUrl = p?.imageUrl ?? '';
   }
 
   @override
   void dispose() {
     _nameController.dispose();
+    _descController.dispose();
     _priceController.dispose();
     _quantityController.dispose();
-    _descController.dispose();
     super.dispose();
   }
 
   void _adjustQuantity(int delta) {
-    int current = int.tryParse(_quantityController.text.trim()) ?? 0;
-    current = (current + delta).clamp(0, 9999);
+    final current = int.tryParse(_quantityController.text.trim()) ?? 0;
+    final next = (current + delta).clamp(0, 9999);
+    _quantityController.text = next.toString();
     setState(() {
-      _quantityController.text = current.toString();
-      if (current == 0) {
-        _isAvailable = false;
-      } else if (!_isAvailable) {
-        _isAvailable = true;
-      }
+      _isAvailable = next > 0;
     });
   }
 
   void _openCategorySelectModal() async {
-    final options = _presetCategories.map((cat) {
+    final options = _defaultCategories.map((cat) {
       return SelectOptionItem<String>(
         value: cat,
         title: cat,
@@ -122,22 +117,21 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
     }
   }
 
-  // Handle Image Upload Flow: Check Permission -> Ask if Needed -> Open Gallery Popup
   void _handleImageUploadRequest() {
     if (_hasPhotoPermission) {
       _showImagePickerPopup();
     } else {
-      _showPermissionRequestDialog();
+      _showPermissionRationaleModal();
     }
   }
 
-  void _showPermissionRequestDialog() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+  void _showPermissionRationaleModal() {
+    final colors = context.appColors;
 
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: isDark ? const Color(0xFF1E242C) : Colors.white,
+        backgroundColor: colors.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         contentPadding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
         content: Column(
@@ -147,12 +141,12 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
               width: 56,
               height: 56,
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF381223) : const Color(0xFFFFF0F6),
+                color: colors.primaryContainer,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.photo_library_rounded,
-                color: AppColors.primary,
+                color: colors.primary,
                 size: 28,
               ),
             ),
@@ -162,7 +156,7 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
               style: TextStyle(
                 fontSize: 17,
                 fontWeight: FontWeight.w900,
-                color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                color: colors.textPrimary,
               ),
               textAlign: TextAlign.center,
             ),
@@ -171,7 +165,7 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
               'Vendor Partner needs access to your device photo gallery so you can upload and showcase appetizing item pictures on your menu.',
               style: TextStyle(
                 fontSize: 12,
-                color: isDark ? AppColors.textMutedDark : const Color(0xFF6B7280),
+                color: colors.textMuted,
                 height: 1.4,
               ),
               textAlign: TextAlign.center,
@@ -188,7 +182,7 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                     child: Text(
                       'Not Now',
                       style: TextStyle(
-                        color: isDark ? AppColors.textMutedDark : const Color(0xFF6B7280),
+                        color: colors.textMuted,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -203,7 +197,7 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                       _showImagePickerPopup();
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
+                      backgroundColor: colors.primary,
                       foregroundColor: Colors.white,
                       elevation: 0,
                       padding: const EdgeInsets.symmetric(vertical: 12),
@@ -365,13 +359,12 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final colors = context.appColors;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkCanvas : AppColors.lightCanvas,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: isDark ? const Color(0xFF161B22) : const Color(0xFFFFFFFF),
+        backgroundColor: colors.surface,
         elevation: 0,
         scrolledUnderElevation: 0,
         leadingWidth: 56,
@@ -382,7 +375,7 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
             fontSize: 16,
             fontWeight: FontWeight.w900,
             letterSpacing: -0.2,
-            color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+            color: colors.textPrimary,
           ),
         ),
         actions: [
@@ -395,7 +388,7 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1.0),
           child: Container(
-            color: isDark ? AppColors.darkBorder : const Color(0xFFEEF0F2),
+            color: colors.borderSubtle,
             height: 1.0,
           ),
         ),
@@ -420,18 +413,18 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                           style: AppTypography.labelSmall.copyWith(
                             fontWeight: FontWeight.w800,
                             letterSpacing: 1.0,
-                            color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
+                            color: colors.textMuted,
                           ),
                         ),
                         if (_imageUrl.isNotEmpty)
                           GestureDetector(
                             onTap: () => setState(() => _imageUrl = ''),
-                            child: const Text(
+                            child: Text(
                               'Remove',
                               style: TextStyle(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w800,
-                                color: AppColors.statusError,
+                                color: colors.error,
                               ),
                             ),
                           ),
@@ -444,10 +437,10 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                         width: double.infinity,
                         height: 140,
                         decoration: BoxDecoration(
-                          color: isDark ? const Color(0xFF232A34) : const Color(0xFFF9FAFB),
+                          color: colors.surfaceSubtle,
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
-                            color: isDark ? AppColors.darkBorder : const Color(0xFFD1D5DB),
+                            color: colors.borderSubtle,
                             width: 1.5,
                           ),
                         ),
@@ -481,12 +474,12 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                                     width: 42,
                                     height: 42,
                                     decoration: BoxDecoration(
-                                      color: isDark ? const Color(0xFF1A1F26) : Colors.white,
+                                      color: colors.surface,
                                       shape: BoxShape.circle,
                                     ),
-                                    child: const Icon(
+                                    child: Icon(
                                       Icons.camera_alt_outlined,
-                                      color: AppColors.primary,
+                                      color: colors.primary,
                                       size: 20,
                                     ),
                                   ),
@@ -496,7 +489,7 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                                     style: TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w700,
-                                      color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                                      color: colors.textPrimary,
                                     ),
                                   ),
                                   const SizedBox(height: 2),
@@ -504,7 +497,7 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                                     'JPG, PNG, WebP up to 5MB',
                                     style: TextStyle(
                                       fontSize: 10,
-                                      color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
+                                      color: colors.textMuted,
                                     ),
                                   ),
                                 ],
@@ -550,17 +543,17 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                                   'Category',
                                   style: AppTypography.labelSmall.copyWith(
                                     fontWeight: FontWeight.w700,
-                                    color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+                                    color: colors.textSecondary,
                                   ),
                                 ),
                                 const SizedBox(height: 6),
                                 Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                                   decoration: BoxDecoration(
-                                    color: isDark ? const Color(0xFF232A34) : AppColors.lightSurfaceSubtle,
+                                    color: colors.surfaceSubtle,
                                     borderRadius: AppRadius.md,
                                     border: Border.all(
-                                      color: isDark ? AppColors.darkBorder : AppColors.borderLight,
+                                      color: colors.borderSubtle,
                                     ),
                                   ),
                                   child: Row(
@@ -572,7 +565,7 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                                           style: TextStyle(
                                             fontSize: 12,
                                             fontWeight: FontWeight.w700,
-                                            color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                                            color: colors.textPrimary,
                                           ),
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
@@ -581,7 +574,7 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                                       Icon(
                                         Icons.keyboard_arrow_down_rounded,
                                         size: 16,
-                                        color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
+                                        color: colors.textMuted,
                                       ),
                                     ],
                                   ),
@@ -629,14 +622,14 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                               'Available Stock Quantity *',
                               style: AppTypography.labelSmall.copyWith(
                                 fontWeight: FontWeight.w700,
-                                color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+                                color: colors.textSecondary,
                               ),
                             ),
                             Text(
                               'Units in Kitchen',
                               style: TextStyle(
                                 fontSize: 10,
-                                color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
+                                color: colors.textMuted,
                               ),
                             ),
                           ],
@@ -651,10 +644,10 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                                 width: 44,
                                 height: 44,
                                 decoration: BoxDecoration(
-                                  color: isDark ? const Color(0xFF232A34) : AppColors.lightSurfaceSubtle,
+                                  color: colors.surfaceSubtle,
                                   borderRadius: AppRadius.md,
                                   border: Border.all(
-                                    color: isDark ? AppColors.darkBorder : AppColors.borderLight,
+                                    color: colors.borderSubtle,
                                   ),
                                 ),
                                 child: const Icon(Icons.remove_rounded, size: 18),
@@ -678,18 +671,18 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                                 style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 15),
                                 decoration: InputDecoration(
                                   filled: true,
-                                  fillColor: isDark ? const Color(0xFF232A34) : AppColors.lightSurfaceSubtle,
+                                  fillColor: colors.surfaceSubtle,
                                   contentPadding: const EdgeInsets.symmetric(vertical: 10),
                                   border: OutlineInputBorder(
                                     borderRadius: AppRadius.md,
                                     borderSide: BorderSide(
-                                      color: isDark ? AppColors.darkBorder : AppColors.borderLight,
+                                      color: colors.borderSubtle,
                                     ),
                                   ),
                                   enabledBorder: OutlineInputBorder(
                                     borderRadius: AppRadius.md,
                                     borderSide: BorderSide(
-                                      color: isDark ? AppColors.darkBorder : AppColors.borderLight,
+                                      color: colors.borderSubtle,
                                     ),
                                   ),
                                 ),
@@ -705,10 +698,10 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                                 width: 44,
                                 height: 44,
                                 decoration: BoxDecoration(
-                                  color: isDark ? const Color(0xFF232A34) : AppColors.lightSurfaceSubtle,
+                                  color: colors.surfaceSubtle,
                                   borderRadius: AppRadius.md,
                                   border: Border.all(
-                                    color: isDark ? AppColors.darkBorder : AppColors.borderLight,
+                                    color: colors.borderSubtle,
                                   ),
                                 ),
                                 child: const Icon(Icons.add_rounded, size: 18),
@@ -750,7 +743,7 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                               style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w700,
-                                color: _isAvailable ? const Color(0xFF10B981) : AppColors.statusError,
+                                color: _isAvailable ? colors.success : colors.error,
                               ),
                             ),
                             Text(
@@ -758,7 +751,7 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                                   ? 'Visible for immediate customer ordering'
                                   : 'Hidden from customer checkout',
                               style: AppTypography.bodySmall.copyWith(
-                                color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
+                                color: colors.textMuted,
                               ),
                             ),
                           ],
@@ -776,7 +769,7 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                         ),
                       ],
                     ),
-                    Divider(height: 20, color: isDark ? AppColors.darkDivider : AppColors.lightDivider),
+                    Divider(height: 20, color: colors.divider),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -790,7 +783,7 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                             Text(
                               'Displays prominent badge on product card',
                               style: AppTypography.bodySmall.copyWith(
-                                color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
+                                color: colors.textMuted,
                               ),
                             ),
                           ],

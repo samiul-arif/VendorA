@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
+import '../../../../core/theme/app_semantic_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/formatters.dart';
@@ -19,8 +19,7 @@ class OrderItemTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final colors = context.appColors;
 
     return Column(
       children: [
@@ -33,18 +32,18 @@ class OrderItemTile extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF2E1A2A) : AppColors.primaryTint,
+                  color: colors.primaryContainer,
                   borderRadius: AppRadius.sm,
                   border: Border.all(
-                    color: isDark ? const Color(0xFF5A1637) : const Color(0xFFFDCFE0),
+                    color: colors.primary.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Text(
                   '${item.quantity}x',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w800,
-                    color: AppColors.primary,
+                    color: colors.primary,
                   ),
                 ),
               ),
@@ -60,7 +59,7 @@ class OrderItemTile extends StatelessWidget {
                       item.productName,
                       style: AppTypography.titleSmall.copyWith(
                         fontWeight: FontWeight.w700,
-                        color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                        color: colors.textPrimary,
                       ),
                     ),
 
@@ -73,14 +72,14 @@ class OrderItemTile extends StatelessWidget {
                           return Container(
                             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                             decoration: BoxDecoration(
-                              color: isDark ? const Color(0xFF232A34) : const Color(0xFFF3F4F6),
+                              color: colors.surfaceSubtle,
                               borderRadius: AppRadius.xs,
                             ),
                             child: Text(
                               '+ $addon',
                               style: TextStyle(
                                 fontSize: 10,
-                                color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+                                color: colors.textSecondary,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -94,25 +93,25 @@ class OrderItemTile extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: isDark ? const Color(0xFF3B2A10) : AppColors.statusWarningBg,
+                          color: colors.warningBg,
                           borderRadius: AppRadius.xs,
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.notes_rounded,
                               size: 12,
-                              color: AppColors.statusWarning,
+                              color: colors.warning,
                             ),
                             const SizedBox(width: 4),
                             Flexible(
                               child: Text(
                                 item.specialInstructions!,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w600,
-                                  color: AppColors.statusWarning,
+                                  color: colors.warning,
                                 ),
                               ),
                             ),
@@ -131,7 +130,7 @@ class OrderItemTile extends StatelessWidget {
                 Formatters.formatCurrency(item.totalPrice),
                 style: AppTypography.titleSmall.copyWith(
                   fontWeight: FontWeight.w800,
-                  color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                  color: colors.textPrimary,
                 ),
               ),
             ],
@@ -141,7 +140,7 @@ class OrderItemTile extends StatelessWidget {
         if (showDivider)
           Divider(
             height: 1,
-            color: isDark ? AppColors.darkDivider : AppColors.lightDivider,
+            color: colors.divider,
           ),
       ],
     );

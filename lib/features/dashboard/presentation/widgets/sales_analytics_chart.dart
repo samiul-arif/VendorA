@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
+import '../../../../core/theme/app_semantic_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/utils/formatters.dart';
@@ -22,8 +22,7 @@ class SalesAnalyticsChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final colors = context.appColors;
 
     final maxAmount = chartPoints.isEmpty
         ? 2500.0
@@ -45,13 +44,13 @@ class SalesAnalyticsChart extends StatelessWidget {
                     'Revenue Analytics',
                     style: AppTypography.titleMedium.copyWith(
                       fontWeight: FontWeight.w800,
-                      color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                      color: colors.textPrimary,
                     ),
                   ),
                   Text(
                     'Sales trend over time',
                     style: AppTypography.bodySmall.copyWith(
-                      color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+                      color: colors.textSecondary,
                     ),
                   ),
                 ],
@@ -61,13 +60,13 @@ class SalesAnalyticsChart extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(3),
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF232A34) : AppColors.borderLight,
+                  color: colors.surfaceSubtle,
                   borderRadius: AppRadius.full,
                 ),
                 child: Row(
                   children: [
-                    _buildPeriodButton('weekly', 'Weekly', isDark),
-                    _buildPeriodButton('monthly', 'Monthly', isDark),
+                    _buildPeriodButton('weekly', 'Weekly', colors),
+                    _buildPeriodButton('monthly', 'Monthly', colors),
                   ],
                 ),
               ),
@@ -105,8 +104,8 @@ class SalesAnalyticsChart extends StatelessWidget {
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 6, vertical: 2),
                                   margin: const EdgeInsets.only(bottom: 6),
-                                  decoration: const BoxDecoration(
-                                    color: AppColors.primary,
+                                  decoration: BoxDecoration(
+                                    color: colors.primary,
                                     borderRadius: AppRadius.sm,
                                   ),
                                   child: Text(
@@ -128,15 +127,13 @@ class SalesAnalyticsChart extends StatelessWidget {
                                 height: 100 * ratio,
                                 decoration: BoxDecoration(
                                   color: isHighlight
-                                      ? AppColors.primary
-                                      : (isDark
-                                          ? const Color(0xFF2D3748)
-                                          : const Color(0xFFE5E7EB)),
+                                      ? colors.primary
+                                      : colors.borderSubtle,
                                   borderRadius: BorderRadius.circular(6),
                                   boxShadow: isHighlight
                                       ? [
                                           BoxShadow(
-                                            color: AppColors.primary
+                                            color: colors.primary
                                                 .withValues(alpha: 0.35),
                                             offset: const Offset(0, 4),
                                             blurRadius: 10,
@@ -153,10 +150,8 @@ class SalesAnalyticsChart extends StatelessWidget {
                                 point.label,
                                 style: AppTypography.labelSmall.copyWith(
                                   color: isHighlight
-                                      ? AppColors.primary
-                                      : (isDark
-                                          ? AppColors.textMutedDark
-                                          : AppColors.textMutedLight),
+                                      ? colors.primary
+                                      : colors.textMuted,
                                   fontWeight: isHighlight
                                       ? FontWeight.w800
                                       : FontWeight.w600,
@@ -175,7 +170,7 @@ class SalesAnalyticsChart extends StatelessWidget {
     );
   }
 
-  Widget _buildPeriodButton(String period, String label, bool isDark) {
+  Widget _buildPeriodButton(String period, String label, AppSemanticColors colors) {
     final isSelected = selectedPeriod == period;
     return GestureDetector(
       onTap: () => onPeriodChanged(period),
@@ -184,7 +179,7 @@ class SalesAnalyticsChart extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
         decoration: BoxDecoration(
           color: isSelected
-              ? (isDark ? AppColors.darkSurface : Colors.white)
+              ? colors.surface
               : Colors.transparent,
           borderRadius: AppRadius.full,
           boxShadow: isSelected
@@ -203,8 +198,8 @@ class SalesAnalyticsChart extends StatelessWidget {
             fontSize: 11,
             fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
             color: isSelected
-                ? (isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight)
-                : (isDark ? AppColors.textMutedDark : AppColors.textMutedLight),
+                ? colors.textPrimary
+                : colors.textMuted,
           ),
         ),
       ),

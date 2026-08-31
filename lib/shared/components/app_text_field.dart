@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radius.dart';
+import '../../core/theme/app_semantic_colors.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/theme/app_spacing.dart';
 
@@ -94,8 +94,7 @@ class _AppTextFieldState extends State<AppTextField> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final colors = context.appColors;
 
     final hasError = widget.errorText != null && widget.errorText!.isNotEmpty;
 
@@ -107,7 +106,7 @@ class _AppTextFieldState extends State<AppTextField> {
           Text(
             widget.label!,
             style: AppTypography.titleSmall.copyWith(
-              color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+              color: colors.textPrimary,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -130,25 +129,25 @@ class _AppTextFieldState extends State<AppTextField> {
           minLines: widget.minLines,
           maxLength: widget.maxLength,
           style: AppTypography.bodyLarge.copyWith(
-            color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+            color: colors.textPrimary,
           ),
-          cursorColor: AppColors.primary,
+          cursorColor: colors.primary,
           decoration: InputDecoration(
             hintText: widget.hint,
             hintStyle: AppTypography.bodyMedium.copyWith(
-              color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
+              color: colors.textMuted,
             ),
             helperText: widget.helperText,
             helperStyle: AppTypography.bodySmall.copyWith(
-              color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+              color: colors.textSecondary,
             ),
             errorText: widget.errorText,
             errorStyle: AppTypography.bodySmall.copyWith(
-              color: AppColors.statusError,
+              color: colors.error,
               fontWeight: FontWeight.w500,
             ),
             filled: true,
-            fillColor: isDark ? AppColors.darkSurface : AppColors.lightSurface,
+            fillColor: colors.surface,
             contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
             prefixIcon: widget.prefixIcon != null
                 ? Padding(
@@ -157,12 +156,12 @@ class _AppTextFieldState extends State<AppTextField> {
                   )
                 : null,
             prefixIconConstraints: const BoxConstraints(minWidth: 44, minHeight: 44),
-            suffixIcon: _buildSuffixIcon(isDark),
+            suffixIcon: _buildSuffixIcon(colors),
             suffixIconConstraints: const BoxConstraints(minWidth: 44, minHeight: 44),
             border: OutlineInputBorder(
               borderRadius: AppRadius.input,
               borderSide: BorderSide(
-                color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+                color: colors.border,
                 width: 1.0,
               ),
             ),
@@ -170,25 +169,25 @@ class _AppTextFieldState extends State<AppTextField> {
               borderRadius: AppRadius.input,
               borderSide: BorderSide(
                 color: hasError
-                    ? AppColors.statusError
-                    : (isDark ? AppColors.darkBorder : AppColors.lightBorder),
+                    ? colors.error
+                    : colors.border,
                 width: 1.0,
               ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: AppRadius.input,
               borderSide: BorderSide(
-                color: hasError ? AppColors.statusError : AppColors.primary,
+                color: hasError ? colors.error : colors.primary,
                 width: 2.0,
               ),
             ),
-            errorBorder: const OutlineInputBorder(
+            errorBorder: OutlineInputBorder(
               borderRadius: AppRadius.input,
-              borderSide: BorderSide(color: AppColors.statusError, width: 1.0),
+              borderSide: BorderSide(color: colors.error, width: 1.0),
             ),
-            focusedErrorBorder: const OutlineInputBorder(
+            focusedErrorBorder: OutlineInputBorder(
               borderRadius: AppRadius.input,
-              borderSide: BorderSide(color: AppColors.statusError, width: 2.0),
+              borderSide: BorderSide(color: colors.error, width: 2.0),
             ),
           ),
         ),
@@ -196,12 +195,12 @@ class _AppTextFieldState extends State<AppTextField> {
     );
   }
 
-  Widget? _buildSuffixIcon(bool isDark) {
+  Widget? _buildSuffixIcon(AppSemanticColors colors) {
     if (widget.isPassword) {
       return IconButton(
         icon: Icon(
           _obscureText ? Icons.visibility_off_outlined : Icons.visibility_outlined,
-          color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+          color: colors.textSecondary,
           size: 20,
         ),
         onPressed: () => setState(() => _obscureText = !_obscureText),
@@ -213,7 +212,7 @@ class _AppTextFieldState extends State<AppTextField> {
       return IconButton(
         icon: Icon(
           Icons.cancel,
-          color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
+          color: colors.textMuted,
           size: 18,
         ),
         onPressed: () {

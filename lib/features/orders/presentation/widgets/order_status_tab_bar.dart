@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
+import '../../../../core/theme/app_semantic_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../domain/models/order_status.dart';
 
@@ -19,8 +19,7 @@ class OrderStatusTabBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final colors = context.appColors;
 
     final tabs = [
       OrderStatus.all,
@@ -44,12 +43,12 @@ class OrderStatusTabBar extends StatelessWidget {
           final count = countGetter(status);
 
           final bgColor = isSelected
-              ? (isDark ? Colors.white : AppColors.ctaPrimary)
-              : (isDark ? AppColors.darkSurface : Colors.white);
+              ? colors.ctaPrimary
+              : colors.surface;
 
           final textColor = isSelected
-              ? (isDark ? AppColors.ctaPrimary : Colors.white)
-              : (isDark ? AppColors.textSecondaryDark : AppColors.textPrimaryLight);
+              ? colors.ctaPrimaryText
+              : colors.textSecondary;
 
           return GestureDetector(
             onTap: () => onStatusSelected(status),
@@ -62,7 +61,7 @@ class OrderStatusTabBar extends StatelessWidget {
                 border: Border.all(
                   color: isSelected
                       ? Colors.transparent
-                      : (isDark ? AppColors.darkBorder : AppColors.borderLight),
+                      : colors.borderSubtle,
                 ),
                 boxShadow: isSelected
                     ? [
@@ -90,8 +89,8 @@ class OrderStatusTabBar extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
                         color: isSelected
-                            ? (isDark ? AppColors.ctaPrimary.withValues(alpha: 0.2) : Colors.white.withValues(alpha: 0.25))
-                            : (isDark ? const Color(0xFF2E1A2A) : AppColors.primaryTint),
+                            ? colors.ctaPrimaryText.withValues(alpha: 0.2)
+                            : colors.primaryContainer,
                         borderRadius: AppRadius.full,
                       ),
                       child: Text(
@@ -100,8 +99,8 @@ class OrderStatusTabBar extends StatelessWidget {
                           fontSize: 10,
                           fontWeight: FontWeight.w800,
                           color: isSelected
-                              ? (isDark ? AppColors.ctaPrimary : Colors.white)
-                              : AppColors.primary,
+                              ? colors.ctaPrimaryText
+                              : colors.primary,
                         ),
                       ),
                     ),

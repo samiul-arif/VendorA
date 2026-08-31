@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radius.dart';
+import '../../core/theme/app_semantic_colors.dart';
 import '../../core/theme/app_shadows.dart';
 import '../../core/theme/app_spacing.dart';
 
@@ -42,13 +42,12 @@ class _AppCardState extends State<AppCard> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final colors = context.appColors;
+    final isDark = context.isDark;
     final isInteractive = widget.onTap != null;
 
     final radius = widget.borderRadius ?? AppRadius.card;
-    final bgColor = widget.backgroundColor ??
-        (isDark ? AppColors.darkSurface : AppColors.lightSurface);
+    final bgColor = widget.backgroundColor ?? colors.surface;
 
     final shadows = widget.hasShadow
         ? (isDark ? AppShadows.darkCard : (_isPressed ? AppShadows.elevated : AppShadows.card))
@@ -69,7 +68,7 @@ class _AppCardState extends State<AppCard> {
           boxShadow: shadows,
           border: widget.hasBorder
               ? Border.all(
-                  color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+                  color: colors.border,
                   width: 1.0,
                 )
               : null,

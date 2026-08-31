@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
+import '../../../../core/theme/app_semantic_colors.dart';
 
 // Product Catalog Search Bar Component (Matched to Standard Input Field Box Style)
 class ProductSearchBar extends StatefulWidget {
@@ -36,15 +36,14 @@ class _ProductSearchBarState extends State<ProductSearchBar> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final colors = context.appColors;
 
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF232A34) : AppColors.lightSurfaceSubtle,
+        color: colors.surfaceSubtle,
         borderRadius: AppRadius.md,
         border: Border.all(
-          color: isDark ? AppColors.darkBorder : AppColors.borderLight,
+          color: colors.borderSubtle,
         ),
       ),
       child: TextField(
@@ -56,26 +55,26 @@ class _ProductSearchBarState extends State<ProductSearchBar> {
         style: TextStyle(
           fontSize: 13,
           fontWeight: FontWeight.w600,
-          color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+          color: colors.textPrimary,
         ),
         decoration: InputDecoration(
           hintText: 'Search items by name or category...',
           hintStyle: TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.w500,
-            color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
+            color: colors.textMuted,
           ),
           prefixIcon: Icon(
             Icons.search_rounded,
             size: 20,
-            color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
+            color: colors.textMuted,
           ),
           suffixIcon: _controller.text.isNotEmpty
               ? IconButton(
                   icon: Icon(
                     Icons.clear_rounded,
                     size: 18,
-                    color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
+                    color: colors.textMuted,
                   ),
                   onPressed: () {
                     _controller.clear();

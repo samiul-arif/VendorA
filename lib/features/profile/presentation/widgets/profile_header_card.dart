@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
+import '../../../../core/theme/app_semantic_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../shared/components/app_card.dart';
@@ -22,8 +22,7 @@ class ProfileHeaderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final colors = context.appColors;
 
     final displayName = vendor?.name ?? 'Samiul Arif';
     final businessName = vendor?.businessName ?? 'Arif Food Enterprises LLC';
@@ -44,16 +43,16 @@ class ProfileHeaderCard extends StatelessWidget {
                     height: 64,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      border: Border.all(color: AppColors.primary, width: 2),
-                      color: isDark ? const Color(0xFF232A34) : AppColors.primaryTint,
+                      border: Border.all(color: colors.primary, width: 2),
+                      color: colors.primaryContainer,
                     ),
                     child: Center(
                       child: Text(
                         displayName.isNotEmpty ? displayName[0].toUpperCase() : 'V',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 26,
                           fontWeight: FontWeight.w800,
-                          color: AppColors.primary,
+                          color: colors.primary,
                         ),
                       ),
                     ),
@@ -63,8 +62,8 @@ class ProfileHeaderCard extends StatelessWidget {
                     right: 0,
                     child: Container(
                       padding: const EdgeInsets.all(3),
-                      decoration: const BoxDecoration(
-                        color: AppColors.statusSuccess,
+                      decoration: BoxDecoration(
+                        color: colors.success,
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(
@@ -79,7 +78,7 @@ class ProfileHeaderCard extends StatelessWidget {
 
               AppSpacing.hGap16,
 
-              // Name, Business & Store Phone
+              // Name, Business & Store Phone with Generous Spacing
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -91,48 +90,49 @@ class ProfileHeaderCard extends StatelessWidget {
                             displayName,
                             style: AppTypography.titleMedium.copyWith(
                               fontWeight: FontWeight.w800,
-                              color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                              color: colors.textPrimary,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
                         const SizedBox(width: 6),
-                        const Icon(
+                        Icon(
                           Icons.verified_rounded,
                           size: 18,
-                          color: AppColors.primary,
+                          color: colors.primary,
                         ),
                       ],
                     ),
 
-                    AppSpacing.vGap2,
+                    const SizedBox(height: 6),
 
                     Text(
                       businessName,
                       style: AppTypography.bodySmall.copyWith(
-                        color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+                        color: colors.textSecondary,
+                        fontWeight: FontWeight.w600,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
 
-                    AppSpacing.vGap4,
+                    const SizedBox(height: 6),
 
                     Row(
                       children: [
                         Icon(
                           Icons.phone_outlined,
                           size: 14,
-                          color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
+                          color: colors.textMuted,
                         ),
-                        const SizedBox(width: 4),
+                        const SizedBox(width: 5),
                         Text(
                           phone,
                           style: TextStyle(
-                            fontSize: 11,
+                            fontSize: 11.5,
                             fontWeight: FontWeight.w600,
-                            color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
+                            color: colors.textMuted,
                           ),
                         ),
                       ],
@@ -143,7 +143,7 @@ class ProfileHeaderCard extends StatelessWidget {
 
               // Edit Action
               IconButton(
-                icon: const Icon(Icons.edit_outlined, size: 20),
+                icon: Icon(Icons.edit_outlined, size: 20, color: colors.textSecondary),
                 onPressed: onEditTapped,
                 tooltip: 'Edit Profile',
               ),
@@ -152,19 +152,23 @@ class ProfileHeaderCard extends StatelessWidget {
 
           AppSpacing.vGap16,
 
-          // Active Store Banner
+          // Active Store Banner (Clean banner without Operational tag)
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF232A34) : AppColors.lightSurfaceSubtle,
+              color: colors.surfaceSubtle,
               borderRadius: AppRadius.md,
+              border: Border.all(
+                color: colors.borderSubtle,
+                width: 1.0,
+              ),
             ),
             child: Row(
               children: [
-                const Icon(
+                Icon(
                   Icons.storefront_rounded,
                   size: 18,
-                  color: AppColors.primary,
+                  color: colors.primary,
                 ),
                 const SizedBox(width: 8),
                 Expanded(
@@ -172,25 +176,10 @@ class ProfileHeaderCard extends StatelessWidget {
                     'Active: $shopName',
                     style: AppTypography.labelMedium.copyWith(
                       fontWeight: FontWeight.w700,
-                      color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                      color: colors.textPrimary,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                  decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF0F3A2E) : AppColors.statusSuccessBg,
-                    borderRadius: AppRadius.full,
-                  ),
-                  child: const Text(
-                    'Operational',
-                    style: TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w800,
-                      color: AppColors.statusSuccess,
-                    ),
                   ),
                 ),
               ],

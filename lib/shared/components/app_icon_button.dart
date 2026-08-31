@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radius.dart';
+import '../../core/theme/app_semantic_colors.dart';
 import '../../core/theme/app_spacing.dart';
 
 // Reusable Circular / Rounded Icon Button
@@ -37,14 +37,11 @@ class _AppIconButtonState extends State<AppIconButton> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final colors = context.appColors;
     final isEnabled = widget.onPressed != null;
 
-    final bgColor = widget.backgroundColor ??
-        (isDark ? AppColors.darkSurfaceSubtle : AppColors.lightSurface);
-    final fgColor = widget.iconColor ??
-        (isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight);
+    final bgColor = widget.backgroundColor ?? colors.surfaceSubtle;
+    final fgColor = widget.iconColor ?? colors.textPrimary;
 
     final buttonWidget = GestureDetector(
       onTapDown: isEnabled ? (_) => setState(() => _isPressed = true) : null,
@@ -61,7 +58,7 @@ class _AppIconButtonState extends State<AppIconButton> {
             shape: BoxShape.circle,
             border: widget.hasBorder
                 ? Border.all(
-                    color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+                    color: colors.border,
                     width: 1.0,
                   )
                 : null,
@@ -79,7 +76,7 @@ class _AppIconButtonState extends State<AppIconButton> {
                   Icon(
                     widget.icon,
                     size: widget.iconSize,
-                    color: isEnabled ? fgColor : AppColors.textMutedLight,
+                    color: isEnabled ? fgColor : colors.textMuted,
                   ),
                   if (widget.badgeCount > 0)
                     Positioned(
@@ -88,18 +85,18 @@ class _AppIconButtonState extends State<AppIconButton> {
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
                         decoration: BoxDecoration(
-                          color: AppColors.primary,
+                          color: colors.primary,
                           borderRadius: AppRadius.full,
                           border: Border.all(
-                            color: isDark ? AppColors.darkSurface : AppColors.lightSurface,
+                            color: colors.surface,
                             width: 1.5,
                           ),
                         ),
                         constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
                         child: Text(
                           widget.badgeCount > 99 ? '99+' : '${widget.badgeCount}',
-                          style: const TextStyle(
-                            color: AppColors.textInverse,
+                          style: TextStyle(
+                            color: colors.textInverse,
                             fontSize: 9,
                             fontWeight: FontWeight.w700,
                             height: 1.0,

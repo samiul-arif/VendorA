@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
+import '../../../../core/theme/app_semantic_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/formatters.dart';
@@ -40,28 +40,50 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
     });
   }
 
-  void _handleStatusTransition(OrderModel order, OrderStatus newStatus) async {
+  void _handleStatusTransition(OrderModel order, OrderStatus nextStatus) async {
     final orderController = context.read<OrderController>();
     final result = await orderController.updateStatus(
       orderId: order.id,
-      newStatus: newStatus,
+      newStatus: nextStatus,
     );
 
     if (!mounted) return;
 
+    final notif = context.read<NotificationController>();
+
     result.when(
-      success: (updated) {
-        context.read<NotificationController>().dispatchNotification(
-          context,
-          title: 'Order Status Changed (#${order.orderNumber})',
-          message: 'Status transitioned to ${newStatus.label}.',
-          type: NotificationType.order,
-          relatedOrderId: order.id,
-          toastVariant: AppToastVariant.success,
-        );
+      success: (_) {
+        if (nextStatus == OrderStatus.accepted) {
+          notif.dispatchNotification(
+            context,
+            title: 'Order #${order.orderNumber} Accepted',
+            message: 'Moved to kitchen preparation queue.',
+            type: NotificationType.order,
+            relatedOrderId: order.id,
+            toastVariant: AppToastVariant.success,
+          );
+        } else if (nextStatus == OrderStatus.ready) {
+          notif.dispatchNotification(
+            context,
+            title: 'Order #${order.orderNumber} Ready',
+            message: 'Courier notified for immediate pickup.',
+            type: NotificationType.order,
+            relatedOrderId: order.id,
+            toastVariant: AppToastVariant.success,
+          );
+        } else if (nextStatus == OrderStatus.delivered) {
+          notif.dispatchNotification(
+            context,
+            title: 'Order #${order.orderNumber} Completed',
+            message: 'Order successfully delivered to customer.',
+            type: NotificationType.order,
+            relatedOrderId: order.id,
+            toastVariant: AppToastVariant.success,
+          );
+        }
       },
       failure: (msg, _) {
-        AppToast.showError(context, title: 'Action Failed', message: msg);
+        AppToast.showError(context, title: 'Update Failed', message: msg);
       },
     );
   }
@@ -69,17 +91,18 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
   void _handleDeclineOrder(OrderModel order) async {
     final confirmed = await AppDialog.showConfirmation(
       context: context,
-      title: 'Decline Order #${order.orderNumber}',
-      message: 'Are you sure you want to reject this order? This cannot be undone.',
-      confirmText: 'Decline Order',
+      title: 'Decline Order #${order.orderNumber}?',
+      message: 'Are you sure you want to decline this incoming order? This will notify the customer and cancel the transaction.',
       isDestructive: true,
+      confirmText: 'Decline Order',
+      cancelText: 'Keep Order',
     );
 
     if (confirmed == true && mounted) {
       final orderController = context.read<OrderController>();
       final result = await orderController.cancelOrder(
         order.id,
-        reason: 'Store was unable to fulfill this order.',
+        reason: 'Merchant unavailable to fulfill',
       );
 
       if (!mounted) return;
@@ -88,15 +111,16 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
         success: (_) {
           context.read<NotificationController>().dispatchNotification(
             context,
-            title: 'Order Cancelled (#${order.orderNumber})',
-            message: 'Order was rejected and customer has been notified.',
+            title: 'Order #${order.orderNumber} Declined',
+            message: 'Order cancelled and customer notified.',
             type: NotificationType.order,
             relatedOrderId: order.id,
             toastVariant: AppToastVariant.error,
           );
+          Navigator.of(context).pop();
         },
         failure: (msg, _) {
-          AppToast.showError(context, title: 'Cancellation Failed', message: msg);
+          AppToast.showError(context, title: 'Action Failed', message: msg);
         },
       );
     }
@@ -104,16 +128,15 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final colors = context.appColors;
     final orderController = context.watch<OrderController>();
     final order = orderController.selectedOrder;
 
     if (order == null) {
       return Scaffold(
         appBar: AppBar(title: const Text('Order Details')),
-        body: const Center(
-          child: CircularProgressIndicator(color: AppColors.primary),
+        body: Center(
+          child: CircularProgressIndicator(color: colors.primary),
         ),
       );
     }
@@ -122,9 +145,9 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
     final nextActionLabel = order.status.nextActionLabel;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkCanvas : AppColors.lightCanvas,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: isDark ? const Color(0xFF161B22) : const Color(0xFFFFFFFF),
+        backgroundColor: colors.surface,
         elevation: 0,
         scrolledUnderElevation: 0,
         leadingWidth: 56,
@@ -135,7 +158,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
             fontSize: 16,
             fontWeight: FontWeight.w900,
             letterSpacing: -0.2,
-            color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+            color: colors.textPrimary,
           ),
         ),
         actions: [
@@ -152,7 +175,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1.0),
           child: Container(
-            color: isDark ? AppColors.darkBorder : const Color(0xFFEEF0F2),
+            color: colors.borderSubtle,
             height: 1.0,
           ),
         ),
@@ -162,41 +185,41 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 110),
           children: [
             // 1. Order Status Timeline Progression Card
-            _buildStatusProgressCard(order, isDark),
+            _buildStatusProgressCard(order, colors),
 
             AppSpacing.vGap16,
 
             // 2. Customer Information Card
-            _buildCustomerCard(order, isDark),
+            _buildCustomerCard(order, colors),
 
             AppSpacing.vGap16,
 
             // 3. Rider / Courier Details Card
             if (order.riderName != null) ...[
-              _buildRiderCard(order, isDark),
+              _buildRiderCard(order, colors),
               AppSpacing.vGap16,
             ],
 
             // 4. Line Items Breakdown Card
-            _buildItemsBreakdownCard(order, isDark),
+            _buildItemsBreakdownCard(order, colors),
 
             AppSpacing.vGap16,
 
             // 5. Payment & Price Receipt Card
-            _buildReceiptCard(order, isDark),
+            _buildReceiptCard(order, colors),
 
             if (order.rejectionReason != null) ...[
               AppSpacing.vGap16,
-              _buildCancellationNoticeCard(order, isDark),
+              _buildCancellationNoticeCard(order, colors),
             ],
           ],
         ),
       ),
-      bottomSheet: _buildBottomActionBar(order, nextStatus, nextActionLabel, isDark),
+      bottomSheet: _buildBottomActionBar(order, nextStatus, nextActionLabel, colors),
     );
   }
 
-  Widget _buildStatusProgressCard(OrderModel order, bool isDark) {
+  Widget _buildStatusProgressCard(OrderModel order, AppSemanticColors colors) {
     final stages = [
       {'status': OrderStatus.pending, 'label': 'Placed'},
       {'status': OrderStatus.accepted, 'label': 'Accepted'},
@@ -219,22 +242,22 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                 'Kitchen Dispatch Timeline',
                 style: AppTypography.titleSmall.copyWith(
                   fontWeight: FontWeight.w800,
-                  color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                  color: colors.textPrimary,
                 ),
               ),
               if (order.estimatedPrepMinutes > 0)
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF2E1A2A) : AppColors.primaryTint,
+                    color: colors.primaryContainer,
                     borderRadius: AppRadius.full,
                   ),
                   child: Text(
                     '~${order.estimatedPrepMinutes}m prep',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w800,
-                      color: AppColors.primary,
+                      color: colors.primary,
                     ),
                   ),
                 ),
@@ -251,7 +274,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                 return Expanded(
                   child: Container(
                     height: 3,
-                    color: isDone ? AppColors.primary : (isDark ? AppColors.darkBorder : AppColors.borderLight),
+                    color: isDone ? colors.primary : colors.borderSubtle,
                   ),
                 );
               }
@@ -268,13 +291,13 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                     height: 28,
                     decoration: BoxDecoration(
                       color: isCurrent
-                          ? AppColors.primary
+                          ? colors.primary
                           : (isReached
-                              ? (isDark ? const Color(0xFF381223) : AppColors.primaryTint)
-                              : (isDark ? AppColors.darkSurfaceSubtle : AppColors.lightSurfaceSubtle)),
+                              ? colors.primaryContainer
+                              : colors.surfaceSubtle),
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: isReached ? AppColors.primary : (isDark ? AppColors.darkBorder : AppColors.borderLight),
+                        color: isReached ? colors.primary : colors.borderSubtle,
                         width: isCurrent ? 2 : 1,
                       ),
                     ),
@@ -283,7 +306,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                       size: isReached ? 16 : 8,
                       color: isCurrent
                           ? Colors.white
-                          : (isReached ? AppColors.primary : (isDark ? AppColors.textMutedDark : AppColors.textMutedLight)),
+                          : (isReached ? colors.primary : colors.textMuted),
                     ),
                   ),
                   const SizedBox(height: 6),
@@ -293,8 +316,8 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                       fontSize: 10,
                       fontWeight: isCurrent ? FontWeight.w800 : FontWeight.w500,
                       color: isCurrent
-                          ? AppColors.primary
-                          : (isDark ? AppColors.textMutedDark : AppColors.textMutedLight),
+                          ? colors.primary
+                          : colors.textMuted,
                     ),
                   ),
                 ],
@@ -306,7 +329,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
     );
   }
 
-  Widget _buildCustomerCard(OrderModel order, bool isDark) {
+  Widget _buildCustomerCard(OrderModel order, AppSemanticColors colors) {
     return AppCard(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -319,7 +342,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                 'Customer Details',
                 style: AppTypography.titleSmall.copyWith(
                   fontWeight: FontWeight.w800,
-                  color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                  color: colors.textPrimary,
                 ),
               ),
               ElevatedButton.icon(
@@ -333,8 +356,8 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                 icon: const Icon(Icons.call_rounded, size: 14),
                 label: const Text('Call'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: isDark ? const Color(0xFF2E1A2A) : AppColors.primaryTint,
-                  foregroundColor: AppColors.primary,
+                  backgroundColor: colors.primaryContainer,
+                  foregroundColor: colors.primary,
                   elevation: 0,
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   shape: const RoundedRectangleBorder(borderRadius: AppRadius.full),
@@ -349,14 +372,14 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
             order.customerName,
             style: AppTypography.titleMedium.copyWith(
               fontWeight: FontWeight.w800,
-              color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+              color: colors.textPrimary,
             ),
           ),
 
           Text(
             order.customerPhone,
             style: AppTypography.bodySmall.copyWith(
-              color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
+              color: colors.textMuted,
             ),
           ),
 
@@ -365,17 +388,17 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Icon(
+              Icon(
                 Icons.location_on_outlined,
                 size: 18,
-                color: AppColors.primary,
+                color: colors.primary,
               ),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
                   order.deliveryAddress,
                   style: AppTypography.bodyMedium.copyWith(
-                    color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+                    color: colors.textSecondary,
                   ),
                 ),
               ),
@@ -387,23 +410,23 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF3B2A10) : AppColors.statusWarningBg,
+                color: colors.warningBg,
                 borderRadius: AppRadius.md,
                 border: Border.all(
-                  color: isDark ? const Color(0xFF5A3E14) : const Color(0xFFFDE68A),
+                  color: colors.warning.withValues(alpha: 0.3),
                 ),
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.info_outline_rounded, size: 18, color: AppColors.statusWarning),
+                  Icon(Icons.info_outline_rounded, size: 18, color: colors.warning),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       'Delivery Instruction: ${order.customerNotes}',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
-                        color: AppColors.statusWarning,
+                        color: colors.warning,
                       ),
                     ),
                   ),
@@ -416,7 +439,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
     );
   }
 
-  Widget _buildRiderCard(OrderModel order, bool isDark) {
+  Widget _buildRiderCard(OrderModel order, AppSemanticColors colors) {
     return AppCard(
       padding: const EdgeInsets.all(16),
       child: Row(
@@ -425,12 +448,12 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
             width: 44,
             height: 44,
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF0F3A2E) : AppColors.statusSuccessBg,
+              color: colors.successBg,
               shape: BoxShape.circle,
             ),
-            child: const Icon(
+            child: Icon(
               Icons.delivery_dining_rounded,
-              color: AppColors.statusSuccess,
+              color: colors.success,
               size: 24,
             ),
           ),
@@ -442,21 +465,21 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                 Text(
                   'Assigned Courier',
                   style: AppTypography.labelSmall.copyWith(
-                    color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
+                    color: colors.textMuted,
                   ),
                 ),
                 Text(
                   order.riderName!,
                   style: AppTypography.titleSmall.copyWith(
                     fontWeight: FontWeight.w800,
-                    color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                    color: colors.textPrimary,
                   ),
                 ),
                 if (order.riderPhone != null)
                   Text(
                     order.riderPhone!,
                     style: AppTypography.bodySmall.copyWith(
-                      color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
+                      color: colors.textMuted,
                     ),
                   ),
               ],
@@ -470,14 +493,14 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                 message: 'Connecting dispatch line with ${order.riderName}...',
               );
             },
-            icon: const Icon(Icons.phone_in_talk_rounded, color: AppColors.statusSuccess),
+            icon: Icon(Icons.phone_in_talk_rounded, color: colors.success),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildItemsBreakdownCard(OrderModel order, bool isDark) {
+  Widget _buildItemsBreakdownCard(OrderModel order, AppSemanticColors colors) {
     return AppCard(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -487,7 +510,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
             'Order Items (${order.totalItemCount})',
             style: AppTypography.titleSmall.copyWith(
               fontWeight: FontWeight.w800,
-              color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+              color: colors.textPrimary,
             ),
           ),
           AppSpacing.vGap8,
@@ -505,7 +528,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
     );
   }
 
-  Widget _buildReceiptCard(OrderModel order, bool isDark) {
+  Widget _buildReceiptCard(OrderModel order, AppSemanticColors colors) {
     return AppCard(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -515,30 +538,30 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
             'Payment Summary',
             style: AppTypography.titleSmall.copyWith(
               fontWeight: FontWeight.w800,
-              color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+              color: colors.textPrimary,
             ),
           ),
           AppSpacing.vGap16,
-          _buildSummaryRow('Subtotal', Formatters.formatCurrency(order.subtotal), isDark),
+          _buildSummaryRow('Subtotal', Formatters.formatCurrency(order.subtotal), colors),
           AppSpacing.vGap8,
-          _buildSummaryRow('Delivery Fee', Formatters.formatCurrency(order.deliveryFee), isDark),
+          _buildSummaryRow('Delivery Fee', Formatters.formatCurrency(order.deliveryFee), colors),
           if (order.tax > 0) ...[
             AppSpacing.vGap8,
-            _buildSummaryRow('Estimated Tax', Formatters.formatCurrency(order.tax), isDark),
+            _buildSummaryRow('Estimated Tax', Formatters.formatCurrency(order.tax), colors),
           ],
           if (order.discount > 0) ...[
             AppSpacing.vGap8,
             _buildSummaryRow(
               'Merchant Discount',
               '- ${Formatters.formatCurrency(order.discount)}',
-              isDark,
-              textColor: AppColors.statusSuccess,
+              colors,
+              textColor: colors.success,
             ),
           ],
           AppSpacing.vGap12,
           Divider(
             height: 1,
-            color: isDark ? AppColors.darkDivider : AppColors.lightDivider,
+            color: colors.divider,
           ),
           AppSpacing.vGap12,
           Row(
@@ -548,14 +571,14 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                 'Total Revenue',
                 style: AppTypography.titleMedium.copyWith(
                   fontWeight: FontWeight.w800,
-                  color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                  color: colors.textPrimary,
                 ),
               ),
               Text(
                 Formatters.formatCurrency(order.totalAmount),
                 style: AppTypography.headlineSmall.copyWith(
                   fontWeight: FontWeight.w800,
-                  color: AppColors.primary,
+                  color: colors.primary,
                 ),
               ),
             ],
@@ -564,18 +587,18 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF232A34) : AppColors.lightSurfaceSubtle,
+              color: colors.surfaceSubtle,
               borderRadius: AppRadius.sm,
             ),
             child: Row(
               children: [
-                const Icon(Icons.payment_rounded, size: 16, color: AppColors.primary),
+                Icon(Icons.payment_rounded, size: 16, color: colors.primary),
                 const SizedBox(width: 8),
                 Text(
                   '${order.paymentMethod} • ${order.isPaid ? "Paid Online" : "Payment Pending"}',
                   style: AppTypography.bodySmall.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+                    color: colors.textSecondary,
                   ),
                 ),
               ],
@@ -586,24 +609,24 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
     );
   }
 
-  Widget _buildCancellationNoticeCard(OrderModel order, bool isDark) {
+  Widget _buildCancellationNoticeCard(OrderModel order, AppSemanticColors colors) {
     return AppCard(
       padding: const EdgeInsets.all(16),
-      backgroundColor: isDark ? const Color(0xFF3B1414) : AppColors.statusErrorBg,
+      backgroundColor: colors.errorBg,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.cancel_rounded, color: AppColors.statusError),
+          Icon(Icons.cancel_rounded, color: colors.error),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'Order Cancelled',
                   style: TextStyle(
                     fontWeight: FontWeight.w800,
-                    color: AppColors.statusError,
+                    color: colors.error,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -611,7 +634,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                   order.rejectionReason!,
                   style: TextStyle(
                     fontSize: 12,
-                    color: isDark ? const Color(0xFFFCA5A5) : const Color(0xFF991B1B),
+                    color: colors.error,
                   ),
                 ),
               ],
@@ -625,7 +648,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
   Widget _buildSummaryRow(
     String label,
     String value,
-    bool isDark, {
+    AppSemanticColors colors, {
     Color? textColor,
   }) {
     return Row(
@@ -634,14 +657,14 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
         Text(
           label,
           style: AppTypography.bodyMedium.copyWith(
-            color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+            color: colors.textSecondary,
           ),
         ),
         Text(
           value,
           style: AppTypography.bodyMedium.copyWith(
             fontWeight: FontWeight.w700,
-            color: textColor ?? (isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight),
+            color: textColor ?? colors.textPrimary,
           ),
         ),
       ],
@@ -652,15 +675,15 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
     OrderModel order,
     OrderStatus? nextStatus,
     String? nextActionLabel,
-    bool isDark,
+    AppSemanticColors colors,
   ) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? AppColors.darkSurface : Colors.white,
+        color: colors.surface,
         border: Border(
           top: BorderSide(
-            color: isDark ? AppColors.darkBorder : AppColors.borderLight,
+            color: colors.borderSubtle,
           ),
         ),
         boxShadow: [

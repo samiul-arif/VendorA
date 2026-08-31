@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/routing/app_routes.dart';
 import '../../../../core/routing/navigation_service.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
+import '../../../../core/theme/app_semantic_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/utils/validators.dart';
@@ -120,12 +120,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final colors = context.appColors;
     final authController = context.watch<AuthController>();
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkCanvas : AppColors.lightCanvas,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -159,25 +158,25 @@ class _LoginScreenState extends State<LoginScreen> {
                             Container(
                               padding: const EdgeInsets.all(12),
                               decoration: BoxDecoration(
-                                color: isDark ? const Color(0xFF3B1414) : AppColors.statusErrorBg,
+                                color: colors.errorBg,
                                 borderRadius: AppRadius.md,
                                 border: Border.all(
-                                  color: isDark ? const Color(0xFF7F1D1D) : const Color(0xFFFECACA),
+                                  color: colors.error.withValues(alpha: 0.3),
                                 ),
                               ),
                               child: Row(
                                 children: [
-                                  const Icon(
+                                  Icon(
                                     Icons.error_outline_rounded,
                                     size: 20,
-                                    color: AppColors.statusError,
+                                    color: colors.error,
                                   ),
                                   const SizedBox(width: 10),
                                   Expanded(
                                     child: Text(
                                       _inlineError!,
                                       style: AppTypography.bodySmall.copyWith(
-                                        color: isDark ? const Color(0xFFF87171) : const Color(0xFFDC2626),
+                                        color: colors.error,
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
@@ -228,7 +227,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     height: 24,
                                     child: Checkbox(
                                       value: _rememberMe,
-                                      activeColor: AppColors.primary,
+                                      activeColor: colors.primary,
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(4),
                                       ),
@@ -241,7 +240,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     child: Text(
                                       'Remember me',
                                       style: AppTypography.bodySmall.copyWith(
-                                        color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+                                        color: colors.textSecondary,
                                       ),
                                     ),
                                   ),
@@ -257,7 +256,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 child: Text(
                                   'Forgot password?',
                                   style: AppTypography.bodySmall.copyWith(
-                                    color: AppColors.primary,
+                                    color: colors.primary,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
@@ -288,7 +287,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Text(
                       'Need assistance? Contact Partner Support',
                       style: AppTypography.bodySmall.copyWith(
-                        color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
+                        color: colors.textMuted,
                       ),
                     ),
                   ),

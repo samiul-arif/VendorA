@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radius.dart';
+import '../../core/theme/app_semantic_colors.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/theme/app_spacing.dart';
 import 'app_card.dart';
@@ -32,12 +32,10 @@ class StatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final colors = context.appColors;
 
-    final primaryIconColor = iconColor ?? AppColors.primary;
-    final primaryIconBg = iconBackgroundColor ??
-        (isDark ? const Color(0xFF381223) : AppColors.primaryTint);
+    final primaryIconColor = iconColor ?? colors.primary;
+    final primaryIconBg = iconBackgroundColor ?? colors.primaryContainer;
 
     return AppCard(
       onTap: onTap,
@@ -66,9 +64,7 @@ class StatCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: isTrendPositive
-                        ? (isDark ? const Color(0xFF0F3A2E) : AppColors.statusSuccessBg)
-                        : (isDark ? const Color(0xFF3B1414) : AppColors.statusErrorBg),
+                    color: isTrendPositive ? colors.successBg : colors.errorBg,
                     borderRadius: AppRadius.full,
                   ),
                   child: Row(
@@ -77,17 +73,13 @@ class StatCard extends StatelessWidget {
                       Icon(
                         isTrendPositive ? Icons.trending_up : Icons.trending_down,
                         size: 14,
-                        color: isTrendPositive
-                            ? AppColors.statusSuccess
-                            : AppColors.statusError,
+                        color: isTrendPositive ? colors.success : colors.error,
                       ),
                       const SizedBox(width: 4),
                       Text(
                         trendText!,
                         style: AppTypography.labelSmall.copyWith(
-                          color: isTrendPositive
-                              ? (isDark ? const Color(0xFF34D399) : const Color(0xFF059669))
-                              : (isDark ? const Color(0xFFF87171) : const Color(0xFFDC2626)),
+                          color: isTrendPositive ? colors.success : colors.error,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -103,7 +95,7 @@ class StatCard extends StatelessWidget {
               Text(
                 title,
                 style: AppTypography.titleSmall.copyWith(
-                  color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+                  color: colors.textSecondary,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -111,7 +103,7 @@ class StatCard extends StatelessWidget {
               Text(
                 value,
                 style: AppTypography.statValue.copyWith(
-                  color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                  color: colors.textPrimary,
                 ),
               ),
               if (subtitle != null) ...[
@@ -119,7 +111,7 @@ class StatCard extends StatelessWidget {
                 Text(
                   subtitle!,
                   style: AppTypography.bodySmall.copyWith(
-                    color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
+                    color: colors.textMuted,
                   ),
                 ),
               ],

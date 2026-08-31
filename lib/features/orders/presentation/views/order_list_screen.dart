@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
+import '../../../../core/theme/app_semantic_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/components/empty_state_view.dart';
 import '../../../../shared/components/error_state_view.dart';
@@ -11,8 +11,6 @@ import '../../domain/models/order_model.dart';
 import '../../domain/models/order_status.dart';
 import '../controllers/order_controller.dart';
 import '../widgets/order_card.dart';
-import '../../../notifications/presentation/controllers/notification_controller.dart';
-import '../../../notifications/domain/models/notification_type.dart';
 import '../../../../shared/components/app_toast.dart';
 import 'order_details_screen.dart';
 
@@ -50,61 +48,37 @@ class _OrderListScreenState extends State<OrderListScreen> {
     );
   }
 
-  void _handleQuickStatusChange(OrderModel order, OrderStatus newStatus) async {
+
+
+  void _handleAcceptOrder(OrderModel order) async {
     final orderController = context.read<OrderController>();
-    final result = await orderController.updateStatus(
-      orderId: order.id,
-      newStatus: newStatus,
-    );
-
+    final result = await orderController.updateStatus(orderId: order.id, newStatus: OrderStatus.accepted);
+    
     if (!mounted) return;
-
     result.when(
-      success: (updated) {
-        String title;
-        String desc;
-        if (newStatus == OrderStatus.preparing || newStatus == OrderStatus.accepted) {
-          title = 'Order Accepted (#${order.orderNumber})';
-          desc = 'Order moved to kitchen preparation queue.';
-        } else if (newStatus == OrderStatus.ready) {
-          title = 'Order Ready for Pickup (#${order.orderNumber})';
-          desc = 'Assigned courier notified for immediate pickup.';
-        } else {
-          title = 'Order Status Updated (#${order.orderNumber})';
-          desc = 'Order changed to ${newStatus.label}.';
-        }
+      success: (_) => AppToast.showSuccess(context, title: 'Order Accepted', message: 'Order #${order.orderNumber} moved to preparation.'),
+      failure: (msg, _) => AppToast.showError(context, title: 'Error', message: msg),
+    );
+  }
 
-        context.read<NotificationController>().dispatchNotification(
-          context,
-          title: title,
-          message: desc,
-          type: NotificationType.order,
-          relatedOrderId: order.id,
-          toastVariant: AppToastVariant.success,
-          actionLabel: 'Details',
-          onAction: () => _openOrderDetails(order),
-        );
-      },
-      failure: (msg, _) {
-        AppToast.showError(context, title: 'Update Failed', message: msg);
-      },
+  void _handleMarkReady(OrderModel order) async {
+    final orderController = context.read<OrderController>();
+    final result = await orderController.updateStatus(orderId: order.id, newStatus: OrderStatus.ready);
+    
+    if (!mounted) return;
+    result.when(
+      success: (_) => AppToast.showSuccess(context, title: 'Order Ready', message: 'Order #${order.orderNumber} is ready for pickup.'),
+      failure: (msg, _) => AppToast.showError(context, title: 'Error', message: msg),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final colors = context.appColors;
     final orderController = context.watch<OrderController>();
     final allOrders = orderController.allOrders;
 
-    // Filter orders based on the 3 segmented tabs: Active, Completed, Cancelled
-    final activeOrders = allOrders.where((o) =>
-        o.status == OrderStatus.pending ||
-        o.status == OrderStatus.accepted ||
-        o.status == OrderStatus.preparing ||
-        o.status == OrderStatus.ready).toList();
-
+    final activeOrders = allOrders.where((o) => o.status != OrderStatus.delivered && o.status != OrderStatus.cancelled).toList();
     final completedOrders = allOrders.where((o) => o.status == OrderStatus.delivered).toList();
     final cancelledOrders = allOrders.where((o) => o.status == OrderStatus.cancelled).toList();
 
@@ -118,7 +92,7 @@ class _OrderListScreenState extends State<OrderListScreen> {
     }
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkCanvas : AppColors.lightCanvas,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         bottom: false,
         child: orderController.isLoading && allOrders.isEmpty
@@ -130,7 +104,7 @@ class _OrderListScreenState extends State<OrderListScreen> {
                   )
                 : RefreshIndicator(
                     onRefresh: () async => _loadOrders(),
-                    color: AppColors.primary,
+                    color: colors.primary,
                     child: ListView(
                       padding: const EdgeInsets.fromLTRB(16, 12, 16, 110),
                       children: [
@@ -145,21 +119,21 @@ class _OrderListScreenState extends State<OrderListScreen> {
                                 fontSize: 20,
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: -0.4,
-                                color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                                color: colors.textPrimary,
                               ),
                             ),
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                               decoration: BoxDecoration(
-                                color: isDark ? const Color(0xFF0F3A2E) : const Color(0xFFECFDF5),
+                                color: colors.successBg,
                                 borderRadius: AppRadius.full,
                               ),
                               child: Text(
                                 '${activeOrders.length} Active',
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w800,
-                                  color: Color(0xFF059669),
+                                  color: colors.success,
                                 ),
                               ),
                             ),
@@ -174,21 +148,21 @@ class _OrderListScreenState extends State<OrderListScreen> {
                             _buildFilterPill(
                               label: 'Active (${activeOrders.length})',
                               isSelected: _selectedFilterIndex == 0,
-                              isDark: isDark,
+                              colors: colors,
                               onTap: () => setState(() => _selectedFilterIndex = 0),
                             ),
                             const SizedBox(width: 8),
                             _buildFilterPill(
-                              label: 'Completed',
+                              label: 'Completed (${completedOrders.length})',
                               isSelected: _selectedFilterIndex == 1,
-                              isDark: isDark,
+                              colors: colors,
                               onTap: () => setState(() => _selectedFilterIndex = 1),
                             ),
                             const SizedBox(width: 8),
                             _buildFilterPill(
-                              label: 'Cancelled',
+                              label: 'Cancelled (${cancelledOrders.length})',
                               isSelected: _selectedFilterIndex == 2,
-                              isDark: isDark,
+                              colors: colors,
                               onTap: () => setState(() => _selectedFilterIndex = 2),
                             ),
                           ],
@@ -196,15 +170,23 @@ class _OrderListScreenState extends State<OrderListScreen> {
 
                         AppSpacing.vGap16,
 
-                        // Empty State if no orders in selected tab
+                        // Orders List
                         if (currentList.isEmpty)
-                          EmptyStateView(
-                            icon: Icons.receipt_long_outlined,
-                            title: 'No ${_selectedFilterIndex == 0 ? 'Active' : _selectedFilterIndex == 1 ? 'Completed' : 'Cancelled'} Orders',
-                            description: 'Orders will automatically appear here as they progress.',
+                          Padding(
+                            padding: const EdgeInsets.only(top: 40.0),
+                            child: EmptyStateView(
+                              icon: Icons.receipt_long_outlined,
+                              title: _selectedFilterIndex == 0
+                                  ? 'No Active Orders'
+                                  : _selectedFilterIndex == 1
+                                      ? 'No Completed Orders'
+                                      : 'No Cancelled Orders',
+                              description: _selectedFilterIndex == 0
+                                  ? 'New orders placed by customers will appear here.'
+                                  : 'Completed order history will be shown here.',
+                            ),
                           )
                         else
-                          // Orders List View
                           ListView.separated(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
@@ -215,8 +197,12 @@ class _OrderListScreenState extends State<OrderListScreen> {
                               return OrderCard(
                                 order: order,
                                 onTap: () => _openOrderDetails(order),
-                                onQuickAction: (nextStatus) =>
-                                    _handleQuickStatusChange(order, nextStatus),
+                                onAccept: order.isPending
+                                    ? () => _handleAcceptOrder(order)
+                                    : null,
+                                onReady: order.isPreparing
+                                    ? () => _handleMarkReady(order)
+                                    : null,
                               );
                             },
                           ),
@@ -230,7 +216,7 @@ class _OrderListScreenState extends State<OrderListScreen> {
   Widget _buildFilterPill({
     required String label,
     required bool isSelected,
-    required bool isDark,
+    required AppSemanticColors colors,
     required VoidCallback onTap,
   }) {
     return GestureDetector(
@@ -240,13 +226,13 @@ class _OrderListScreenState extends State<OrderListScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
           color: isSelected
-              ? (isDark ? Colors.white : AppColors.ctaPrimary)
-              : (isDark ? const Color(0xFF232A34) : Colors.white),
+              ? colors.ctaPrimary
+              : colors.surface,
           borderRadius: AppRadius.full,
           border: Border.all(
             color: isSelected
                 ? Colors.transparent
-                : (isDark ? AppColors.darkBorder : const Color(0xFFE5E7EB)),
+                : colors.borderSubtle,
           ),
           boxShadow: isSelected
               ? [
@@ -264,8 +250,8 @@ class _OrderListScreenState extends State<OrderListScreen> {
             fontSize: 12,
             fontWeight: FontWeight.w800,
             color: isSelected
-                ? (isDark ? AppColors.inkPrimary : Colors.white)
-                : (isDark ? AppColors.textSecondaryDark : const Color(0xFF6B7280)),
+                ? colors.ctaPrimaryText
+                : colors.textSecondary,
           ),
         ),
       ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radius.dart';
+import '../../core/theme/app_semantic_colors.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/theme/app_spacing.dart';
 
@@ -55,8 +55,6 @@ class _AppButtonState extends State<AppButton> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
     final isEnabled = widget.onPressed != null && !widget.isLoading;
 
     // Resolve Dimensions
@@ -79,6 +77,8 @@ class _AppButtonState extends State<AppButton> {
           AppButtonSize.large => const EdgeInsets.symmetric(horizontal: 24),
         };
 
+    final colors = context.appColors;
+
     // Resolve Colors by Variant & Theme
     Color backgroundColor;
     Color foregroundColor;
@@ -86,43 +86,43 @@ class _AppButtonState extends State<AppButton> {
 
     switch (widget.variant) {
       case AppButtonVariant.primary:
-        backgroundColor = isDark ? AppColors.textPrimaryDark : AppColors.ctaPrimary;
-        foregroundColor = isDark ? AppColors.ctaPrimary : AppColors.ctaPrimaryText;
+        backgroundColor = colors.ctaPrimary;
+        foregroundColor = colors.ctaPrimaryText;
         break;
 
       case AppButtonVariant.brand:
-        backgroundColor = AppColors.primary;
-        foregroundColor = AppColors.textInverse;
+        backgroundColor = colors.primary;
+        foregroundColor = colors.textInverse;
         break;
 
       case AppButtonVariant.secondary:
-        backgroundColor = isDark ? AppColors.darkSurfaceSubtle : AppColors.ctaSecondary;
-        foregroundColor = isDark ? AppColors.textPrimaryDark : AppColors.ctaSecondaryText;
+        backgroundColor = colors.ctaSecondary;
+        foregroundColor = colors.ctaSecondaryText;
         break;
 
       case AppButtonVariant.outline:
         backgroundColor = Colors.transparent;
-        foregroundColor = isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight;
+        foregroundColor = colors.textPrimary;
         borderSide = BorderSide(
-          color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+          color: colors.border,
           width: 1.5,
         );
         break;
 
       case AppButtonVariant.ghost:
         backgroundColor = Colors.transparent;
-        foregroundColor = isDark ? AppColors.primaryLight : AppColors.primary;
+        foregroundColor = colors.primary;
         break;
 
       case AppButtonVariant.destructive:
-        backgroundColor = AppColors.statusError;
-        foregroundColor = AppColors.textInverse;
+        backgroundColor = colors.error;
+        foregroundColor = colors.textInverse;
         break;
     }
 
     if (!isEnabled) {
-      backgroundColor = isDark ? AppColors.darkSurfaceSubtle : const Color(0xFFE5E7EB);
-      foregroundColor = isDark ? AppColors.textMutedDark : AppColors.textMutedLight;
+      backgroundColor = colors.surfaceSubtle;
+      foregroundColor = colors.textMuted;
       borderSide = null;
     }
 

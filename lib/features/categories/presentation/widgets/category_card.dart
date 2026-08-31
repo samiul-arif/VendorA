@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
+import '../../../../core/theme/app_semantic_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../shared/components/app_card.dart';
@@ -23,8 +23,7 @@ class CategoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final colors = context.appColors;
 
     return AppCard(
       onTap: onTap ?? onEdit,
@@ -40,12 +39,12 @@ class CategoryCard extends StatelessWidget {
                 width: 44,
                 height: 44,
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF381223) : AppColors.primaryTint,
+                  color: colors.primaryContainer,
                   borderRadius: AppRadius.md,
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.category_outlined,
-                  color: AppColors.primary,
+                  color: colors.primary,
                   size: 22,
                 ),
               ),
@@ -64,9 +63,7 @@ class CategoryCard extends StatelessWidget {
                             category.name,
                             style: AppTypography.titleMedium.copyWith(
                               fontWeight: FontWeight.w800,
-                              color: isDark
-                                  ? AppColors.textPrimaryDark
-                                  : AppColors.textPrimaryLight,
+                              color: colors.textPrimary,
                             ),
                           ),
                         ),
@@ -77,23 +74,17 @@ class CategoryCard extends StatelessWidget {
                             vertical: 3,
                           ),
                           decoration: BoxDecoration(
-                            color: isDark
-                                ? const Color(0xFF232A34)
-                                : AppColors.lightSurfaceSubtle,
+                            color: colors.surfaceSubtle,
                             borderRadius: AppRadius.full,
                             border: Border.all(
-                              color: isDark
-                                  ? AppColors.darkBorder
-                                  : AppColors.borderLight,
+                              color: colors.borderSubtle,
                             ),
                           ),
                           child: Text(
                             '${category.itemCount} ${category.itemCount == 1 ? 'Item' : 'Items'}',
                             style: AppTypography.labelSmall.copyWith(
                               fontWeight: FontWeight.w700,
-                              color: isDark
-                                  ? AppColors.textSecondaryDark
-                                  : AppColors.textSecondaryLight,
+                              color: colors.textSecondary,
                             ),
                           ),
                         ),
@@ -105,9 +96,7 @@ class CategoryCard extends StatelessWidget {
                       Text(
                         category.description,
                         style: AppTypography.bodySmall.copyWith(
-                          color: isDark
-                              ? AppColors.textSecondaryDark
-                              : AppColors.textSecondaryLight,
+                          color: colors.textSecondary,
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -124,7 +113,7 @@ class CategoryCard extends StatelessWidget {
           // Divider
           Divider(
             height: 1,
-            color: isDark ? AppColors.darkDivider : AppColors.lightDivider,
+            color: colors.divider,
           ),
 
           AppSpacing.vGap8,
@@ -138,9 +127,7 @@ class CategoryCard extends StatelessWidget {
                 icon: const Icon(Icons.edit_outlined, size: 16),
                 label: const Text('Edit'),
                 style: TextButton.styleFrom(
-                  foregroundColor: isDark
-                      ? AppColors.textPrimaryDark
-                      : AppColors.textPrimaryLight,
+                  foregroundColor: colors.textPrimary,
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   textStyle: AppTypography.labelMedium.copyWith(fontWeight: FontWeight.w700),
                 ),
@@ -151,7 +138,7 @@ class CategoryCard extends StatelessWidget {
                 icon: const Icon(Icons.delete_outline_rounded, size: 16),
                 label: const Text('Delete'),
                 style: TextButton.styleFrom(
-                  foregroundColor: AppColors.statusError,
+                  foregroundColor: colors.error,
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   textStyle: AppTypography.labelMedium.copyWith(fontWeight: FontWeight.w700),
                 ),

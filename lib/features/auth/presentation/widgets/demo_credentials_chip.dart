@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
+import '../../../../core/theme/app_semantic_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 
 // Demo Account Quick Fill Helper Chip
@@ -14,8 +14,7 @@ class DemoCredentialsChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final colors = context.appColors;
 
     return Material(
       color: Colors.transparent,
@@ -25,19 +24,19 @@ class DemoCredentialsChip extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF13294B) : AppColors.statusInfoBg,
+            color: colors.infoBg,
             borderRadius: AppRadius.md,
             border: Border.all(
-              color: isDark ? const Color(0xFF1E3A8A) : const Color(0xFFBFDBFE),
+              color: colors.info.withValues(alpha: 0.3),
               width: 1.0,
             ),
           ),
           child: Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.auto_awesome,
                 size: 18,
-                color: AppColors.statusInfo,
+                color: colors.info,
               ),
               const SizedBox(width: 10),
               Expanded(
@@ -47,23 +46,23 @@ class DemoCredentialsChip extends StatelessWidget {
                     Text(
                       'Tap to autofill demo account',
                       style: AppTypography.labelLarge.copyWith(
-                        color: isDark ? const Color(0xFF93C5FD) : const Color(0xFF1D4ED8),
+                        color: colors.info,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
                     Text(
                       'demo@vendor.com • vendor123',
                       style: AppTypography.bodySmall.copyWith(
-                        color: isDark ? const Color(0xFF60A5FA) : const Color(0xFF2563EB),
+                        color: colors.info.withValues(alpha: 0.8),
                       ),
                     ),
                   ],
                 ),
               ),
-              const Icon(
+              Icon(
                 Icons.arrow_forward_ios_rounded,
                 size: 12,
-                color: AppColors.statusInfo,
+                color: colors.info,
               ),
             ],
           ),

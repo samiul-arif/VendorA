@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
+import '../../../../core/theme/app_semantic_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../shared/components/app_bottom_sheet.dart';
@@ -135,15 +135,14 @@ class _CategoryListScreenState extends State<CategoryListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final colors = context.appColors;
     final categoryController = context.watch<CategoryController>();
     final categories = categoryController.filteredCategories;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkCanvas : AppColors.lightCanvas,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: isDark ? const Color(0xFF161B22) : const Color(0xFFFFFFFF),
+        backgroundColor: colors.surface,
         elevation: 0,
         scrolledUnderElevation: 0,
         leadingWidth: 56,
@@ -154,7 +153,7 @@ class _CategoryListScreenState extends State<CategoryListScreen> {
             fontSize: 16,
             fontWeight: FontWeight.w900,
             letterSpacing: -0.2,
-            color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+            color: colors.textPrimary,
           ),
         ),
         actions: [
@@ -167,7 +166,7 @@ class _CategoryListScreenState extends State<CategoryListScreen> {
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1.0),
           child: Container(
-            color: isDark ? AppColors.darkBorder : const Color(0xFFEEF0F2),
+            color: colors.borderSubtle,
             height: 1.0,
           ),
         ),
@@ -183,17 +182,17 @@ class _CategoryListScreenState extends State<CategoryListScreen> {
                   )
                 : RefreshIndicator(
                     onRefresh: () async => _loadCategories(),
-                    color: AppColors.primary,
+                    color: colors.primary,
                     child: ListView(
                       padding: const EdgeInsets.fromLTRB(16, 12, 16, 96),
                       children: [
                         // Search Bar Container
                         Container(
                           decoration: BoxDecoration(
-                            color: isDark ? AppColors.darkSurface : Colors.white,
+                            color: colors.surfaceSubtle,
                             borderRadius: AppRadius.full,
                             border: Border.all(
-                              color: isDark ? const Color(0xFF2D3748) : AppColors.borderLight,
+                              color: colors.borderSubtle,
                             ),
                           ),
                           child: TextField(
@@ -201,10 +200,10 @@ class _CategoryListScreenState extends State<CategoryListScreen> {
                             onChanged: (val) => categoryController.setSearchQuery(val),
                             decoration: InputDecoration(
                               hintText: 'Search categories...',
-                              prefixIcon: const Icon(Icons.search_rounded, size: 20),
+                              prefixIcon: Icon(Icons.search_rounded, size: 20, color: colors.textMuted),
                               suffixIcon: categoryController.searchQuery.isNotEmpty
                                   ? IconButton(
-                                      icon: const Icon(Icons.close_rounded, size: 18),
+                                      icon: Icon(Icons.close_rounded, size: 18, color: colors.textMuted),
                                       onPressed: () {
                                         _searchController.clear();
                                         categoryController.clearSearch();
@@ -230,17 +229,13 @@ class _CategoryListScreenState extends State<CategoryListScreen> {
                               'All Categories (${categories.length})',
                               style: AppTypography.titleSmall.copyWith(
                                 fontWeight: FontWeight.w800,
-                                color: isDark
-                                    ? AppColors.textPrimaryDark
-                                    : AppColors.textPrimaryLight,
+                                color: colors.textPrimary,
                               ),
                             ),
                             Text(
                               'Organize Menu',
                               style: AppTypography.bodySmall.copyWith(
-                                color: isDark
-                                    ? AppColors.textMutedDark
-                                    : AppColors.textMutedLight,
+                                color: colors.textMuted,
                               ),
                             ),
                           ],
@@ -290,8 +285,8 @@ class _CategoryListScreenState extends State<CategoryListScreen> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showAddEditBottomSheet(),
-        backgroundColor: AppColors.ctaPrimary,
-        foregroundColor: Colors.white,
+        backgroundColor: colors.ctaPrimary,
+        foregroundColor: colors.ctaPrimaryText,
         icon: const Icon(Icons.add_rounded, size: 20),
         label: const Text(
           'Add Category',

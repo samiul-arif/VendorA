@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_semantic_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../shared/components/shimmer_skeleton.dart';
@@ -109,12 +109,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final colors = context.appColors;
     final dashboardController = context.watch<DashboardController>();
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkCanvas : AppColors.lightCanvas,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         bottom: false,
         child: dashboardController.isLoading && dashboardController.metrics == null
@@ -126,7 +125,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   )
                 : RefreshIndicator(
                     onRefresh: () => dashboardController.refreshDashboard(),
-                    color: AppColors.primary,
+                    color: colors.primary,
                     child: ListView(
                       padding: const EdgeInsets.fromLTRB(16, 12, 16, 110),
                       children: [

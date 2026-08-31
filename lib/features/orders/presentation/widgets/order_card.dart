@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
+import '../../../../core/theme/app_semantic_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/formatters.dart';
@@ -13,6 +13,8 @@ class OrderCard extends StatelessWidget {
   final OrderModel order;
   final VoidCallback onTap;
   final ValueChanged<OrderStatus>? onQuickAction;
+  final VoidCallback? onAccept;
+  final VoidCallback? onReady;
   final VoidCallback? onReject;
 
   const OrderCard({
@@ -20,13 +22,14 @@ class OrderCard extends StatelessWidget {
     required this.order,
     required this.onTap,
     this.onQuickAction,
+    this.onAccept,
+    this.onReady,
     this.onReject,
   });
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final colors = context.appColors;
 
     final isNew = order.isPending;
     final isPreparing = order.status == OrderStatus.preparing || order.status == OrderStatus.accepted;
@@ -48,10 +51,10 @@ class OrderCard extends StatelessWidget {
                 style: AppTypography.titleSmall.copyWith(
                   fontWeight: FontWeight.w800,
                   fontSize: 14,
-                  color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                  color: colors.textPrimary,
                 ),
               ),
-              _buildStatusBadge(order.status, isDark),
+              _buildStatusBadge(order.status, colors),
             ],
           ),
 
@@ -68,7 +71,7 @@ class OrderCard extends StatelessWidget {
                   '• ${item.quantity}x ${item.productName} (\$$itemTotal)',
                   style: TextStyle(
                     fontSize: 12,
-                    color: isDark ? AppColors.textSecondaryDark : const Color(0xFF4B5563),
+                    color: colors.textSecondary,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -89,7 +92,7 @@ class OrderCard extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w700,
-                    color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                    color: colors.textPrimary,
                   ),
                   children: [
                     TextSpan(
@@ -105,11 +108,17 @@ class OrderCard extends StatelessWidget {
               // Right Action / Status Element
               if (isNew)
                 GestureDetector(
-                  onTap: () => onQuickAction?.call(OrderStatus.preparing),
+                  onTap: () {
+                    if (onAccept != null) {
+                      onAccept!();
+                    } else {
+                      onQuickAction?.call(OrderStatus.preparing);
+                    }
+                  },
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 7),
-                    decoration: const BoxDecoration(
-                      color: AppColors.primary,
+                    decoration: BoxDecoration(
+                      color: colors.primary,
                       borderRadius: AppRadius.full,
                     ),
                     child: const Text(
@@ -124,17 +133,23 @@ class OrderCard extends StatelessWidget {
                 )
               else if (isPreparing)
                 GestureDetector(
-                  onTap: () => onQuickAction?.call(OrderStatus.ready),
+                  onTap: () {
+                    if (onReady != null) {
+                      onReady!();
+                    } else {
+                      onQuickAction?.call(OrderStatus.ready);
+                    }
+                  },
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
                     decoration: BoxDecoration(
-                      color: isDark ? Colors.white : AppColors.ctaPrimary,
+                      color: colors.ctaPrimary,
                       borderRadius: AppRadius.full,
                     ),
                     child: Text(
                       'Mark Ready',
                       style: TextStyle(
-                        color: isDark ? AppColors.inkPrimary : Colors.white,
+                        color: colors.ctaPrimaryText,
                         fontSize: 11,
                         fontWeight: FontWeight.w800,
                       ),
@@ -147,7 +162,7 @@ class OrderCard extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
-                    color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
+                    color: colors.textMuted,
                   ),
                 )
               else
@@ -156,7 +171,7 @@ class OrderCard extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
-                    color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
+                    color: colors.textMuted,
                   ),
                 ),
             ],
@@ -166,41 +181,41 @@ class OrderCard extends StatelessWidget {
     );
   }
 
-  Widget _buildStatusBadge(OrderStatus status, bool isDark) {
+  Widget _buildStatusBadge(OrderStatus status, AppSemanticColors colors) {
     Color bg;
     Color fg;
     String label;
 
     switch (status) {
       case OrderStatus.ready:
-        bg = isDark ? const Color(0xFF0F3A2E) : const Color(0xFFECFDF5);
-        fg = const Color(0xFF059669);
+        bg = colors.orderReadyBg;
+        fg = colors.orderReady;
         label = 'Ready for Delivery';
         break;
       case OrderStatus.preparing:
       case OrderStatus.accepted:
-        bg = isDark ? const Color(0xFF1E293B) : const Color(0xFFEFF6FF);
-        fg = const Color(0xFF2563EB);
+        bg = colors.orderPreparingBg;
+        fg = colors.orderPreparing;
         label = 'In Preparation';
         break;
       case OrderStatus.pending:
-        bg = isDark ? const Color(0xFF1E293B) : const Color(0xFFEFF6FF);
-        fg = const Color(0xFF2563EB);
+        bg = colors.orderPendingBg;
+        fg = colors.orderPending;
         label = 'New';
         break;
       case OrderStatus.delivered:
-        bg = isDark ? const Color(0xFF0F3A2E) : const Color(0xFFECFDF5);
-        fg = const Color(0xFF059669);
+        bg = colors.orderDeliveredBg;
+        fg = colors.orderDelivered;
         label = 'Completed';
         break;
       case OrderStatus.cancelled:
-        bg = isDark ? const Color(0xFF3B1414) : const Color(0xFFFEF2F2);
-        fg = const Color(0xFFEF4444);
+        bg = colors.orderCancelledBg;
+        fg = colors.orderCancelled;
         label = 'Cancelled';
         break;
       default:
-        bg = isDark ? const Color(0xFF232A34) : const Color(0xFFF3F4F6);
-        fg = isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
+        bg = colors.surfaceSubtle;
+        fg = colors.textSecondary;
         label = status.label;
     }
 
