@@ -5,11 +5,10 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../../shared/components/app_card.dart';
-import '../../../../shared/components/status_badge.dart';
 import '../../domain/models/order_model.dart';
 import '../../domain/models/order_status.dart';
 
-// Order Card for Merchant Dispatch List View
+// Order Card for Merchant Dispatch List View (Screenshot 3 Matching)
 class OrderCard extends StatelessWidget {
   final OrderModel order;
   final VoidCallback onTap;
@@ -24,224 +23,200 @@ class OrderCard extends StatelessWidget {
     this.onReject,
   });
 
-  String _formatTimeAgo(DateTime dt) {
-    final diff = DateTime.now().difference(dt);
-    if (diff.inMinutes < 1) return 'Just now';
-    if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
-    if (diff.inHours < 24) return '${diff.inHours}h ago';
-    return '${diff.inDays}d ago';
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    final nextStatus = order.status.nextActionStatus;
-    final nextActionLabel = order.status.nextActionLabel;
+    final isNew = order.isPending;
+    final isPreparing = order.status == OrderStatus.preparing || order.status == OrderStatus.accepted;
+    final isReady = order.status == OrderStatus.ready;
 
     return AppCard(
       onTap: onTap,
       padding: const EdgeInsets.all(16),
+      borderRadius: BorderRadius.circular(22),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Row 1: Order ID, Time Ago & Status Badge
+          // Header: Order #FP-XXXX + Status Badge
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  Text(
-                    '#${order.orderNumber}',
-                    style: AppTypography.titleSmall.copyWith(
-                      fontWeight: FontWeight.w800,
-                      color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
-                    ),
-                  ),
-                  const SizedBox(width: 6),
-                  Text(
-                    '• ${_formatTimeAgo(order.createdAt)}',
-                    style: AppTypography.bodySmall.copyWith(
-                      color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
-                    ),
-                  ),
-                ],
+              Text(
+                'Order #${order.orderNumber}',
+                style: AppTypography.titleSmall.copyWith(
+                  fontWeight: FontWeight.w800,
+                  fontSize: 14,
+                  color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                ),
               ),
-              StatusBadge(
-                type: order.status.badgeType,
-                label: order.status.label,
-              ),
+              _buildStatusBadge(order.status, isDark),
             ],
           ),
 
           AppSpacing.vGap12,
 
-          // Row 2: Customer Name & Delivery Address
-          Row(
-            children: [
-              const Icon(
-                Icons.person_outline_rounded,
-                size: 16,
-                color: AppColors.primary,
-              ),
-              const SizedBox(width: 6),
-              Expanded(
+          // Bulleted Items List (e.g. • 2x Classic Double Cheeseburger ($22.00))
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: order.items.map((item) {
+              final itemTotal = (item.unitPrice * item.quantity).toStringAsFixed(2);
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 4.0),
                 child: Text(
-                  order.customerName,
-                  style: AppTypography.bodyMedium.copyWith(
+                  '• ${item.quantity}x ${item.productName} (\$$itemTotal)',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: isDark ? AppColors.textSecondaryDark : const Color(0xFF4B5563),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+
+          AppSpacing.vGap12,
+
+          // Footer: Total: $XX.XX on left and Action / Rider Status on right
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              RichText(
+                text: TextSpan(
+                  text: 'Total: ',
+                  style: TextStyle(
+                    fontSize: 13,
                     fontWeight: FontWeight.w700,
                     color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          ),
-
-          AppSpacing.vGap4,
-
-          Row(
-            children: [
-              Icon(
-                Icons.location_on_outlined,
-                size: 16,
-                color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
-              ),
-              const SizedBox(width: 6),
-              Expanded(
-                child: Text(
-                  order.deliveryAddress,
-                  style: AppTypography.bodySmall.copyWith(
-                    color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          ),
-
-          AppSpacing.vGap12,
-
-          // Row 3: Items Summary Container
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF232A34) : AppColors.lightSurfaceSubtle,
-              borderRadius: AppRadius.sm,
-            ),
-            child: Text(
-              order.itemsSummary,
-              style: AppTypography.bodySmall.copyWith(
-                color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
-                fontWeight: FontWeight.w600,
-              ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-
-          if (order.customerNotes != null && order.customerNotes!.isNotEmpty) ...[
-            AppSpacing.vGap8,
-            Row(
-              children: [
-                const Icon(
-                  Icons.edit_note_rounded,
-                  size: 16,
-                  color: AppColors.statusWarning,
-                ),
-                const SizedBox(width: 6),
-                Expanded(
-                  child: Text(
-                    'Note: ${order.customerNotes}',
-                    style: const TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.statusWarning,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
-            ),
-          ],
-
-          AppSpacing.vGap16,
-
-          // Row 4: Total Price and Action Buttons
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Total (${order.totalItemCount} items)',
-                    style: AppTypography.labelSmall.copyWith(
-                      color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
-                    ),
-                  ),
-                  Text(
-                    Formatters.formatCurrency(order.totalAmount),
-                    style: AppTypography.titleMedium.copyWith(
-                      fontWeight: FontWeight.w800,
-                      color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
-                    ),
-                  ),
-                ],
-              ),
-
-              // Action Buttons
-              Row(
-                children: [
-                  if (order.isPending && onReject != null) ...[
-                    OutlinedButton(
-                      onPressed: onReject,
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: AppColors.statusError,
-                        side: const BorderSide(color: Color(0xFFFECACA)),
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                        shape: const RoundedRectangleBorder(borderRadius: AppRadius.full),
-                      ),
-                      child: const Text(
-                        'Decline',
-                        style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+                  children: [
+                    TextSpan(
+                      text: Formatters.formatCurrency(order.totalAmount),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w900,
                       ),
                     ),
-                    const SizedBox(width: 8),
                   ],
+                ),
+              ),
 
-                  if (nextStatus != null && nextActionLabel != null)
-                    ElevatedButton(
-                      onPressed: () => onQuickAction?.call(nextStatus),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: order.isPending
-                            ? AppColors.primary
-                            : (isDark ? Colors.white : AppColors.ctaPrimary),
-                        foregroundColor: order.isPending
-                            ? Colors.white
-                            : (isDark ? AppColors.inkPrimary : Colors.white),
-                        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
-                        shape: const RoundedRectangleBorder(borderRadius: AppRadius.full),
-                        elevation: 0,
-                      ),
-                      child: Text(
-                        nextActionLabel,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w800,
-                        ),
+              // Right Action / Status Element
+              if (isNew)
+                GestureDetector(
+                  onTap: () => onQuickAction?.call(OrderStatus.preparing),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 7),
+                    decoration: const BoxDecoration(
+                      color: AppColors.primary,
+                      borderRadius: AppRadius.full,
+                    ),
+                    child: const Text(
+                      'Accept',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w800,
                       ),
                     ),
-                ],
-              ),
+                  ),
+                )
+              else if (isPreparing)
+                GestureDetector(
+                  onTap: () => onQuickAction?.call(OrderStatus.ready),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+                    decoration: BoxDecoration(
+                      color: isDark ? Colors.white : AppColors.ctaPrimary,
+                      borderRadius: AppRadius.full,
+                    ),
+                    child: Text(
+                      'Mark Ready',
+                      style: TextStyle(
+                        color: isDark ? AppColors.inkPrimary : Colors.white,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ),
+                )
+              else if (isReady)
+                Text(
+                  'Rider Assigned (5 mins)',
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
+                  ),
+                )
+              else
+                Text(
+                  order.status.label,
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
+                  ),
+                ),
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildStatusBadge(OrderStatus status, bool isDark) {
+    Color bg;
+    Color fg;
+    String label;
+
+    switch (status) {
+      case OrderStatus.ready:
+        bg = isDark ? const Color(0xFF0F3A2E) : const Color(0xFFECFDF5);
+        fg = const Color(0xFF059669);
+        label = 'Ready for Delivery';
+        break;
+      case OrderStatus.preparing:
+      case OrderStatus.accepted:
+        bg = isDark ? const Color(0xFF1E293B) : const Color(0xFFEFF6FF);
+        fg = const Color(0xFF2563EB);
+        label = 'In Preparation';
+        break;
+      case OrderStatus.pending:
+        bg = isDark ? const Color(0xFF1E293B) : const Color(0xFFEFF6FF);
+        fg = const Color(0xFF2563EB);
+        label = 'New';
+        break;
+      case OrderStatus.delivered:
+        bg = isDark ? const Color(0xFF0F3A2E) : const Color(0xFFECFDF5);
+        fg = const Color(0xFF059669);
+        label = 'Completed';
+        break;
+      case OrderStatus.cancelled:
+        bg = isDark ? const Color(0xFF3B1414) : const Color(0xFFFEF2F2);
+        fg = const Color(0xFFEF4444);
+        label = 'Cancelled';
+        break;
+      default:
+        bg = isDark ? const Color(0xFF232A34) : const Color(0xFFF3F4F6);
+        fg = isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
+        label = status.label;
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3.5),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: AppRadius.full,
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          color: fg,
+          fontSize: 10,
+          fontWeight: FontWeight.w800,
+        ),
       ),
     );
   }

@@ -31,24 +31,24 @@ class _MainShellScreenState extends State<MainShellScreen> {
 
   final List<NavItem> _navItems = const [
     NavItem(
-      icon: Icons.dashboard_outlined,
-      selectedIcon: Icons.dashboard_rounded,
+      icon: Icons.home_outlined,
+      selectedIcon: Icons.home_rounded,
       label: 'Home',
     ),
     NavItem(
-      icon: Icons.receipt_long_outlined,
-      selectedIcon: Icons.receipt_long_rounded,
+      icon: Icons.shopping_bag_outlined,
+      selectedIcon: Icons.shopping_bag_rounded,
       label: 'Orders',
-      badgeCount: 2, // Live active incoming orders count
+      badgeCount: 3,
     ),
     NavItem(
-      icon: Icons.restaurant_menu_outlined,
-      selectedIcon: Icons.restaurant_menu_rounded,
+      icon: Icons.menu_rounded,
+      selectedIcon: Icons.menu_rounded,
       label: 'Products',
     ),
     NavItem(
-      icon: Icons.storefront_outlined,
-      selectedIcon: Icons.storefront_rounded,
+      icon: Icons.store_mall_directory_outlined,
+      selectedIcon: Icons.store_mall_directory_rounded,
       label: 'Shop',
     ),
     NavItem(

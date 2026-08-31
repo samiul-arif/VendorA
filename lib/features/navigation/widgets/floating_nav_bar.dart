@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_shadows.dart';
-import '../../../core/theme/app_typography.dart';
 
 // Navigation Item Configuration
 class NavItem {
@@ -42,30 +41,28 @@ class FloatingNavBar extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.fromLTRB(16, 0, 16, bottomPadding > 0 ? bottomPadding + 4 : 16),
       child: Container(
-        height: 64,
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+        height: 62,
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
         decoration: BoxDecoration(
-          color: isDark ? AppColors.darkSurface : AppColors.lightSurface,
+          color: isDark ? const Color(0xFF1A1F26).withValues(alpha: 0.95) : Colors.white.withValues(alpha: 0.95),
           borderRadius: AppRadius.full,
           boxShadow: isDark ? AppShadows.darkCard : AppShadows.floating,
           border: Border.all(
-            color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+            color: isDark ? AppColors.darkBorder : const Color(0xFFE5E7EB),
             width: 1.0,
           ),
         ),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: List.generate(items.length, (index) {
             final item = items[index];
             final isSelected = index == currentIndex;
 
-            return Expanded(
-              child: _NavBarItemWidget(
-                item: item,
-                isSelected: isSelected,
-                isDark: isDark,
-                onTap: () => onTap(index),
-              ),
+            return _NavBarItemWidget(
+              item: item,
+              isSelected: isSelected,
+              isDark: isDark,
+              onTap: () => onTap(index),
             );
           }),
         ),
@@ -97,16 +94,16 @@ class _NavBarItemWidgetState extends State<_NavBarItemWidget> {
   @override
   Widget build(BuildContext context) {
     final activeBgColor = widget.isDark
-        ? AppColors.textPrimaryDark
-        : AppColors.ctaPrimary;
+        ? Colors.white
+        : const Color(0xFF141414);
 
     final activeFgColor = widget.isDark
-        ? AppColors.ctaPrimary
-        : AppColors.ctaPrimaryText;
+        ? const Color(0xFF141414)
+        : Colors.white;
 
     final inactiveFgColor = widget.isDark
-        ? AppColors.textSecondaryDark
-        : AppColors.textSecondaryLight;
+        ? const Color(0xFF9CA3AF)
+        : const Color(0xFF6B7280);
 
     return GestureDetector(
       onTapDown: (_) => setState(() => _isPressed = true),
@@ -121,7 +118,7 @@ class _NavBarItemWidgetState extends State<_NavBarItemWidget> {
           duration: const Duration(milliseconds: 200),
           curve: Curves.easeInOut,
           padding: EdgeInsets.symmetric(
-            horizontal: widget.isSelected ? 10 : 6,
+            horizontal: widget.isSelected ? 14 : 10,
             vertical: 8,
           ),
           decoration: BoxDecoration(
@@ -137,30 +134,30 @@ class _NavBarItemWidgetState extends State<_NavBarItemWidget> {
                 children: [
                   Icon(
                     widget.isSelected ? widget.item.selectedIcon : widget.item.icon,
-                    size: 22,
+                    size: 20,
                     color: widget.isSelected ? activeFgColor : inactiveFgColor,
                   ),
-                  if (widget.item.badgeCount > 0)
+                  if (!widget.isSelected && widget.item.badgeCount > 0)
                     Positioned(
-                      top: -3,
-                      right: -6,
+                      top: -4,
+                      right: -7,
                       child: Container(
                         padding: const EdgeInsets.all(3),
                         decoration: BoxDecoration(
                           color: AppColors.primary,
                           shape: BoxShape.circle,
                           border: Border.all(
-                            color: widget.isSelected ? activeBgColor : Colors.white,
+                            color: widget.isDark ? const Color(0xFF1A1F26) : Colors.white,
                             width: 1.5,
                           ),
                         ),
                         constraints: const BoxConstraints(minWidth: 14, minHeight: 14),
                         child: Text(
-                          widget.item.badgeCount > 9 ? '9+' : '${widget.item.badgeCount}',
+                          '${widget.item.badgeCount}',
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 8,
-                            fontWeight: FontWeight.w800,
+                            fontWeight: FontWeight.w900,
                             height: 1.0,
                           ),
                           textAlign: TextAlign.center,
@@ -171,15 +168,12 @@ class _NavBarItemWidgetState extends State<_NavBarItemWidget> {
               ),
               if (widget.isSelected) ...[
                 const SizedBox(width: 6),
-                Flexible(
-                  child: Text(
-                    widget.item.label,
-                    style: AppTypography.labelSmall.copyWith(
-                      color: activeFgColor,
-                      fontWeight: FontWeight.w700,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                Text(
+                  widget.item.label,
+                  style: TextStyle(
+                    color: activeFgColor,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w800,
                   ),
                 ),
               ],

@@ -3,12 +3,10 @@ import 'package:provider/provider.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_typography.dart';
-import '../../../../core/theme/app_spacing.dart';
 import '../../../../features/auth/presentation/controllers/auth_controller.dart';
 import '../../../../features/shop/presentation/controllers/shop_controller.dart';
-import '../../../notifications/presentation/widgets/notification_badge_icon.dart';
 
-// Top Store Header with Open/Closed Status Toggle & Multi-Shop Switcher
+// Top Store Header with Open/Closed Status Toggle & Shop Switcher (Screenshot 4 Matching)
 class StoreStatusHeader extends StatelessWidget {
   final VoidCallback onSwitchShopRequested;
 
@@ -26,97 +24,82 @@ class StoreStatusHeader extends StatelessWidget {
     final shopController = context.watch<ShopController>();
 
     final shop = shopController.currentShop ?? authController.activeShop;
-    final isStoreOpen = shop?.isOpen ?? false;
+    final isStoreOpen = shop?.isOpen ?? true;
+
+    // Display clean name without brackets if present for header
+    final rawName = shop?.name ?? 'Foodie Hub Express';
+    final cleanName = rawName.contains('(') ? rawName.split('(').first.trim() : rawName;
 
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        // Store Avatar / Icon
-        Container(
-          width: 44,
-          height: 44,
-          decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF232A34) : Colors.white,
-            borderRadius: AppRadius.md,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
-                offset: const Offset(0, 4),
-                blurRadius: 12,
+        // Store Manager & Shop Name with tap to switch
+        GestureDetector(
+          onTap: onSwitchShopRequested,
+          behavior: HitTestBehavior.opaque,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Store Manager',
+                style: AppTypography.labelSmall.copyWith(
+                  color: isDark ? AppColors.textSecondaryDark : const Color(0xFF6B7280),
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    cleanName,
+                    style: AppTypography.titleMedium.copyWith(
+                      fontWeight: FontWeight.w900,
+                      fontSize: 18,
+                      color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  Icon(
+                    Icons.keyboard_arrow_down_rounded,
+                    size: 20,
+                    color: isDark ? AppColors.textMutedDark : const Color(0xFF9CA3AF),
+                  ),
+                ],
               ),
             ],
-            border: Border.all(
-              color: isDark ? const Color(0xFF2D3748) : const Color(0xFFF3F4F6),
-            ),
-          ),
-          child: const Center(
-            child: Icon(
-              Icons.storefront_rounded,
-              color: AppColors.primary,
-              size: 22,
-            ),
           ),
         ),
 
-        AppSpacing.hGap12,
-
-        // Store Name & Multi-Shop Selector
-        Expanded(
-          child: GestureDetector(
-            onTap: onSwitchShopRequested,
-            behavior: HitTestBehavior.opaque,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'Store Manager',
-                      style: AppTypography.labelSmall.copyWith(
-                        color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    Icon(
-                      Icons.keyboard_arrow_down_rounded,
-                      size: 16,
-                      color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
-                    ),
-                  ],
-                ),
-                Text(
-                  shop?.name ?? 'Foodie Hub Express',
-                  style: AppTypography.titleMedium.copyWith(
-                    fontWeight: FontWeight.w800,
-                    color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-          ),
-        ),
-
-        // Store Open/Close Toggle Pill (Instant Visual Feedback)
+        // Store Open/Close Toggle Pill Matching Screenshot 4 (Green #ECFDF5 with #10B981 dot)
         GestureDetector(
           onTap: () {
-            shopController.toggleStoreStatus(!isStoreOpen);
+            final nextStatus = !isStoreOpen;
+            shopController.toggleStoreStatus(nextStatus);
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  nextStatus ? 'Store Opened! Accepting incoming orders.' : 'Store Paused. Incoming orders paused.',
+                ),
+                backgroundColor: nextStatus ? AppColors.statusSuccess : AppColors.statusError,
+                behavior: SnackBarBehavior.floating,
+                duration: const Duration(seconds: 2),
+              ),
+            );
           },
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
             decoration: BoxDecoration(
               color: isStoreOpen
-                  ? (isDark ? const Color(0xFF0F3A2E) : AppColors.statusSuccessBg)
-                  : (isDark ? const Color(0xFF3B1414) : AppColors.statusErrorBg),
+                  ? (isDark ? const Color(0xFF0F3A2E) : const Color(0xFFECFDF5))
+                  : (isDark ? const Color(0xFF3B1414) : const Color(0xFFFEF2F2)),
               borderRadius: AppRadius.full,
               border: Border.all(
-                color: isStoreOpen ? AppColors.statusSuccess : AppColors.statusError,
-                width: 1.2,
+                color: isStoreOpen ? const Color(0xFFA7F3D0) : const Color(0xFFFECACA),
+                width: 1.0,
               ),
             ),
             child: Row(
@@ -126,25 +109,23 @@ class StoreStatusHeader extends StatelessWidget {
                   width: 7,
                   height: 7,
                   decoration: BoxDecoration(
-                    color: isStoreOpen ? AppColors.statusSuccess : AppColors.statusError,
+                    color: isStoreOpen ? const Color(0xFF10B981) : const Color(0xFFEF4444),
                     shape: BoxShape.circle,
                   ),
                 ),
-                const SizedBox(width: 5),
+                const SizedBox(width: 6),
                 Text(
                   isStoreOpen ? 'Open' : 'Closed',
-                  style: AppTypography.labelSmall.copyWith(
-                    color: isStoreOpen ? AppColors.statusSuccess : AppColors.statusError,
+                  style: TextStyle(
+                    color: isStoreOpen ? const Color(0xFF059669) : const Color(0xFFDC2626),
                     fontWeight: FontWeight.w800,
+                    fontSize: 12,
                   ),
                 ),
               ],
             ),
           ),
         ),
-
-        // Notification Bell Icon with Badge
-        const NotificationBadgeIcon(),
       ],
     );
   }

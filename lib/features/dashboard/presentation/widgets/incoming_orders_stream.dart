@@ -2,16 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
-import '../../../../core/theme/app_typography.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../../shared/components/app_card.dart';
-import '../../../../shared/components/status_badge.dart';
 import '../../../orders/domain/models/order_status.dart';
 import '../../../orders/presentation/controllers/order_controller.dart';
 import '../../../orders/presentation/views/order_details_screen.dart';
 
-// Incoming Orders Stream Component for Quick Dispatch & Kitchen Preparation
+// Incoming Orders Stream Component (Screenshot 4 Matching)
 class IncomingOrdersStream extends StatelessWidget {
   final VoidCallback onViewAllTapped;
 
@@ -20,14 +18,6 @@ class IncomingOrdersStream extends StatelessWidget {
     required this.onViewAllTapped,
   });
 
-  String _formatTimeAgo(DateTime dt) {
-    final diff = DateTime.now().difference(dt);
-    if (diff.inMinutes < 1) return 'Just now';
-    if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
-    if (diff.inHours < 24) return '${diff.inHours}h ago';
-    return '${diff.inDays}d ago';
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -35,31 +25,37 @@ class IncomingOrdersStream extends StatelessWidget {
     final orderController = context.watch<OrderController>();
 
     final liveOrders = orderController.allOrders
-        .where((o) => o.status == OrderStatus.pending || o.status == OrderStatus.accepted || o.status == OrderStatus.preparing)
+        .where((o) =>
+            o.status == OrderStatus.pending ||
+            o.status == OrderStatus.accepted ||
+            o.status == OrderStatus.preparing)
         .take(3)
         .toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Section Header
+        // Section Header Matching Screenshot 4: INCOMING ORDERS | View All (18)
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Incoming Live Orders',
-              style: AppTypography.titleMedium.copyWith(
+              'INCOMING ORDERS',
+              style: TextStyle(
                 fontWeight: FontWeight.w800,
-                color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                fontSize: 11,
+                letterSpacing: 0.8,
+                color: isDark ? AppColors.textMutedDark : const Color(0xFF6B7280),
               ),
             ),
             GestureDetector(
               onTap: onViewAllTapped,
               child: Text(
                 'View All (${orderController.allOrders.length})',
-                style: AppTypography.labelMedium.copyWith(
+                style: const TextStyle(
                   color: AppColors.primary,
                   fontWeight: FontWeight.w800,
+                  fontSize: 11,
                 ),
               ),
             ),
@@ -71,16 +67,17 @@ class IncomingOrdersStream extends StatelessWidget {
         if (liveOrders.isEmpty)
           AppCard(
             padding: const EdgeInsets.all(20),
+            borderRadius: BorderRadius.circular(20),
             child: Row(
               children: [
                 Container(
-                  width: 44,
-                  height: 44,
+                  width: 40,
+                  height: 40,
                   decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF2E1A2A) : AppColors.primaryTint,
+                    color: isDark ? const Color(0xFF2E1A2A) : const Color(0xFFFFF0F6),
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.check_circle_outline_rounded, color: AppColors.primary),
+                  child: const Icon(Icons.check_circle_outline_rounded, color: AppColors.primary, size: 20),
                 ),
                 AppSpacing.hGap12,
                 Expanded(
@@ -89,15 +86,17 @@ class IncomingOrdersStream extends StatelessWidget {
                     children: [
                       Text(
                         'Kitchen Queue is Clear',
-                        style: AppTypography.titleSmall.copyWith(
+                        style: TextStyle(
                           fontWeight: FontWeight.w800,
+                          fontSize: 13,
                           color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
                         ),
                       ),
                       Text(
                         'New customer orders will appear here in real time.',
-                        style: AppTypography.bodySmall.copyWith(
-                          color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: isDark ? AppColors.textMutedDark : const Color(0xFF6B7280),
                         ),
                       ),
                     ],
@@ -112,11 +111,10 @@ class IncomingOrdersStream extends StatelessWidget {
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: liveOrders.length,
-            separatorBuilder: (_, __) => AppSpacing.vGap12,
+            separatorBuilder: (_, __) => AppSpacing.vGap10,
             itemBuilder: (context, index) {
               final order = liveOrders[index];
-              final nextStatus = order.status.nextActionStatus;
-              final nextActionLabel = order.status.nextActionLabel;
+              final isNew = order.isPending;
 
               return AppCard(
                 onTap: () {
@@ -126,114 +124,165 @@ class IncomingOrdersStream extends StatelessWidget {
                     ),
                   );
                 },
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                borderRadius: BorderRadius.circular(20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    // Order ID & Status Badge
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              '#${order.orderNumber}',
-                              style: AppTypography.titleSmall.copyWith(
-                                fontWeight: FontWeight.w800,
-                                color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                    // Order Info Left
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                '#${order.orderNumber}',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w900,
+                                  color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                                ),
                               ),
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              '• ${_formatTimeAgo(order.createdAt)}',
-                              style: AppTypography.bodySmall.copyWith(
-                                color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
+                              const SizedBox(width: 8),
+                              // Status pill (Preparing in yellow / New in blue)
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2.5),
+                                decoration: BoxDecoration(
+                                  color: isNew
+                                      ? (isDark ? const Color(0xFF1E293B) : const Color(0xFFEFF6FF))
+                                      : (isDark ? const Color(0xFF382914) : const Color(0xFFFFFBEB)),
+                                  borderRadius: AppRadius.full,
+                                ),
+                                child: Text(
+                                  isNew ? 'New' : 'Preparing',
+                                  style: TextStyle(
+                                    fontSize: 9.5,
+                                    fontWeight: FontWeight.w800,
+                                    color: isNew ? const Color(0xFF2563EB) : const Color(0xFFD97706),
+                                  ),
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                        StatusBadge(
-                          type: order.status.badgeType,
-                          label: order.status.label,
-                        ),
-                      ],
-                    ),
-
-                    AppSpacing.vGap8,
-
-                    // Items Summary
-                    Text(
-                      order.itemsSummary,
-                      style: AppTypography.bodyMedium.copyWith(
-                        color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-
-                    AppSpacing.vGap12,
-
-                    // Price & Quick Action Button
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          Formatters.formatCurrency(order.totalAmount),
-                          style: AppTypography.titleMedium.copyWith(
-                            fontWeight: FontWeight.w800,
-                            color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                            ],
                           ),
-                        ),
-                        if (nextStatus != null && nextActionLabel != null)
-                          ElevatedButton(
-                            onPressed: () async {
-                              final result = await orderController.updateStatus(
-                                orderId: order.id,
-                                newStatus: nextStatus,
-                              );
-                              result.when(
-                                success: (_) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text('Order #${order.orderNumber} updated to ${nextStatus.label}!'),
-                                      backgroundColor: AppColors.statusSuccess,
-                                      behavior: SnackBarBehavior.floating,
-                                      duration: const Duration(seconds: 2),
-                                    ),
-                                  );
-                                },
-                                failure: (msg, _) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(msg),
-                                      backgroundColor: AppColors.statusError,
-                                      behavior: SnackBarBehavior.floating,
-                                    ),
-                                  );
-                                },
+                          const SizedBox(height: 4),
+                          Text(
+                            order.itemsSummary,
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: isDark ? AppColors.textSecondaryDark : const Color(0xFF6B7280),
+                              fontWeight: FontWeight.w500,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 3),
+                          Text(
+                            Formatters.formatCurrency(order.totalAmount),
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w900,
+                              color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(width: 12),
+
+                    // Action Button Right (Pink "Accept" or Black "Ready")
+                    if (isNew)
+                      GestureDetector(
+                        onTap: () async {
+                          final result = await orderController.updateStatus(
+                            orderId: order.id,
+                            newStatus: OrderStatus.preparing,
+                          );
+                          result.when(
+                            success: (_) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Order #${order.orderNumber} Accepted! Moved to Preparing.'),
+                                  backgroundColor: AppColors.statusSuccess,
+                                  behavior: SnackBarBehavior.floating,
+                                  duration: const Duration(seconds: 2),
+                                ),
                               );
                             },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: order.isPending
-                                  ? AppColors.primary
-                                  : (isDark ? Colors.white : AppColors.ctaPrimary),
-                              foregroundColor: order.isPending
-                                  ? Colors.white
-                                  : (isDark ? AppColors.inkPrimary : Colors.white),
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                              shape: const RoundedRectangleBorder(borderRadius: AppRadius.full),
-                              elevation: 0,
-                            ),
-                            child: Text(
-                              nextActionLabel,
-                              style: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w800,
-                              ),
+                            failure: (msg, _) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(msg),
+                                  backgroundColor: AppColors.statusError,
+                                  behavior: SnackBarBehavior.floating,
+                                ),
+                              );
+                            },
+                          );
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 7),
+                          decoration: const BoxDecoration(
+                            color: AppColors.primary,
+                            borderRadius: AppRadius.full,
+                          ),
+                          child: const Text(
+                            'Accept',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w800,
                             ),
                           ),
-                      ],
-                    ),
+                        ),
+                      )
+                    else
+                      GestureDetector(
+                        onTap: () async {
+                          final result = await orderController.updateStatus(
+                            orderId: order.id,
+                            newStatus: OrderStatus.ready,
+                          );
+                          result.when(
+                            success: (_) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Order #${order.orderNumber} Ready! Assigned rider notified for immediate pickup.'),
+                                  backgroundColor: AppColors.statusSuccess,
+                                  behavior: SnackBarBehavior.floating,
+                                  duration: const Duration(seconds: 3),
+                                ),
+                              );
+                            },
+                            failure: (msg, _) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(msg),
+                                  backgroundColor: AppColors.statusError,
+                                  behavior: SnackBarBehavior.floating,
+                                ),
+                              );
+                            },
+                          );
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+                          decoration: BoxDecoration(
+                            color: isDark ? Colors.white : AppColors.ctaPrimary,
+                            borderRadius: AppRadius.full,
+                          ),
+                          child: Text(
+                            'Ready',
+                            style: TextStyle(
+                              color: isDark ? AppColors.inkPrimary : Colors.white,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                        ),
+                      ),
                   ],
                 ),
               );

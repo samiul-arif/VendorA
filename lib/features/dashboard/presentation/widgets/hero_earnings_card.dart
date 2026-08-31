@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../domain/models/dashboard_metrics.dart';
 
-// Hero Net Earnings Card with Food-Tech Gradient & Performance Badges
+// Hero Net Earnings Card with Food-Tech Gradient & Performance Badges (Screenshot 4 Matching)
 class HeroEarningsCard extends StatelessWidget {
   final DashboardMetrics? metrics;
   final VoidCallback? onAnalyticsTapped;
@@ -27,159 +26,119 @@ class HeroEarningsCard extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        gradient: AppColors.primaryGradient,
-        borderRadius: AppRadius.card,
+        gradient: const LinearGradient(
+          colors: [
+            Color(0xFFE21B70),
+            Color(0xFFD81B60),
+            Color(0xFFC0155C),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withValues(alpha: 0.32),
-            offset: const Offset(0, 10),
-            blurRadius: 24,
-            spreadRadius: -2,
+            color: const Color(0xFFE21B70).withValues(alpha: 0.35),
+            offset: const Offset(0, 12),
+            blurRadius: 28,
+            spreadRadius: -4,
           ),
         ],
       ),
-      child: Stack(
-        children: [
-          // Subtle Ambient Background Circles
-          Positioned(
-            right: -20,
-            top: -20,
-            child: Container(
-              width: 140,
-              height: 140,
+      child: Padding(
+        padding: const EdgeInsets.all(22),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Top Badge Matching Screenshot 4: TODAY'S OVERVIEW
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4.5),
               decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white.withValues(alpha: 0.08),
+                color: Colors.white.withValues(alpha: 0.22),
+                borderRadius: AppRadius.full,
+              ),
+              child: Text(
+                "TODAY'S OVERVIEW",
+                style: AppTypography.labelSmall.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w800,
+                  fontSize: 10,
+                  letterSpacing: 0.8,
+                ),
               ),
             ),
-          ),
 
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            AppSpacing.vGap16,
+
+            // Primary Revenue Amount
+            Text(
+              Formatters.formatCurrency(earnings),
+              style: const TextStyle(
+                fontSize: 34,
+                fontWeight: FontWeight.w900,
+                color: Colors.white,
+                letterSpacing: -0.8,
+              ),
+            ),
+
+            const SizedBox(height: 4),
+
+            // Subtext: Total Net Revenue (+14.2% vs yesterday)
+            Text(
+              'Total Net Revenue (+${growth.toStringAsFixed(1)}% vs yesterday)',
+              style: TextStyle(
+                color: Colors.white.withValues(alpha: 0.9),
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+
+            AppSpacing.vGap20,
+
+            // Sub-Metrics Row Matching Screenshot 4: 24 Orders | $59.18 Avg Ticket | 4.9 ★ Rating
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                // Top Tagline & Growth Pill
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.2),
-                        borderRadius: AppRadius.full,
-                      ),
-                      child: Text(
-                        "TODAY'S NET EARNINGS",
-                        style: AppTypography.labelSmall.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: 0.6,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: AppRadius.full,
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(
-                            Icons.trending_up_rounded,
-                            size: 14,
-                            color: AppColors.primary,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            '+${growth.toStringAsFixed(1)}%',
-                            style: AppTypography.labelSmall.copyWith(
-                              color: AppColors.primary,
-                              fontWeight: FontWeight.w800,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+                _buildSubMetric(
+                  value: '$ordersCount',
+                  label: 'Orders',
                 ),
-
-                AppSpacing.vGap16,
-
-                // Primary Revenue Amount
-                Text(
-                  Formatters.formatCurrency(earnings),
-                  style: AppTypography.statLarge.copyWith(
-                    color: Colors.white,
-                    letterSpacing: -1.0,
-                  ),
+                _buildMetricDivider(),
+                _buildSubMetric(
+                  value: Formatters.formatCurrency(avgTicket),
+                  label: 'Avg Ticket',
                 ),
-
-                AppSpacing.vGap4,
-
-                Text(
-                  'Real-time automated revenue ledger',
-                  style: AppTypography.bodySmall.copyWith(
-                    color: Colors.white.withValues(alpha: 0.85),
-                  ),
-                ),
-
-                AppSpacing.vGap16,
-
-                // Divider Line
-                Container(
-                  height: 1,
-                  color: Colors.white.withValues(alpha: 0.2),
-                ),
-
-                AppSpacing.vGap12,
-
-                // Sub-Metrics Row
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _buildSubMetric(
-                      label: 'Total Orders',
-                      value: '$ordersCount',
-                    ),
-                    _buildMetricDivider(),
-                    _buildSubMetric(
-                      label: 'Avg Ticket',
-                      value: Formatters.formatCurrency(avgTicket),
-                    ),
-                    _buildMetricDivider(),
-                    _buildSubMetric(
-                      label: 'Store Rating',
-                      value: '$rating ★',
-                    ),
-                  ],
+                _buildMetricDivider(),
+                _buildSubMetric(
+                  value: '$rating ★',
+                  label: 'Rating',
                 ),
               ],
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildSubMetric({required String label, required String value}) {
+  Widget _buildSubMetric({required String value, required String label}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           value,
-          style: AppTypography.titleMedium.copyWith(
+          style: const TextStyle(
             color: Colors.white,
-            fontWeight: FontWeight.w800,
+            fontSize: 14,
+            fontWeight: FontWeight.w900,
           ),
         ),
         Text(
           label,
-          style: AppTypography.bodySmall.copyWith(
+          style: TextStyle(
             color: Colors.white.withValues(alpha: 0.75),
             fontSize: 11,
+            fontWeight: FontWeight.w500,
           ),
         ),
       ],
@@ -190,7 +149,8 @@ class HeroEarningsCard extends StatelessWidget {
     return Container(
       width: 1,
       height: 24,
-      color: Colors.white.withValues(alpha: 0.2),
+      margin: const EdgeInsets.symmetric(horizontal: 20),
+      color: Colors.white.withValues(alpha: 0.25),
     );
   }
 }

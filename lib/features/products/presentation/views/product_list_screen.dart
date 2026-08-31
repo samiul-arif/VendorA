@@ -8,7 +8,6 @@ import '../../../../shared/components/empty_state_view.dart';
 import '../../../../shared/components/error_state_view.dart';
 import '../../../../shared/components/shimmer_skeleton.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
-import '../../../notifications/presentation/widgets/notification_badge_icon.dart';
 import '../../domain/models/product_model.dart';
 import '../controllers/product_controller.dart';
 import '../widgets/product_card.dart';
@@ -17,7 +16,7 @@ import '../widgets/category_filter_bar.dart';
 import '../widgets/quick_restock_bottom_sheet.dart';
 import 'add_edit_product_screen.dart';
 
-// Product Catalog & Inventory Screen (arif.html Styled 2-Column Grid with Floating Action Button)
+// Product Catalog & Inventory Screen (Screenshot 5 Matching)
 class ProductListScreen extends StatefulWidget {
   const ProductListScreen({super.key});
 
@@ -115,10 +114,36 @@ class _ProductListScreenState extends State<ProductListScreen> {
             ),
           ],
         ),
-        actions: const [
-          // Notification Bell Icon with Live Badge
-          NotificationBadgeIcon(),
-          SizedBox(width: 8),
+        actions: [
+          // Foodie Pink "+ Add Item" Pill Button Matching Screenshot 5
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 14.0),
+            child: GestureDetector(
+              onTap: () => _openAddEditScreen(),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                decoration: const BoxDecoration(
+                  color: AppColors.primary,
+                  borderRadius: AppRadius.full,
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: const [
+                    Icon(Icons.add_rounded, color: Colors.white, size: 16),
+                    SizedBox(width: 4),
+                    Text(
+                      'Add Item',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
         ],
       ),
       body: SafeArea(
@@ -134,7 +159,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                     onRefresh: () async => _loadProducts(),
                     color: AppColors.primary,
                     child: ListView(
-                      padding: const EdgeInsets.fromLTRB(16, 12, 16, 120),
+                      padding: const EdgeInsets.fromLTRB(16, 12, 16, 110),
                       children: [
                         // Search Bar
                         ProductSearchBar(
@@ -175,7 +200,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                             },
                           )
                         else
-                          // 2-Column Responsive Grid
+                          // 2-Column Responsive Grid with Compact Ratio
                           GridView.builder(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
@@ -185,7 +210,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                               crossAxisCount: 2,
                               crossAxisSpacing: 12,
                               mainAxisSpacing: 12,
-                              childAspectRatio: 0.62,
+                              childAspectRatio: 0.76,
                             ),
                             itemBuilder: (context, index) {
                               final product = filteredProducts[index];
@@ -205,20 +230,6 @@ class _ProductListScreenState extends State<ProductListScreen> {
                       ],
                     ),
                   ),
-      ),
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 72.0),
-        child: FloatingActionButton.extended(
-          onPressed: () => _openAddEditScreen(),
-          backgroundColor: isDark ? Colors.white : AppColors.ctaPrimary,
-          foregroundColor: isDark ? AppColors.ctaPrimary : Colors.white,
-          elevation: 4,
-          icon: const Icon(Icons.add_rounded, size: 20),
-          label: const Text(
-            'Add Item',
-            style: TextStyle(fontWeight: FontWeight.w800, fontSize: 13),
-          ),
-        ),
       ),
     );
   }
@@ -253,7 +264,7 @@ class _ProductGridSkeleton extends StatelessWidget {
             crossAxisCount: 2,
             crossAxisSpacing: 12,
             mainAxisSpacing: 12,
-            childAspectRatio: 0.62,
+            childAspectRatio: 0.76,
           ),
           itemBuilder: (_, __) => const ShimmerSkeleton(
             width: double.infinity,

@@ -68,13 +68,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       backgroundColor: isDark ? AppColors.darkCanvas : AppColors.lightCanvas,
       appBar: AppBar(
         title: const Text('Vendor Profile & Settings'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout_rounded),
-            tooltip: 'Log Out',
-            onPressed: _handleLogout,
-          ),
-        ],
       ),
       body: SafeArea(
         bottom: false,

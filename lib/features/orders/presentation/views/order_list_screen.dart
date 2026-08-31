@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
-import '../../../../shared/components/app_dialog.dart';
 import '../../../../shared/components/empty_state_view.dart';
 import '../../../../shared/components/error_state_view.dart';
 import '../../../../shared/components/shimmer_skeleton.dart';
@@ -12,11 +11,9 @@ import '../../domain/models/order_model.dart';
 import '../../domain/models/order_status.dart';
 import '../controllers/order_controller.dart';
 import '../widgets/order_card.dart';
-import '../widgets/order_status_tab_bar.dart';
 import 'order_details_screen.dart';
-import '../../../notifications/presentation/widgets/notification_badge_icon.dart';
 
-// Order Dispatch & Kitchen Live Queue Screen (Tab 1 in Main Shell)
+// Order Management Screen (Screenshot 3 Matching Layout)
 class OrderListScreen extends StatefulWidget {
   const OrderListScreen({super.key});
 
@@ -25,7 +22,7 @@ class OrderListScreen extends StatefulWidget {
 }
 
 class _OrderListScreenState extends State<OrderListScreen> {
-  final TextEditingController _searchController = TextEditingController();
+  int _selectedFilterIndex = 0; // 0 = Active, 1 = Completed, 2 = Cancelled
 
   @override
   void initState() {
@@ -33,12 +30,6 @@ class _OrderListScreenState extends State<OrderListScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadOrders();
     });
-  }
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
   }
 
   void _loadOrders() {
@@ -67,12 +58,21 @@ class _OrderListScreenState extends State<OrderListScreen> {
 
     result.when(
       success: (updated) {
+        String msg;
+        if (newStatus == OrderStatus.preparing || newStatus == OrderStatus.accepted) {
+          msg = 'Order #${order.orderNumber} accepted! Moved to preparation queue.';
+        } else if (newStatus == OrderStatus.ready) {
+          msg = 'Order #${order.orderNumber} Ready! Assigned rider notified for pickup.';
+        } else {
+          msg = 'Order #${order.orderNumber} updated to ${newStatus.label}.';
+        }
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Order #${order.orderNumber} moved to ${newStatus.label}!'),
+            content: Text(msg),
             backgroundColor: AppColors.statusSuccess,
             behavior: SnackBarBehavior.floating,
-            duration: const Duration(seconds: 2),
+            duration: const Duration(seconds: 3),
           ),
         );
       },
@@ -88,67 +88,45 @@ class _OrderListScreenState extends State<OrderListScreen> {
     );
   }
 
-  void _handleDeclineOrder(OrderModel order) async {
-    final confirmed = await AppDialog.showConfirmation(
-      context: context,
-      title: 'Decline Order #${order.orderNumber}',
-      message: 'Are you sure you want to reject this incoming order?',
-      confirmText: 'Decline Order',
-      isDestructive: true,
-    );
-
-    if (confirmed == true && mounted) {
-      final orderController = context.read<OrderController>();
-      final result = await orderController.cancelOrder(
-        order.id,
-        reason: 'Merchant unable to prepare at this time.',
-      );
-
-      if (!mounted) return;
-
-      result.when(
-        success: (_) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Order #${order.orderNumber} declined.'),
-              backgroundColor: AppColors.statusError,
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
-        },
-        failure: (msg, _) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(msg),
-              backgroundColor: AppColors.statusError,
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
-        },
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final orderController = context.watch<OrderController>();
-    final orders = orderController.filteredOrders;
+    final allOrders = orderController.allOrders;
+
+    // Filter orders based on the 3 segmented tabs: Active, Completed, Cancelled
+    final activeOrders = allOrders.where((o) =>
+        o.status == OrderStatus.pending ||
+        o.status == OrderStatus.accepted ||
+        o.status == OrderStatus.preparing ||
+        o.status == OrderStatus.ready).toList();
+
+    final completedOrders = allOrders.where((o) => o.status == OrderStatus.delivered).toList();
+    final cancelledOrders = allOrders.where((o) => o.status == OrderStatus.cancelled).toList();
+
+    List<OrderModel> currentList;
+    if (_selectedFilterIndex == 0) {
+      currentList = activeOrders;
+    } else if (_selectedFilterIndex == 1) {
+      currentList = completedOrders;
+    } else {
+      currentList = cancelledOrders;
+    }
 
     return Scaffold(
       backgroundColor: isDark ? AppColors.darkCanvas : AppColors.lightCanvas,
       appBar: AppBar(
-        title: const Text('Live Orders'),
-        actions: const [
-          NotificationBadgeIcon(),
-        ],
+        title: const Text(
+          'Order Management',
+          style: TextStyle(fontWeight: FontWeight.w800),
+        ),
       ),
       body: SafeArea(
         bottom: false,
-        child: orderController.isLoading && orderController.allOrders.isEmpty
+        child: orderController.isLoading && allOrders.isEmpty
             ? const _OrderListSkeleton()
-            : orderController.hasError && orderController.allOrders.isEmpty
+            : orderController.hasError && allOrders.isEmpty
                 ? ErrorStateView(
                     message: orderController.errorMessage ?? 'Failed to load order queue.',
                     onRetry: _loadOrders,
@@ -157,93 +135,108 @@ class _OrderListScreenState extends State<OrderListScreen> {
                     onRefresh: () async => _loadOrders(),
                     color: AppColors.primary,
                     child: ListView(
-                      padding: const EdgeInsets.fromLTRB(16, 12, 16, 96),
+                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 110),
                       children: [
-                        // Search Bar
-                        Container(
-                          decoration: BoxDecoration(
-                            color: isDark ? AppColors.darkSurface : Colors.white,
-                            borderRadius: AppRadius.full,
-                            border: Border.all(
-                              color: isDark ? const Color(0xFF2D3748) : AppColors.borderLight,
+                        // Filter Pills Matching Screenshot 3: Active (6) | Completed | Cancelled
+                        Row(
+                          children: [
+                            _buildFilterPill(
+                              label: 'Active (${activeOrders.length})',
+                              isSelected: _selectedFilterIndex == 0,
+                              isDark: isDark,
+                              onTap: () => setState(() => _selectedFilterIndex = 0),
                             ),
-                          ),
-                          child: TextField(
-                            controller: _searchController,
-                            onChanged: (val) => orderController.setSearchQuery(val),
-                            decoration: InputDecoration(
-                              hintText: 'Search by order #, customer, item...',
-                              prefixIcon: const Icon(Icons.search_rounded, size: 20),
-                              suffixIcon: orderController.searchQuery.isNotEmpty
-                                  ? IconButton(
-                                      icon: const Icon(Icons.close_rounded, size: 18),
-                                      onPressed: () {
-                                        _searchController.clear();
-                                        orderController.clearSearch();
-                                      },
-                                    )
-                                  : null,
-                              border: InputBorder.none,
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 12,
-                              ),
+                            const SizedBox(width: 8),
+                            _buildFilterPill(
+                              label: 'Completed',
+                              isSelected: _selectedFilterIndex == 1,
+                              isDark: isDark,
+                              onTap: () => setState(() => _selectedFilterIndex = 1),
                             ),
-                          ),
-                        ),
-
-                        AppSpacing.vGap12,
-
-                        // Horizontal Status Tabs Bar
-                        OrderStatusTabBar(
-                          selectedStatus: orderController.selectedStatus,
-                          onStatusSelected: (status) =>
-                              orderController.setStatusFilter(status),
-                          countGetter: (status) =>
-                              orderController.getCount(status),
+                            const SizedBox(width: 8),
+                            _buildFilterPill(
+                              label: 'Cancelled',
+                              isSelected: _selectedFilterIndex == 2,
+                              isDark: isDark,
+                              onTap: () => setState(() => _selectedFilterIndex = 2),
+                            ),
+                          ],
                         ),
 
                         AppSpacing.vGap16,
 
-                        // Empty State if no orders found
-                        if (orders.isEmpty)
+                        // Empty State if no orders in selected tab
+                        if (currentList.isEmpty)
                           EmptyStateView(
-                            icon: Icons.receipt_long_rounded,
-                            title: 'No Orders Found',
-                            description: orderController.searchQuery.isNotEmpty
-                                ? 'No orders match "${orderController.searchQuery}".'
-                                : 'No orders in ${orderController.selectedStatus.label.toLowerCase()} status.',
-                            actionButtonText: orderController.searchQuery.isNotEmpty
-                                ? 'Clear Search'
-                                : null,
-                            onActionButtonPressed: orderController.searchQuery.isNotEmpty
-                                ? () {
-                                    _searchController.clear();
-                                    orderController.clearSearch();
-                                  }
-                                : null,
+                            icon: Icons.receipt_long_outlined,
+                            title: 'No ${_selectedFilterIndex == 0 ? 'Active' : _selectedFilterIndex == 1 ? 'Completed' : 'Cancelled'} Orders',
+                            description: 'Orders will automatically appear here as they progress.',
                           )
                         else
                           // Orders List View
                           ListView.separated(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
-                            itemCount: orders.length,
+                            itemCount: currentList.length,
                             separatorBuilder: (_, __) => AppSpacing.vGap12,
                             itemBuilder: (context, index) {
-                              final order = orders[index];
+                              final order = currentList[index];
                               return OrderCard(
                                 order: order,
                                 onTap: () => _openOrderDetails(order),
                                 onQuickAction: (nextStatus) =>
                                     _handleQuickStatusChange(order, nextStatus),
-                                onReject: () => _handleDeclineOrder(order),
                               );
                             },
                           ),
                       ],
                     ),
                   ),
+      ),
+    );
+  }
+
+  Widget _buildFilterPill({
+    required String label,
+    required bool isSelected,
+    required bool isDark,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? (isDark ? Colors.white : AppColors.ctaPrimary)
+              : (isDark ? const Color(0xFF232A34) : Colors.white),
+          borderRadius: AppRadius.full,
+          border: Border.all(
+            color: isSelected
+                ? Colors.transparent
+                : (isDark ? AppColors.darkBorder : const Color(0xFFE5E7EB)),
+          ),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.08),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ]
+              : null,
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w800,
+            color: isSelected
+                ? (isDark ? AppColors.inkPrimary : Colors.white)
+                : (isDark ? AppColors.textSecondaryDark : const Color(0xFF6B7280)),
+          ),
+        ),
       ),
     );
   }
@@ -258,15 +251,13 @@ class _OrderListSkeleton extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 96),
       children: [
-        const ShimmerSkeleton(width: double.infinity, height: 48, borderRadius: AppRadius.full),
-        AppSpacing.vGap12,
         Row(
           children: const [
-            ShimmerSkeleton(width: 80, height: 38, borderRadius: AppRadius.full),
+            ShimmerSkeleton(width: 90, height: 36, borderRadius: AppRadius.full),
             SizedBox(width: 8),
-            ShimmerSkeleton(width: 90, height: 38, borderRadius: AppRadius.full),
+            ShimmerSkeleton(width: 90, height: 36, borderRadius: AppRadius.full),
             SizedBox(width: 8),
-            ShimmerSkeleton(width: 90, height: 38, borderRadius: AppRadius.full),
+            ShimmerSkeleton(width: 90, height: 36, borderRadius: AppRadius.full),
           ],
         ),
         AppSpacing.vGap16,
@@ -276,7 +267,7 @@ class _OrderListSkeleton extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: 12.0),
             child: const ShimmerSkeleton(
               width: double.infinity,
-              height: 180,
+              height: 160,
               borderRadius: AppRadius.card,
             ),
           ),
