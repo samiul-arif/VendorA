@@ -439,43 +439,72 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
           Row(
             children: [
               Expanded(
-                child: ElevatedButton.icon(
-                  onPressed: () {
+                child: InkWell(
+                  onTap: () {
                     AppToast.showInfo(
                       context,
                       title: 'Calling Customer',
                       message: 'Connecting dispatch phone to ${order.customerPhone}...',
                     );
                   },
-                  icon: const Icon(Icons.call_rounded, size: 15),
-                  label: const Text('Call Customer'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: colors.primaryContainer,
-                    foregroundColor: colors.primary,
-                    elevation: 0,
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    shape: const RoundedRectangleBorder(borderRadius: AppRadius.full),
+                  borderRadius: AppRadius.full,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 11),
+                    decoration: BoxDecoration(
+                      color: colors.primaryContainer,
+                      borderRadius: AppRadius.full,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.call_rounded, size: 15, color: colors.primary),
+                        const SizedBox(width: 6),
+                        Text(
+                          'Call Customer',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                            color: colors.primary,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
               AppSpacing.hGap10,
               Expanded(
-                child: ElevatedButton.icon(
-                  onPressed: () {
+                child: InkWell(
+                  onTap: () {
                     AppToast.showInfo(
                       context,
                       title: 'Opening Map Location',
                       message: 'Navigating to: ${order.deliveryAddress}',
                     );
                   },
-                  icon: const Icon(Icons.map_outlined, size: 15),
-                  label: const Text('Open in Maps'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: colors.surfaceSubtle,
-                    foregroundColor: colors.textPrimary,
-                    elevation: 0,
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    shape: const RoundedRectangleBorder(borderRadius: AppRadius.full),
+                  borderRadius: AppRadius.full,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 11),
+                    decoration: BoxDecoration(
+                      color: colors.surfaceSubtle,
+                      borderRadius: AppRadius.full,
+                      border: Border.all(color: colors.borderSubtle),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.map_outlined, size: 15, color: colors.textPrimary),
+                        const SizedBox(width: 6),
+                        Text(
+                          'Open in Maps',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                            color: colors.textPrimary,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -696,6 +725,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
     return AppCard(
       padding: const EdgeInsets.all(16),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
             width: 44,
@@ -714,6 +744,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
                   'Assigned Courier / Rider',
@@ -723,6 +754,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                     color: colors.textMuted,
                   ),
                 ),
+                const SizedBox(height: 2),
                 Text(
                   order.riderName!,
                   style: AppTypography.titleSmall.copyWith(
@@ -730,7 +762,8 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                     color: colors.textPrimary,
                   ),
                 ),
-                if (order.riderPhone != null)
+                if (order.riderPhone != null) ...[
+                  const SizedBox(height: 2),
                   Text(
                     order.riderPhone!,
                     style: TextStyle(
@@ -739,25 +772,41 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                       color: colors.textSecondary,
                     ),
                   ),
+                ],
               ],
             ),
           ),
-          ElevatedButton.icon(
-            onPressed: () {
+          const SizedBox(width: 8),
+          InkWell(
+            onTap: () {
               AppToast.showInfo(
                 context,
                 title: 'Calling Courier',
                 message: 'Connecting dispatch line with ${order.riderName}...',
               );
             },
-            icon: const Icon(Icons.phone_in_talk_rounded, size: 14),
-            label: const Text('Call'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: colors.successBg,
-              foregroundColor: colors.success,
-              elevation: 0,
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              shape: const RoundedRectangleBorder(borderRadius: AppRadius.full),
+            borderRadius: AppRadius.full,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              decoration: BoxDecoration(
+                color: colors.successBg,
+                borderRadius: AppRadius.full,
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.phone_in_talk_rounded, size: 14, color: colors.success),
+                  const SizedBox(width: 4),
+                  Text(
+                    'Call',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color: colors.success,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -765,14 +814,14 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
     );
   }
 
-  // 7. Order Timeline Card
+  // 7. Order Timeline Card (Vertical Milestone Tracker)
   Widget _buildOrderTimelineCard(OrderModel order, AppSemanticColors colors) {
     final stages = [
-      {'status': OrderStatus.pending, 'label': 'Order Placed'},
-      {'status': OrderStatus.accepted, 'label': 'Accepted'},
-      {'status': OrderStatus.preparing, 'label': 'Kitchen Prep'},
-      {'status': OrderStatus.ready, 'label': 'Ready for Pickup'},
-      {'status': OrderStatus.delivered, 'label': 'Delivered'},
+      {'status': OrderStatus.pending, 'label': 'Order Placed', 'desc': 'Received by merchant system'},
+      {'status': OrderStatus.accepted, 'label': 'Order Accepted', 'desc': 'Sent to kitchen prep queue'},
+      {'status': OrderStatus.preparing, 'label': 'Kitchen Preparation', 'desc': 'Meal being cooked & packed'},
+      {'status': OrderStatus.ready, 'label': 'Ready for Pickup', 'desc': 'Awaiting courier dispatch'},
+      {'status': OrderStatus.delivered, 'label': 'Order Delivered', 'desc': 'Handed over to customer'},
     ];
 
     final currentIdx = stages.indexWhere((s) => s['status'] == order.status);
@@ -782,71 +831,121 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Order Timeline',
-            style: AppTypography.titleSmall.copyWith(
-              fontWeight: FontWeight.w800,
-              color: colors.textPrimary,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Order Timeline',
+                style: AppTypography.titleSmall.copyWith(
+                  fontWeight: FontWeight.w800,
+                  color: colors.textPrimary,
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: colors.primaryContainer,
+                  borderRadius: AppRadius.full,
+                ),
+                child: Text(
+                  order.status.label,
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w800,
+                    color: colors.primary,
+                  ),
+                ),
+              ),
+            ],
           ),
           AppSpacing.vGap16,
-          Row(
-            children: List.generate(stages.length * 2 - 1, (index) {
-              if (index.isOdd) {
-                final stepIdx = index ~/ 2;
-                final isDone = currentIdx >= 0 && stepIdx < currentIdx;
-                return Expanded(
-                  child: Container(
-                    height: 3,
-                    color: isDone ? colors.primary : colors.borderSubtle,
-                  ),
-                );
-              }
+          ...List.generate(stages.length, (index) {
+            final stage = stages[index];
+            final isReached = currentIdx >= 0 && index <= currentIdx;
+            final isCurrent = index == currentIdx;
+            final isLast = index == stages.length - 1;
 
-              final stepIdx = index ~/ 2;
-              final isReached = currentIdx >= 0 && stepIdx <= currentIdx;
-              final isCurrent = stepIdx == currentIdx;
-
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: 28,
-                    height: 28,
-                    decoration: BoxDecoration(
-                      color: isCurrent
-                          ? colors.primary
-                          : (isReached
-                              ? colors.primaryContainer
-                              : colors.surfaceSubtle),
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: isReached ? colors.primary : colors.borderSubtle,
-                        width: isCurrent ? 2 : 1,
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Milestone Node & Vertical Connector Line
+                Column(
+                  children: [
+                    Container(
+                      width: 26,
+                      height: 26,
+                      decoration: BoxDecoration(
+                        color: isCurrent
+                            ? colors.primary
+                            : (isReached ? colors.primaryContainer : colors.surfaceSubtle),
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: isReached ? colors.primary : colors.borderSubtle,
+                          width: isCurrent ? 2 : 1,
+                        ),
+                      ),
+                      child: Center(
+                        child: isReached
+                            ? Icon(
+                                Icons.check_rounded,
+                                size: 14,
+                                color: isCurrent ? Colors.white : colors.primary,
+                              )
+                            : Container(
+                                width: 6,
+                                height: 6,
+                                decoration: BoxDecoration(
+                                  color: colors.textMuted,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
                       ),
                     ),
-                    child: Icon(
-                      isReached ? Icons.check_rounded : Icons.circle,
-                      size: isReached ? 16 : 8,
-                      color: isCurrent
-                          ? Colors.white
-                          : (isReached ? colors.primary : colors.textMuted),
+                    if (!isLast)
+                      Container(
+                        width: 2,
+                        height: 28,
+                        color: (currentIdx >= 0 && index < currentIdx)
+                            ? colors.primary
+                            : colors.borderSubtle,
+                      ),
+                  ],
+                ),
+                const SizedBox(width: 12),
+                // Step Title & Description
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 2.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          stage['label'] as String,
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: isCurrent ? FontWeight.w800 : (isReached ? FontWeight.w700 : FontWeight.w500),
+                            color: isCurrent
+                                ? colors.primary
+                                : (isReached ? colors.textPrimary : colors.textMuted),
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          stage['desc'] as String,
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w400,
+                            color: isReached ? colors.textSecondary : colors.textMuted,
+                          ),
+                        ),
+                        if (!isLast) const SizedBox(height: 12),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 6),
-                  Text(
-                    stages[stepIdx]['label'] as String,
-                    style: TextStyle(
-                      fontSize: 9.5,
-                      fontWeight: isCurrent ? FontWeight.w800 : FontWeight.w500,
-                      color: isCurrent ? colors.primary : colors.textMuted,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              );
-            }),
-          ),
+                ),
+              ],
+            );
+          }),
         ],
       ),
     );
