@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
-import '../../../../core/theme/app_typography.dart';
 import '../../../../shared/components/app_bottom_sheet.dart';
 import '../../../../shared/components/empty_state_view.dart';
 import '../../../../shared/components/error_state_view.dart';
@@ -146,14 +145,15 @@ class _ProductListScreenState extends State<ProductListScreen> {
                         // Empty State if no matches found
                         if (filteredProducts.isEmpty)
                           EmptyStateView(
+                            icon: Icons.inventory_2_outlined,
                             title: 'No Products Found',
                             description: productController.searchQuery.isNotEmpty
                                 ? 'No items match "${productController.searchQuery}".'
                                 : 'Add your first menu item to begin accepting orders.',
-                            buttonText: productController.searchQuery.isNotEmpty
+                            actionButtonText: productController.searchQuery.isNotEmpty
                                 ? 'Clear Search'
                                 : '+ Add New Product',
-                            onAction: () {
+                            onActionButtonPressed: () {
                               if (productController.searchQuery.isNotEmpty) {
                                 productController.clearSearch();
                               } else {
@@ -206,15 +206,15 @@ class _ProductGridSkeleton extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 96),
       children: [
-        const ShimmerSkeleton(width: double.infinity, height: 48, borderRadius: 24),
+        const ShimmerSkeleton(width: double.infinity, height: 48, borderRadius: AppRadius.full),
         AppSpacing.vGap12,
         Row(
           children: const [
-            ShimmerSkeleton(width: 90, height: 36, borderRadius: 18),
+            ShimmerSkeleton(width: 90, height: 36, borderRadius: AppRadius.full),
             SizedBox(width: 8),
-            ShimmerSkeleton(width: 90, height: 36, borderRadius: 18),
+            ShimmerSkeleton(width: 90, height: 36, borderRadius: AppRadius.full),
             SizedBox(width: 8),
-            ShimmerSkeleton(width: 90, height: 36, borderRadius: 18),
+            ShimmerSkeleton(width: 90, height: 36, borderRadius: AppRadius.full),
           ],
         ),
         AppSpacing.vGap16,
@@ -231,7 +231,7 @@ class _ProductGridSkeleton extends StatelessWidget {
           itemBuilder: (_, __) => const ShimmerSkeleton(
             width: double.infinity,
             height: double.infinity,
-            borderRadius: 22,
+            borderRadius: AppRadius.card,
           ),
         ),
       ],

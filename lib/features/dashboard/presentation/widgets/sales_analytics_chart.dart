@@ -80,10 +80,10 @@ class SalesAnalyticsChart extends StatelessWidget {
           SizedBox(
             height: 160,
             child: chartPoints.isEmpty
-                ? Center(
+                ? const Center(
                     child: Text(
                       'No revenue data available',
-                      style: AppTypography.bodySmall,
+                      style: TextStyle(fontSize: 12),
                     ),
                   )
                 : Row(
@@ -104,7 +104,7 @@ class SalesAnalyticsChart extends StatelessWidget {
                                 Container(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 6, vertical: 2),
-                                  margin: const EdgeInsets.bottom: 6),
+                                  margin: const EdgeInsets.only(bottom: 6),
                                   decoration: BoxDecoration(
                                     color: AppColors.primary,
                                     borderRadius: AppRadius.sm,

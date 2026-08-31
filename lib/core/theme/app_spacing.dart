@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-/// Centralized Spacing Tokens (4/8dp Spatial Rhythm)
-/// Enforces consistent padding, margins, and gaps across all feature modules.
+// Centralized Spacing Tokens (4/8dp Spatial Rhythm)
+// Enforces consistent padding, margins, and gaps across all feature modules.
 class AppSpacing {
   AppSpacing._();
 
@@ -30,6 +30,7 @@ class AppSpacing {
   static const Widget vGap2 = SizedBox(height: xxxs);
   static const Widget vGap4 = SizedBox(height: xxs);
   static const Widget vGap8 = SizedBox(height: xs);
+  static const Widget vGap10 = SizedBox(height: 10.0);
   static const Widget vGap12 = SizedBox(height: sm);
   static const Widget vGap16 = SizedBox(height: md);
   static const Widget vGap20 = SizedBox(height: lg);
@@ -40,6 +41,7 @@ class AppSpacing {
 
   static const Widget hGap4 = SizedBox(width: xxs);
   static const Widget hGap8 = SizedBox(width: xs);
+  static const Widget hGap10 = SizedBox(width: 10.0);
   static const Widget hGap12 = SizedBox(width: sm);
   static const Widget hGap16 = SizedBox(width: md);
   static const Widget hGap20 = SizedBox(width: lg);

@@ -44,10 +44,10 @@ class DashboardController extends BaseController {
         _chartData = chartResult.data;
       }
 
-      if (metricsResult is Failure) {
-        return Failure(metricsResult.message);
+      if (metricsResult is Failure<DashboardMetrics>) {
+        return Failure<void>(metricsResult.message);
       }
-      return const Success(null);
+      return const Success<void>(null);
     });
   }
 

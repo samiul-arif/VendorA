@@ -31,13 +31,13 @@ preview/
 .system_generated/
 *.log
 
-# Markdown files (all markdown files and folders ignored)
+# Markdown files (strictly code-only git repository)
 *.md
 **/*.md
 !README.md
 
 # ==========================================
-# 3. Bulky Document & Binary Artifacts
+# 3. Document & Binary Artifacts
 # ==========================================
 *.pdf
 *.pptx
@@ -57,29 +57,40 @@ preview/
 *.dmg
 
 # ==========================================
-# 4. Flutter & Dart System Exclusions
+# 4. Flutter, Dart & Package Libraries
+# (Collaborators download via `flutter pub get`)
 # ==========================================
 .dart_tool/
+**/.dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies
 .packages
 .pub-cache/
 .pub/
-/build/
-ios/.symlinks/
+build/
+**/build/
+pubspec.lock
+
+# iOS & macOS Build / Pods / Frameworks
 ios/Pods/
+ios/.symlinks/
 ios/Podfile.lock
-ios/.symlinks
 ios/Flutter/Generated.xcconfig
 ios/Flutter/flutter_export_environment.sh
 ios/Flutter/App.framework
 ios/Flutter/Flutter.framework
 ios/Flutter/Flutter.podspec
 ios/ServiceDefinitions.json
+macos/Pods/
+macos/Flutter/ephemeral/
+macos/Flutter/GeneratedPluginRegistrant.swift
+
+# Android Build & Device SDK Files
+android/.gradle/
+android/app/build/
 android/app/debug/
 android/app/profile/
 android/app/release/
-android/.gradle
 android/captures/
 android/gradlew
 android/gradlew.bat
@@ -87,8 +98,12 @@ android/local.properties
 android/**/generated/
 coverage/
 
+# Windows & Linux Ephemeral
+windows/flutter/ephemeral/
+linux/flutter/ephemeral/
+
 # ==========================================
-# 5. OS & IDE System Files
+# 5. OS & IDE Device-Specific Files
 # ==========================================
 .DS_Store
 .DS_Store?
@@ -98,6 +113,10 @@ coverage/
 ehthumbs.db
 Thumbs.db
 .idea/
+**/.idea/
 .vscode/
+**/.vscode/
+*.iml
+**/*.iml
 *.swp
 *.swo

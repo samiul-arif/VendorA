@@ -7,7 +7,6 @@ import '../../../../core/theme/app_radius.dart';
 import '../../../../shared/components/app_bottom_sheet.dart';
 import '../../../../shared/components/shimmer_skeleton.dart';
 import '../../../../shared/components/error_state_view.dart';
-import '../../../../shared/models/shop_model.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../../../shop/presentation/controllers/shop_controller.dart';
 import '../controllers/dashboard_controller.dart';
@@ -73,8 +72,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 final result = await authController.switchShop(shop.id);
                 result.when(
                   success: (session) {
-                    shopController.setActiveShop(session.activeShop);
-                    context.read<DashboardController>().loadDashboard(shopId: session.activeShop.id);
+                    if (session.activeShop != null) {
+                      shopController.setActiveShop(session.activeShop!);
+                      context.read<DashboardController>().loadDashboard(shopId: session.activeShop!.id);
+                    }
                   },
                   failure: (msg, _) {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -228,7 +229,7 @@ class _DashboardSkeletonLoading extends StatelessWidget {
       children: [
         Row(
           children: [
-            const ShimmerSkeleton(width: 44, height: 44, borderRadius: 12),
+            const ShimmerSkeleton(width: 44, height: 44, borderRadius: AppRadius.md),
             AppSpacing.hGap12,
             Expanded(
               child: Column(
@@ -240,21 +241,21 @@ class _DashboardSkeletonLoading extends StatelessWidget {
                 ],
               ),
             ),
-            const ShimmerSkeleton(width: 70, height: 32, borderRadius: 16),
+            const ShimmerSkeleton(width: 70, height: 32, borderRadius: AppRadius.full),
           ],
         ),
         AppSpacing.vGap16,
-        const ShimmerSkeleton(width: double.infinity, height: 180, borderRadius: 24),
+        const ShimmerSkeleton(width: double.infinity, height: 180, borderRadius: AppRadius.card),
         AppSpacing.vGap16,
         Row(
           children: const [
-            Expanded(child: ShimmerSkeleton(width: double.infinity, height: 110, borderRadius: 22)),
+            Expanded(child: ShimmerSkeleton(width: double.infinity, height: 110, borderRadius: AppRadius.card)),
             SizedBox(width: 12),
-            Expanded(child: ShimmerSkeleton(width: double.infinity, height: 110, borderRadius: 22)),
+            Expanded(child: ShimmerSkeleton(width: double.infinity, height: 110, borderRadius: AppRadius.card)),
           ],
         ),
         AppSpacing.vGap16,
-        const ShimmerSkeleton(width: double.infinity, height: 210, borderRadius: 24),
+        const ShimmerSkeleton(width: double.infinity, height: 210, borderRadius: AppRadius.card),
       ],
     );
   }

@@ -67,6 +67,7 @@ class MockShopRepository extends BaseMockRepository implements IShopRepository {
               city: 'San Francisco',
               phone: '+1 (555) 234-5678',
               isOpen: isOpen,
+              createdAt: DateTime.now().subtract(const Duration(days: 90)),
             );
 
         final updated = shop.copyWith(isOpen: isOpen);

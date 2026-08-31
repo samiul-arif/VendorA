@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-/// Centralized Color Tokens for Vendor App
-/// Follows modern_ui_arif (Card-first, solid black CTAs, vibrant food-tech accent)
-/// and ui-ux-pro-max (WCAG 4.5:1 contrast, semantic tokens, light/dark parity).
+// Centralized Color Tokens for Vendor App
+// Follows modern_ui_arif (Card-first, solid black CTAs, vibrant food-tech accent)
+// and ui-ux-pro-max (WCAG 4.5:1 contrast, semantic tokens, light/dark parity).
 class AppColors {
   AppColors._();
 
@@ -36,6 +36,7 @@ class AppColors {
 
   // Action & Button Tokens (modern_ui_arif: Solid Near-Black Primary CTAs)
   static const Color ctaPrimary = Color(0xFF141414);       // Solid black pill button
+  static const Color btnPrimaryBgLight = Color(0xFF141414);
   static const Color ctaPrimaryHover = Color(0xFF262626);  // Hover / Pressed state
   static const Color ctaPrimaryText = Color(0xFFFFFFFF);   // High-contrast text on CTA
   static const Color ctaSecondary = Color(0xFFF3F4F6);     // Neutral pill button
@@ -46,6 +47,7 @@ class AppColors {
   static const Color lightSurface = Color(0xFFFFFFFF);      // Primary high-radius card surface
   static const Color lightSurfaceSubtle = Color(0xFFFAFAFC);// Secondary card surface
   static const Color lightBorder = Color(0xFFE8EAED);       // Subtle card/input outline
+  static const Color borderLight = Color(0xFFE8EAED);
   static const Color lightDivider = Color(0xFFF0F1F3);
 
   // Canvas & Surface Tokens (Dark Theme)
@@ -53,11 +55,14 @@ class AppColors {
   static const Color darkSurface = Color(0xFF1A1F26);       // Elevated card surface
   static const Color darkSurfaceSubtle = Color(0xFF232A34); // Nested surface
   static const Color darkBorder = Color(0xFF2A3340);
+  static const Color borderDark = Color(0xFF2A3340);
   static const Color darkDivider = Color(0xFF232A34);
 
   // Typography & Text Tokens (Light Theme)
   static const Color textPrimaryLight = Color(0xFF141414);   // Near-black headings & labels
+  static const Color inkPrimary = Color(0xFF141414);
   static const Color textSecondaryLight = Color(0xFF6B7280); // Medium-grey descriptions
+  static const Color inkSecondary = Color(0xFF6B7280);
   static const Color textMutedLight = Color(0xFF9CA3AF);     // Tertiary/placeholder captions
   static const Color textInverse = Color(0xFFFFFFFF);        // Text on dark surfaces
 

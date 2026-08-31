@@ -172,6 +172,22 @@ class AppTypography {
   );
 
   // Numeric Stats & Metrics
+  static TextStyle statLarge = _baseStyle(
+    fontSize: 32.0,
+    fontWeight: FontWeight.w800,
+    lineHeight: 38.0,
+    letterSpacing: -0.5,
+    color: AppColors.textPrimaryLight,
+  );
+
+  static TextStyle statMedium = _baseStyle(
+    fontSize: 26.0,
+    fontWeight: FontWeight.w800,
+    lineHeight: 32.0,
+    letterSpacing: -0.5,
+    color: AppColors.textPrimaryLight,
+  );
+
   static TextStyle statValue = _baseStyle(
     fontSize: 26.0,
     fontWeight: FontWeight.w800,

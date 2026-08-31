@@ -27,7 +27,7 @@ class IncomingOrdersStream extends StatelessWidget {
         customerName: 'Alex Rivera',
         itemsSummary: '2x Truffle Smash Burger • 1x Loaded Fries',
         totalAmount: 32.50,
-        status: OrderStatusType.preparing,
+        status: BadgeType.preparing,
         timeAgo: '4m ago',
         actionLabel: 'Mark Ready',
         isPrimaryAction: false,
@@ -37,7 +37,7 @@ class IncomingOrdersStream extends StatelessWidget {
         customerName: 'Sarah Jenkins',
         itemsSummary: '1x Crispy Chicken Rice Bowl • 1x Iced Tea',
         totalAmount: 18.20,
-        status: OrderStatusType.pending,
+        status: BadgeType.pending,
         timeAgo: 'Just now',
         actionLabel: 'Accept Order',
         isPrimaryAction: true,
@@ -108,7 +108,7 @@ class IncomingOrdersStream extends StatelessWidget {
                           ),
                         ],
                       ),
-                      StatusBadge.fromOrderStatus(order.status),
+                      StatusBadge(type: order.status),
                     ],
                   ),
 
@@ -184,7 +184,7 @@ class _MockOrderSummary {
   final String customerName;
   final String itemsSummary;
   final double totalAmount;
-  final OrderStatusType status;
+  final BadgeType status;
   final String timeAgo;
   final String actionLabel;
   final bool isPrimaryAction;

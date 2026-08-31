@@ -166,45 +166,46 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
     );
   }
 
-  void _handleDelete() {
+  void _handleDelete() async {
     if (widget.productToEdit == null) return;
 
-    AppDialog.showConfirmation(
+    final confirmed = await AppDialog.showConfirmation(
       context: context,
       title: 'Delete Product',
       message:
           'Are you sure you want to remove "${widget.productToEdit!.name}" from your catalog?',
       confirmText: 'Delete',
       isDestructive: true,
-      onConfirm: () async {
-        final productController = context.read<ProductController>();
-        final result = await productController.deleteProduct(widget.productToEdit!.id);
-
-        if (!mounted) return;
-
-        result.when(
-          success: (_) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Product removed from catalog.'),
-                backgroundColor: AppColors.statusSuccess,
-                behavior: SnackBarBehavior.floating,
-              ),
-            );
-            Navigator.of(context).pop();
-          },
-          failure: (msg, _) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(msg),
-                backgroundColor: AppColors.statusError,
-                behavior: SnackBarBehavior.floating,
-              ),
-            );
-          },
-        );
-      },
     );
+
+    if (confirmed == true && mounted) {
+      final productController = context.read<ProductController>();
+      final result = await productController.deleteProduct(widget.productToEdit!.id);
+
+      if (!mounted) return;
+
+      result.when(
+        success: (_) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Product removed from catalog.'),
+              backgroundColor: AppColors.statusSuccess,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+          Navigator.of(context).pop();
+        },
+        failure: (msg, _) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(msg),
+              backgroundColor: AppColors.statusError,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        },
+      );
+    }
   }
 
   @override
