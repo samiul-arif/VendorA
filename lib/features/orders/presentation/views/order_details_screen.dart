@@ -251,45 +251,53 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Row(
-                children: [
-                  Container(
-                    width: 36,
-                    height: 36,
-                    decoration: BoxDecoration(
-                      color: colors.primaryContainer,
-                      borderRadius: AppRadius.sm,
-                    ),
-                    child: Icon(
-                      Icons.receipt_long_rounded,
-                      size: 20,
-                      color: colors.primary,
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Order #${order.orderNumber}',
-                        style: AppTypography.titleSmall.copyWith(
-                          fontWeight: FontWeight.w900,
-                          color: colors.textPrimary,
-                        ),
+              Expanded(
+                child: Row(
+                  children: [
+                    Container(
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        color: colors.primaryContainer,
+                        borderRadius: AppRadius.sm,
                       ),
-                      Text(
-                        'Placed ${Formatters.formatRelativeTime(order.createdAt)}',
-                        style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                          color: colors.textMuted,
-                        ),
+                      child: Icon(
+                        Icons.receipt_long_rounded,
+                        size: 20,
+                        color: colors.primary,
                       ),
-                    ],
-                  ),
-                ],
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Order #${order.orderNumber}',
+                            style: AppTypography.titleSmall.copyWith(
+                              fontWeight: FontWeight.w900,
+                              color: colors.textPrimary,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          Text(
+                            'Placed ${Formatters.formatRelativeTime(order.createdAt)}',
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                              color: colors.textMuted,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
+              const SizedBox(width: 8),
               StatusBadge(
                 type: order.status.badgeType,
                 label: order.status.label,
@@ -300,19 +308,25 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  Icon(Icons.calendar_today_rounded, size: 14, color: colors.textMuted),
-                  const SizedBox(width: 6),
-                  Text(
-                    Formatters.formatDateTime(order.createdAt),
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: colors.textSecondary,
+              Flexible(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.calendar_today_rounded, size: 14, color: colors.textMuted),
+                    const SizedBox(width: 6),
+                    Flexible(
+                      child: Text(
+                        Formatters.formatDateTime(order.createdAt),
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: colors.textSecondary,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
               if (order.estimatedPrepMinutes > 0)
                 Container(
@@ -882,28 +896,35 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
     IconData? icon,
   }) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Row(
-          children: [
-            if (icon != null) ...[
-              Icon(icon, size: 15, color: colors.textMuted),
-              const SizedBox(width: 6),
-            ],
-            Text(
-              label,
-              style: AppTypography.bodyMedium.copyWith(
-                color: colors.textSecondary,
+        Expanded(
+          child: Row(
+            children: [
+              if (icon != null) ...[
+                Icon(icon, size: 15, color: colors.textMuted),
+                const SizedBox(width: 6),
+              ],
+              Flexible(
+                child: Text(
+                  label,
+                  style: AppTypography.bodyMedium.copyWith(
+                    color: colors.textSecondary,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
+        const SizedBox(width: 12),
         Text(
           value,
           style: AppTypography.bodyMedium.copyWith(
             fontWeight: FontWeight.w700,
             color: textColor ?? colors.textPrimary,
           ),
+          textAlign: TextAlign.right,
         ),
       ],
     );
