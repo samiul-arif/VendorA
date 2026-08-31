@@ -220,35 +220,39 @@ class _StoreStatusHeaderState extends State<StoreStatusHeader> with SingleTicker
               // Live Pulsing Dot + Status Label
               Row(
                 children: [
-                  AnimatedBuilder(
-                    animation: _pulseAnimation,
-                    builder: (context, child) {
-                      return Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          if (isStoreOpen)
-                            Transform.scale(
-                              scale: _pulseAnimation.value,
-                              child: Container(
-                                width: 12,
-                                height: 12,
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFF006B57).withValues(alpha: 0.35),
-                                  shape: BoxShape.circle,
+                  SizedBox(
+                    width: 14,
+                    height: 14,
+                    child: AnimatedBuilder(
+                      animation: _pulseAnimation,
+                      builder: (context, child) {
+                        return Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            if (isStoreOpen)
+                              Transform.scale(
+                                scale: _pulseAnimation.value,
+                                child: Container(
+                                  width: 14,
+                                  height: 14,
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFF006B57).withValues(alpha: 0.35),
+                                    shape: BoxShape.circle,
+                                  ),
                                 ),
                               ),
+                            Container(
+                              width: 8,
+                              height: 8,
+                              decoration: BoxDecoration(
+                                color: isStoreOpen ? const Color(0xFF006B57) : colors.error,
+                                shape: BoxShape.circle,
+                              ),
                             ),
-                          Container(
-                            width: 8,
-                            height: 8,
-                            decoration: BoxDecoration(
-                              color: isStoreOpen ? const Color(0xFF006B57) : colors.error,
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                        ],
-                      );
-                    },
+                          ],
+                        );
+                      },
+                    ),
                   ),
                   const SizedBox(width: 8),
                   Text(

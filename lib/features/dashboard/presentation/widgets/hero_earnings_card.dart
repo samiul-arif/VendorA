@@ -41,6 +41,7 @@ class HeroEarningsCard extends StatelessWidget {
           ),
         ],
       ),
+      clipBehavior: Clip.antiAlias,
       child: Stack(
         children: [
           // Background Decorative Subtle Glow Circle
@@ -76,8 +77,7 @@ class HeroEarningsCard extends StatelessWidget {
 
                 // Amount + Growth Pill
                 Row(
-                  crossAxisAlignment: CrossAxisAlignment.baseline,
-                  textBaseline: TextBaseline.alphabetic,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
                       Formatters.formatCurrency(earnings),

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_semantic_colors.dart';
 
-// Animated Shimmer Skeleton Placeholder (ui-ux-pro-max loading feedback)
+// Animated Shimmer Skeleton Placeholder
 class ShimmerSkeleton extends StatefulWidget {
   final double? width;
   final double? height;
@@ -52,7 +52,7 @@ class _ShimmerSkeletonState extends State<ShimmerSkeleton>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1400),
+      duration: const Duration(milliseconds: 1200),
     )..repeat();
   }
 
@@ -72,6 +72,7 @@ class _ShimmerSkeletonState extends State<ShimmerSkeleton>
     return AnimatedBuilder(
       animation: _controller,
       builder: (context, child) {
+        final slide = _controller.value;
         return Container(
           width: widget.width,
           height: widget.height,
@@ -81,13 +82,8 @@ class _ShimmerSkeletonState extends State<ShimmerSkeleton>
                   borderRadius: widget.borderRadius ?? AppRadius.md,
                 ),
             gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              stops: [
-                _controller.value - 0.3,
-                _controller.value,
-                _controller.value + 0.3,
-              ].map((s) => s.clamp(0.0, 1.0)).toList(),
+              begin: Alignment(-2.0 + (slide * 4.0), -0.5),
+              end: Alignment(-0.5 + (slide * 4.0), 0.5),
               colors: [baseColor, highlightColor, baseColor],
             ),
           ),

@@ -25,24 +25,19 @@ class _ShopSettingsScreenState extends State<ShopSettingsScreen> {
   late TextEditingController _cityController;
   late TextEditingController _zipController;
 
-  bool _isInitialized = false;
-
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (!_isInitialized) {
-      final shopController = context.read<ShopController>();
-      final authController = context.read<AuthController>();
-      final shop = shopController.currentShop ?? authController.activeShop;
+  void initState() {
+    super.initState();
+    final shopController = context.read<ShopController>();
+    final authController = context.read<AuthController>();
+    final shop = shopController.currentShop ?? authController.activeShop;
 
-      _nameController = TextEditingController(text: shop?.name ?? 'Jane\'s Gourmet Bakery');
-      _descController = TextEditingController(text: shop?.description ?? 'Artisanal baked goods, pastries, sourdough bread and specialty espresso drinks.');
-      _phoneController = TextEditingController(text: shop?.phone.isNotEmpty == true ? shop!.phone : '+880 1711778889');
-      _addressController = TextEditingController(text: shop?.address.isNotEmpty == true ? shop!.address : 'House 42, Road 11, Banani');
-      _cityController = TextEditingController(text: 'Dhaka');
-      _zipController = TextEditingController(text: '1213');
-      _isInitialized = true;
-    }
+    _nameController = TextEditingController(text: shop?.name ?? 'Jane\'s Gourmet Bakery');
+    _descController = TextEditingController(text: shop?.description ?? 'Artisanal baked goods, pastries, sourdough bread and specialty espresso drinks.');
+    _phoneController = TextEditingController(text: shop?.phone.isNotEmpty == true ? shop!.phone : '+880 1711778889');
+    _addressController = TextEditingController(text: shop?.address.isNotEmpty == true ? shop!.address : 'House 42, Road 11, Banani');
+    _cityController = TextEditingController(text: 'Dhaka');
+    _zipController = TextEditingController(text: '1213');
   }
 
   @override
