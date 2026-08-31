@@ -125,19 +125,36 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                 letterSpacing: -0.4,
                               ),
                             ),
-                            ElevatedButton.icon(
-                              onPressed: () => _openAddEditScreen(),
-                              icon: const Icon(Icons.add_rounded, size: 18),
-                              label: const Text('Add'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: colors.primary,
-                                foregroundColor: Colors.white,
+                            InkWell(
+                              onTap: () => _openAddEditScreen(),
+                              borderRadius: AppRadius.full,
+                              child: Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                                shape: const RoundedRectangleBorder(borderRadius: AppRadius.full),
-                                elevation: 0,
-                                textStyle: const TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w800,
+                                decoration: BoxDecoration(
+                                  color: colors.primary,
+                                  borderRadius: AppRadius.full,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: colors.primary.withValues(alpha: 0.25),
+                                      blurRadius: 8,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: const Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(Icons.add_rounded, size: 18, color: Colors.white),
+                                    SizedBox(width: 4),
+                                    Text(
+                                      'Add',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w800,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
@@ -269,16 +286,30 @@ class _ProductListScreenState extends State<ProductListScreen> {
             textAlign: TextAlign.center,
           ),
           AppSpacing.vGap20,
-          ElevatedButton.icon(
-            onPressed: () => _openAddEditScreen(),
-            icon: const Icon(Icons.add_rounded, size: 18),
-            label: const Text('Add First Product'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: colors.ctaPrimary,
-              foregroundColor: colors.ctaPrimaryText,
+          InkWell(
+            onTap: () => _openAddEditScreen(),
+            borderRadius: AppRadius.full,
+            child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              shape: const RoundedRectangleBorder(borderRadius: AppRadius.full),
-              textStyle: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13),
+              decoration: BoxDecoration(
+                color: colors.ctaPrimary,
+                borderRadius: AppRadius.full,
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.add_rounded, size: 18, color: colors.ctaPrimaryText),
+                  const SizedBox(width: 6),
+                  Text(
+                    'Add First Product',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w800,
+                      fontSize: 13,
+                      color: colors.ctaPrimaryText,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -319,8 +350,6 @@ class _ProductGridSkeleton extends StatelessWidget {
             childAspectRatio: 0.74,
           ),
           itemBuilder: (_, __) => const ShimmerSkeleton(
-            width: double.infinity,
-            height: double.infinity,
             borderRadius: BorderRadius.all(Radius.circular(16)),
           ),
         ),
