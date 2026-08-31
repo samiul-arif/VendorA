@@ -79,8 +79,14 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   }
 
   String _formatMaskedPhone(String phone) {
-    if (phone.length <= 4) return phone;
-    return '${phone.substring(0, 3)} ••• ••• ${phone.substring(phone.length - 2)}';
+    if (phone.length <= 6) return phone;
+    if (phone.startsWith('+880')) {
+      final sub = phone.replaceAll('+880', '').trim();
+      if (sub.length >= 4) {
+        return '+880 ${sub.substring(0, 2)}••• •••${sub.substring(sub.length - 2)}';
+      }
+    }
+    return '${phone.substring(0, 4)} ••• ••• ${phone.substring(phone.length - 2)}';
   }
 
   @override

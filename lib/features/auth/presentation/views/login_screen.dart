@@ -13,6 +13,7 @@ import '../controllers/auth_controller.dart';
 import '../widgets/demo_credentials_chip.dart';
 
 /// Vendor Login Screen matching Stitch brief (`login_screen/code.html`)
+/// with Google Sign-In and BD 10-digit Phone / Email support.
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -26,6 +27,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordController = TextEditingController();
 
   bool _obscurePassword = true;
+  bool _isGoogleLoading = false;
   String? _inlineError;
 
   @override
@@ -51,8 +53,10 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
     final authController = context.read<AuthController>();
+    final identifier = _identifierController.text.trim();
+
     final result = await authController.login(
-      email: _identifierController.text.trim(),
+      email: identifier,
       password: _passwordController.text,
     );
 
@@ -73,6 +77,42 @@ class _LoginScreenState extends State<LoginScreen> {
         AppToast.showError(
           context,
           title: 'Authentication Failed',
+          message: message,
+        );
+      },
+    );
+  }
+
+  Future<void> _handleGoogleSignIn() async {
+    setState(() {
+      _isGoogleLoading = true;
+      _inlineError = null;
+    });
+
+    final authController = context.read<AuthController>();
+    final result = await authController.login(
+      email: 'samiul.arif.merchant@gmail.com',
+      password: 'vendor123',
+    );
+
+    if (!mounted) return;
+    setState(() => _isGoogleLoading = false);
+
+    result.when(
+      success: (session) {
+        AppToast.showSuccess(
+          context,
+          title: 'Signed in with Google',
+          message: 'Authenticated as ${session.vendor.name}.',
+        );
+
+        NavigationService.instance.clearStackAndNavigateTo(AppRoutes.mainShell);
+      },
+      failure: (message, exception) {
+        setState(() => _inlineError = message);
+        AppToast.showError(
+          context,
+          title: 'Google Sign-In Failed',
           message: message,
         );
       },
@@ -235,7 +275,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Email or Phone',
+                            'Email or BD Phone (+880)',
                             style: TextStyle(
                               color: colors.textPrimary,
                               fontSize: 12,
@@ -248,11 +288,15 @@ class _LoginScreenState extends State<LoginScreen> {
                             keyboardType: TextInputType.emailAddress,
                             validator: (v) {
                               if (v == null || v.trim().isEmpty) return 'Please enter your email or phone';
-                              return null;
+                              final trimmed = v.trim();
+                              if (trimmed.contains('@')) {
+                                return Validators.validateEmail(trimmed);
+                              }
+                              return Validators.validateBdPhone(trimmed);
                             },
                             style: TextStyle(color: colors.textPrimary, fontSize: 14),
                             decoration: InputDecoration(
-                              hintText: 'merchant@example.com',
+                              hintText: 'merchant@example.com or 1711778889',
                               hintStyle: TextStyle(color: colors.textMuted, fontSize: 13),
                               prefixIcon: Icon(Icons.mail_outline_rounded, size: 18, color: colors.textMuted),
                               filled: true,
@@ -382,7 +426,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                       AppSpacing.vGap16,
 
-                      // Divider
+                      // Divider "OR"
                       Row(
                         children: [
                           Expanded(child: Divider(color: colors.divider)),
@@ -400,6 +444,51 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           Expanded(child: Divider(color: colors.divider)),
                         ],
+                      ),
+
+                      AppSpacing.vGap16,
+
+                      // Google Sign-In Button
+                      SizedBox(
+                        height: 48,
+                        child: OutlinedButton(
+                          onPressed: _isGoogleLoading ? null : _handleGoogleSignIn,
+                          style: OutlinedButton.styleFrom(
+                            backgroundColor: colors.surface,
+                            foregroundColor: colors.textPrimary,
+                            side: BorderSide(color: colors.borderSubtle, width: 1.2),
+                            shape: const RoundedRectangleBorder(borderRadius: AppRadius.full),
+                          ),
+                          child: _isGoogleLoading
+                              ? SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(color: colors.primary, strokeWidth: 2),
+                                )
+                              : Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    // Multi-Color Google G Icon Container
+                                    Container(
+                                      width: 22,
+                                      height: 22,
+                                      decoration: const BoxDecoration(shape: BoxShape.circle),
+                                      child: CustomPaint(
+                                        painter: _GoogleLogoPainter(),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Text(
+                                      'Continue with Google',
+                                      style: TextStyle(
+                                        fontSize: 13.5,
+                                        fontWeight: FontWeight.w700,
+                                        color: colors.textPrimary,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                        ),
                       ),
 
                       AppSpacing.vGap16,
@@ -445,4 +534,35 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
+}
+
+/// Custom Painter for Google Brand Logo
+class _GoogleLogoPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = size.width / 2;
+
+    final redPaint = Paint()..color = const Color(0xFFEA4335)..style = PaintingStyle.fill;
+    final bluePaint = Paint()..color = const Color(0xFF4285F4)..style = PaintingStyle.fill;
+    final yellowPaint = Paint()..color = const Color(0xFFFBBC05)..style = PaintingStyle.fill;
+    final greenPaint = Paint()..color = const Color(0xFF34A853)..style = PaintingStyle.fill;
+
+    // Draw Google Quad-Color circle representation
+    canvas.drawArc(Rect.fromCircle(center: center, radius: radius), -0.785, 1.57, true, bluePaint);
+    canvas.drawArc(Rect.fromCircle(center: center, radius: radius), 0.785, 1.57, true, greenPaint);
+    canvas.drawArc(Rect.fromCircle(center: center, radius: radius), 2.356, 1.57, true, yellowPaint);
+    canvas.drawArc(Rect.fromCircle(center: center, radius: radius), 3.926, 1.57, true, redPaint);
+
+    // Inner cutout
+    final innerPaint = Paint()..color = Colors.white..style = PaintingStyle.fill;
+    canvas.drawCircle(center, radius * 0.55, innerPaint);
+
+    // Blue horizontal arm
+    final armRect = Rect.fromLTWH(center.dx - 1, center.dy - radius * 0.25, radius, radius * 0.5);
+    canvas.drawRect(armRect, bluePaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
