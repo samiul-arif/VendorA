@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_semantic_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
-import '../../../../shared/components/empty_state_view.dart';
 import '../../../../shared/components/error_state_view.dart';
 import '../../../../shared/components/shimmer_skeleton.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
@@ -14,7 +13,7 @@ import '../widgets/order_card.dart';
 import '../../../../shared/components/app_toast.dart';
 import 'order_details_screen.dart';
 
-// Order Management Screen (Content-First Merchant Layout)
+/// Order Management Screen matching Stitch brief (`orders_list/code.html`)
 class OrderListScreen extends StatefulWidget {
   const OrderListScreen({super.key});
 
@@ -48,15 +47,17 @@ class _OrderListScreenState extends State<OrderListScreen> {
     );
   }
 
-
-
   void _handleAcceptOrder(OrderModel order) async {
     final orderController = context.read<OrderController>();
-    final result = await orderController.updateStatus(orderId: order.id, newStatus: OrderStatus.accepted);
-    
+    final result = await orderController.updateStatus(orderId: order.id, newStatus: OrderStatus.preparing);
+
     if (!mounted) return;
     result.when(
-      success: (_) => AppToast.showSuccess(context, title: 'Order Accepted', message: 'Order #${order.orderNumber} moved to preparation.'),
+      success: (_) => AppToast.showSuccess(
+        context,
+        title: 'Order Accepted',
+        message: 'Order #${order.orderNumber} moved to kitchen preparation queue.',
+      ),
       failure: (msg, _) => AppToast.showError(context, title: 'Error', message: msg),
     );
   }
@@ -64,10 +65,29 @@ class _OrderListScreenState extends State<OrderListScreen> {
   void _handleMarkReady(OrderModel order) async {
     final orderController = context.read<OrderController>();
     final result = await orderController.updateStatus(orderId: order.id, newStatus: OrderStatus.ready);
-    
+
     if (!mounted) return;
     result.when(
-      success: (_) => AppToast.showSuccess(context, title: 'Order Ready', message: 'Order #${order.orderNumber} is ready for pickup.'),
+      success: (_) => AppToast.showSuccess(
+        context,
+        title: 'Order Ready',
+        message: 'Order #${order.orderNumber} marked ready for courier pickup.',
+      ),
+      failure: (msg, _) => AppToast.showError(context, title: 'Error', message: msg),
+    );
+  }
+
+  void _handleDeclineOrder(OrderModel order) async {
+    final orderController = context.read<OrderController>();
+    final result = await orderController.updateStatus(orderId: order.id, newStatus: OrderStatus.cancelled);
+
+    if (!mounted) return;
+    result.when(
+      success: (_) => AppToast.showWarning(
+        context,
+        title: 'Order Declined',
+        message: 'Order #${order.orderNumber} has been rejected.',
+      ),
       failure: (msg, _) => AppToast.showError(context, title: 'Error', message: msg),
     );
   }
@@ -83,109 +103,107 @@ class _OrderListScreenState extends State<OrderListScreen> {
     final cancelledOrders = allOrders.where((o) => o.status == OrderStatus.cancelled).toList();
 
     List<OrderModel> currentList;
+    String screenTitle;
     if (_selectedFilterIndex == 0) {
       currentList = activeOrders;
+      screenTitle = 'Active Orders';
     } else if (_selectedFilterIndex == 1) {
       currentList = completedOrders;
+      screenTitle = 'Completed Orders';
     } else {
       currentList = cancelledOrders;
+      screenTitle = 'Cancelled Orders';
     }
 
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: colors.surface,
       body: SafeArea(
         bottom: false,
         child: orderController.isLoading && allOrders.isEmpty
             ? const _OrderListSkeleton()
             : orderController.hasError && allOrders.isEmpty
                 ? ErrorStateView(
-                    message: orderController.errorMessage ?? 'Failed to load order queue.',
+                    message: orderController.errorMessage ?? 'Failed to load orders.',
                     onRetry: _loadOrders,
                   )
                 : RefreshIndicator(
                     onRefresh: () async => _loadOrders(),
                     color: colors.primary,
                     child: ListView(
-                      padding: const EdgeInsets.fromLTRB(16, 12, 16, 110),
+                      padding: const EdgeInsets.fromLTRB(18, 14, 18, 120),
                       children: [
-                        // Content-First Header (Scrollable Merchant Title)
+                        // Page Header matching Stitch: "Active Orders" + "Manage and process live incoming requests."
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Text(
-                              'Order Management',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w900,
-                                letterSpacing: -0.4,
-                                color: colors.textPrimary,
-                              ),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: colors.successBg,
-                                borderRadius: AppRadius.full,
-                              ),
-                              child: Text(
-                                '${activeOrders.length} Active',
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w800,
-                                  color: colors.success,
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  screenTitle,
+                                  style: TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.w900,
+                                    color: colors.textPrimary,
+                                    letterSpacing: -0.4,
+                                  ),
                                 ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  'Manage and process live incoming requests.',
+                                  style: TextStyle(
+                                    fontSize: 12.5,
+                                    color: colors.textSecondary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+
+                        AppSpacing.vGap16,
+
+                        // Segmented Control Pill Container matching Stitch
+                        Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: colors.surfaceSubtle,
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(color: colors.borderSubtle),
+                          ),
+                          child: Row(
+                            children: [
+                              _buildSegmentTab(
+                                index: 0,
+                                label: 'Active',
+                                count: activeOrders.length,
+                                isSelected: _selectedFilterIndex == 0,
+                                colors: colors,
                               ),
-                            ),
-                          ],
+                              _buildSegmentTab(
+                                index: 1,
+                                label: 'Completed',
+                                count: completedOrders.length,
+                                isSelected: _selectedFilterIndex == 1,
+                                colors: colors,
+                              ),
+                              _buildSegmentTab(
+                                index: 2,
+                                label: 'Cancelled',
+                                count: cancelledOrders.length,
+                                isSelected: _selectedFilterIndex == 2,
+                                colors: colors,
+                              ),
+                            ],
+                          ),
                         ),
 
                         AppSpacing.vGap16,
 
-                        // Filter Pills: Active | Completed | Cancelled
-                        Row(
-                          children: [
-                            _buildFilterPill(
-                              label: 'Active (${activeOrders.length})',
-                              isSelected: _selectedFilterIndex == 0,
-                              colors: colors,
-                              onTap: () => setState(() => _selectedFilterIndex = 0),
-                            ),
-                            const SizedBox(width: 8),
-                            _buildFilterPill(
-                              label: 'Completed (${completedOrders.length})',
-                              isSelected: _selectedFilterIndex == 1,
-                              colors: colors,
-                              onTap: () => setState(() => _selectedFilterIndex = 1),
-                            ),
-                            const SizedBox(width: 8),
-                            _buildFilterPill(
-                              label: 'Cancelled (${cancelledOrders.length})',
-                              isSelected: _selectedFilterIndex == 2,
-                              colors: colors,
-                              onTap: () => setState(() => _selectedFilterIndex = 2),
-                            ),
-                          ],
-                        ),
-
-                        AppSpacing.vGap16,
-
-                        // Orders List
+                        // Orders List / Empty State
                         if (currentList.isEmpty)
-                          Padding(
-                            padding: const EdgeInsets.only(top: 40.0),
-                            child: EmptyStateView(
-                              icon: Icons.receipt_long_outlined,
-                              title: _selectedFilterIndex == 0
-                                  ? 'No Active Orders'
-                                  : _selectedFilterIndex == 1
-                                      ? 'No Completed Orders'
-                                      : 'No Cancelled Orders',
-                              description: _selectedFilterIndex == 0
-                                  ? 'New orders placed by customers will appear here.'
-                                  : 'Completed order history will be shown here.',
-                            ),
-                          )
+                          _buildEmptyState(colors)
                         else
                           ListView.separated(
                             shrinkWrap: true,
@@ -197,12 +215,9 @@ class _OrderListScreenState extends State<OrderListScreen> {
                               return OrderCard(
                                 order: order,
                                 onTap: () => _openOrderDetails(order),
-                                onAccept: order.isPending
-                                    ? () => _handleAcceptOrder(order)
-                                    : null,
-                                onReady: order.isPreparing
-                                    ? () => _handleMarkReady(order)
-                                    : null,
+                                onAccept: () => _handleAcceptOrder(order),
+                                onReady: () => _handleMarkReady(order),
+                                onDecline: () => _handleDeclineOrder(order),
                               );
                             },
                           ),
@@ -213,82 +228,132 @@ class _OrderListScreenState extends State<OrderListScreen> {
     );
   }
 
-  Widget _buildFilterPill({
+  Widget _buildSegmentTab({
+    required int index,
     required String label,
+    required int count,
     required bool isSelected,
     required AppSemanticColors colors,
-    required VoidCallback onTap,
   }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? colors.ctaPrimary
-              : colors.surface,
-          borderRadius: AppRadius.full,
-          border: Border.all(
-            color: isSelected
-                ? Colors.transparent
-                : colors.borderSubtle,
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => setState(() => _selectedFilterIndex = index),
+        behavior: HitTestBehavior.opaque,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          padding: const EdgeInsets.symmetric(vertical: 9),
+          decoration: BoxDecoration(
+            color: isSelected ? colors.surface : Colors.transparent,
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: isSelected
+                ? [
+                    BoxShadow(
+                      color: const Color(0xFF15171C).withValues(alpha: 0.06),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ]
+                : null,
           ),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.08),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 12.5,
+                  fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                  color: isSelected ? colors.textPrimary : colors.textSecondary,
+                ),
+              ),
+              if (count > 0) ...[
+                const SizedBox(width: 5),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
+                  decoration: BoxDecoration(
+                    color: isSelected ? colors.primaryContainer.withValues(alpha: 0.15) : colors.borderSubtle,
+                    borderRadius: AppRadius.full,
                   ),
-                ]
-              : null,
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w800,
-            color: isSelected
-                ? colors.ctaPrimaryText
-                : colors.textSecondary,
+                  child: Text(
+                    '$count',
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w900,
+                      color: isSelected ? colors.primary : colors.textSecondary,
+                    ),
+                  ),
+                ),
+              ],
+            ],
           ),
         ),
       ),
     );
   }
+
+  Widget _buildEmptyState(AppSemanticColors colors) {
+    return Container(
+      margin: const EdgeInsets.only(top: 20),
+      padding: const EdgeInsets.all(32),
+      decoration: BoxDecoration(
+        color: colors.surface,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: colors.borderSubtle),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 56,
+            height: 56,
+            decoration: BoxDecoration(
+              color: colors.primaryContainer.withValues(alpha: 0.15),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(Icons.receipt_long_outlined, size: 28, color: colors.primary),
+          ),
+          AppSpacing.vGap16,
+          Text(
+            'No Orders Found',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w800,
+              color: colors.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'There are currently no orders under this filter category.',
+            style: TextStyle(
+              fontSize: 12.5,
+              color: colors.textSecondary,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
 }
 
-// Skeleton Placeholder during initial load
+// Skeleton loading layout for orders screen
 class _OrderListSkeleton extends StatelessWidget {
   const _OrderListSkeleton();
 
   @override
   Widget build(BuildContext context) {
     return ListView(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 96),
-      children: [
-        const Row(
-          children: [
-            ShimmerSkeleton(width: 90, height: 36, borderRadius: AppRadius.full),
-            SizedBox(width: 8),
-            ShimmerSkeleton(width: 90, height: 36, borderRadius: AppRadius.full),
-            SizedBox(width: 8),
-            ShimmerSkeleton(width: 90, height: 36, borderRadius: AppRadius.full),
-          ],
-        ),
+      padding: const EdgeInsets.fromLTRB(18, 14, 18, 96),
+      children: const [
+        ShimmerSkeleton(width: 140, height: 24),
+        SizedBox(height: 6),
+        ShimmerSkeleton(width: 220, height: 14),
         AppSpacing.vGap16,
-        ...List.generate(
-          3,
-          (index) => const Padding(
-            padding: EdgeInsets.only(bottom: 12.0),
-            child: ShimmerSkeleton(
-              width: double.infinity,
-              height: 160,
-              borderRadius: AppRadius.card,
-            ),
-          ),
-        ),
+        ShimmerSkeleton(width: double.infinity, height: 42, borderRadius: BorderRadius.all(Radius.circular(14))),
+        AppSpacing.vGap16,
+        ShimmerSkeleton(width: double.infinity, height: 130, borderRadius: BorderRadius.all(Radius.circular(18))),
+        AppSpacing.vGap12,
+        ShimmerSkeleton(width: double.infinity, height: 130, borderRadius: BorderRadius.all(Radius.circular(18))),
       ],
     );
   }

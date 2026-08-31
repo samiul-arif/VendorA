@@ -66,6 +66,19 @@ class ShopController extends BaseController {
     return result;
   }
 
+  // Toggle Auto-Accept Orders
+  Future<Result<ShopModel>> toggleAutoAccept(bool autoAccept, {AuthController? authController}) async {
+    final targetShop = _currentShop ?? authController?.activeShop;
+    if (targetShop == null) {
+      return const Failure('No active shop selected.');
+    }
+    final updated = targetShop.copyWith(autoAcceptOrders: autoAccept);
+    _currentShop = updated;
+    authController?.updateActiveShop(updated);
+    notifyListeners();
+    return await updateShop(updated);
+  }
+
   // Update Shop Information
   Future<Result<ShopModel>> updateShop(ShopModel updatedShop) async {
     return await runWithState<ShopModel>(
