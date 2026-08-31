@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'app_routes.dart';
+import '../../features/navigation/views/main_shell_screen.dart';
 
-/// Central Route Generator with custom page transitions
+// Central Route Generator with custom page transitions
 class AppRouter {
   AppRouter._();
 
@@ -24,15 +25,16 @@ class AppRouter {
 
       case AppRoutes.mainShell:
       case AppRoutes.dashboard:
+        final initialTab = args is int ? args : 0;
         return _buildPageRoute(
           settings: settings,
-          builder: (_) => const _PlaceholderScreen(title: 'Vendor Dashboard'),
+          builder: (_) => MainShellScreen(initialIndex: initialTab),
         );
 
       case AppRoutes.orders:
         return _buildPageRoute(
           settings: settings,
-          builder: (_) => const _PlaceholderScreen(title: 'Orders Management'),
+          builder: (_) => const MainShellScreen(initialIndex: 1),
         );
 
       case AppRoutes.orderDetails:
@@ -44,7 +46,7 @@ class AppRouter {
       case AppRoutes.products:
         return _buildPageRoute(
           settings: settings,
-          builder: (_) => const _PlaceholderScreen(title: 'Products'),
+          builder: (_) => const MainShellScreen(initialIndex: 2),
         );
 
       case AppRoutes.addProduct:
@@ -68,7 +70,7 @@ class AppRouter {
       case AppRoutes.shopManagement:
         return _buildPageRoute(
           settings: settings,
-          builder: (_) => const _PlaceholderScreen(title: 'Shop Management'),
+          builder: (_) => const MainShellScreen(initialIndex: 3),
         );
 
       case AppRoutes.notifications:
@@ -80,7 +82,7 @@ class AppRouter {
       case AppRoutes.profile:
         return _buildPageRoute(
           settings: settings,
-          builder: (_) => const _PlaceholderScreen(title: 'Vendor Profile'),
+          builder: (_) => const MainShellScreen(initialIndex: 4),
         );
 
       case AppRoutes.editProfile:
@@ -136,7 +138,7 @@ class AppRouter {
   }
 }
 
-/// Temporary Scaffolding Placeholder Screen for Route Verification
+// Temporary Scaffolding Placeholder Screen for Route Verification
 class _PlaceholderScreen extends StatelessWidget {
   final String title;
   final String? subtitle;
