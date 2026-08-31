@@ -9,6 +9,8 @@ import 'core/routing/navigation_service.dart';
 import 'core/di/service_locator.dart';
 import 'core/storage/session_storage.dart';
 import 'features/auth/presentation/controllers/auth_controller.dart';
+import 'features/dashboard/presentation/controllers/dashboard_controller.dart';
+import 'features/shop/presentation/controllers/shop_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,6 +36,8 @@ class VendorApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final sessionStorage = locate<SessionStorage>();
     final authController = locate<AuthController>();
+    final dashboardController = locate<DashboardController>();
+    final shopController = locate<ShopController>();
 
     final isDark = sessionStorage.isDarkMode();
     final isAuthenticated = authController.isAuthenticated;
@@ -41,6 +45,8 @@ class VendorApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<AuthController>.value(value: authController),
+        ChangeNotifierProvider<DashboardController>.value(value: dashboardController),
+        ChangeNotifierProvider<ShopController>.value(value: shopController),
       ],
       child: MaterialApp(
         title: AppConstants.appName,

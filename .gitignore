@@ -27,6 +27,7 @@ docs/**
 prompt-*.md
 next-phase-*.md
 scratch/
+preview/
 .system_generated/
 *.log
 

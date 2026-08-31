@@ -8,6 +8,16 @@ import '../../features/auth/domain/usecases/get_session_usecase.dart';
 import '../../features/auth/domain/usecases/switch_shop_usecase.dart';
 import '../../features/auth/data/repositories/mock_auth_repository.dart';
 import '../../features/auth/presentation/controllers/auth_controller.dart';
+import '../../features/dashboard/domain/repositories/dashboard_repository_interface.dart';
+import '../../features/dashboard/domain/usecases/get_dashboard_metrics_usecase.dart';
+import '../../features/dashboard/domain/usecases/get_sales_chart_usecase.dart';
+import '../../features/dashboard/data/repositories/mock_dashboard_repository.dart';
+import '../../features/dashboard/presentation/controllers/dashboard_controller.dart';
+import '../../features/shop/domain/repositories/shop_repository_interface.dart';
+import '../../features/shop/domain/usecases/toggle_shop_status_usecase.dart';
+import '../../features/shop/domain/usecases/update_shop_info_usecase.dart';
+import '../../features/shop/data/repositories/mock_shop_repository.dart';
+import '../../features/shop/presentation/controllers/shop_controller.dart';
 
 // Lightweight Service Locator for Dependency Injection
 class ServiceLocator {
@@ -83,6 +93,41 @@ class ServiceLocator {
     );
     await authController.initSession();
     instance.register<AuthController>(authController);
+
+    // Dashboard Module Services & Use Cases
+    final dashboardRepository = MockDashboardRepository();
+    instance.register<IDashboardRepository>(dashboardRepository);
+
+    final getMetricsUseCase = GetDashboardMetricsUseCase(dashboardRepository);
+    instance.register<GetDashboardMetricsUseCase>(getMetricsUseCase);
+
+    final getSalesChartUseCase = GetSalesChartUseCase(dashboardRepository);
+    instance.register<GetSalesChartUseCase>(getSalesChartUseCase);
+
+    final dashboardController = DashboardController(
+      getMetricsUseCase: getMetricsUseCase,
+      getSalesChartUseCase: getSalesChartUseCase,
+    );
+    instance.register<DashboardController>(dashboardController);
+
+    // Shop Module Services & Use Cases
+    final shopRepository = MockShopRepository();
+    instance.register<IShopRepository>(shopRepository);
+
+    final toggleStatusUseCase = ToggleShopStatusUseCase(shopRepository);
+    instance.register<ToggleShopStatusUseCase>(toggleStatusUseCase);
+
+    final updateInfoUseCase = UpdateShopInfoUseCase(shopRepository);
+    instance.register<UpdateShopInfoUseCase>(updateInfoUseCase);
+
+    final shopController = ShopController(
+      toggleStatusUseCase: toggleStatusUseCase,
+      updateInfoUseCase: updateInfoUseCase,
+    );
+    if (authController.activeShop != null) {
+      shopController.setActiveShop(authController.activeShop!);
+    }
+    instance.register<ShopController>(shopController);
   }
 }
 

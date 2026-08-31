@@ -6,6 +6,7 @@ import '../../../shared/components/app_card.dart';
 import '../../../shared/components/stat_card.dart';
 import '../../../shared/components/status_badge.dart';
 import '../../../shared/components/app_switch.dart';
+import '../../dashboard/presentation/views/dashboard_screen.dart';
 import '../widgets/floating_nav_bar.dart';
 
 // Main Application Navigation Shell
@@ -40,7 +41,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
       icon: Icons.receipt_long_outlined,
       selectedIcon: Icons.receipt_long_rounded,
       label: 'Orders',
-      badgeCount: 3, // Mock active orders count
+      badgeCount: 3, // Mock active incoming orders count
     ),
     NavItem(
       icon: Icons.restaurant_menu_outlined,
@@ -72,30 +73,36 @@ class _MainShellScreenState extends State<MainShellScreen> {
           IndexedStack(
             index: _currentIndex,
             children: [
-              _TabPlaceholder(
-                title: 'Dashboard Overview',
-                subtitle: 'Real-time sales, order alerts, and business insights.',
-                icon: Icons.analytics_outlined,
-                accentColor: AppColors.primary,
+              // Tab 0: Real Dashboard Screen
+              DashboardScreen(
+                onNavigateTab: (index) => setState(() => _currentIndex = index),
               ),
+
+              // Tab 1: Orders Tab Placeholder
               _TabPlaceholder(
                 title: 'Order Management',
                 subtitle: 'Manage active, completed, and incoming customer orders.',
                 icon: Icons.receipt_long_rounded,
                 accentColor: AppColors.secondary,
               ),
+
+              // Tab 2: Products Tab Placeholder
               _TabPlaceholder(
                 title: 'Product Catalog',
                 subtitle: 'Organize menu categories, items, and availability status.',
                 icon: Icons.restaurant_menu_rounded,
                 accentColor: AppColors.statusInfo,
               ),
+
+              // Tab 3: Shop Settings Placeholder
               _TabPlaceholder(
                 title: 'Shop Settings',
                 subtitle: 'Manage store hours, open/close toggle, and delivery radius.',
                 icon: Icons.storefront_rounded,
                 accentColor: AppColors.statusWarning,
               ),
+
+              // Tab 4: Vendor Profile Placeholder
               _TabPlaceholder(
                 title: 'Vendor Profile',
                 subtitle: 'Account preferences, business details, and secure logout.',
@@ -105,7 +112,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
             ],
           ),
 
-          // Floating Pill Bottom Navigation Dock
+          // Floating Pill Bottom Navigation Dock (modern_ui_arif)
           Positioned(
             left: 0,
             right: 0,
@@ -122,7 +129,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
   }
 }
 
-// Scaffolding Tab View Demonstration
+// Scaffolding Tab View Placeholder
 class _TabPlaceholder extends StatefulWidget {
   final String title;
   final String subtitle;
@@ -152,7 +159,6 @@ class _TabPlaceholderState extends State<_TabPlaceholder> {
       child: ListView(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
         children: [
-          // Header Bar
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -184,7 +190,6 @@ class _TabPlaceholderState extends State<_TabPlaceholder> {
 
           AppSpacing.vGap20,
 
-          // Feature Demo Card
           AppCard(
             gradient: isDark ? AppColors.darkCardGradient : null,
             child: Row(
@@ -222,68 +227,6 @@ class _TabPlaceholderState extends State<_TabPlaceholder> {
                 ),
               ],
             ),
-          ),
-
-          AppSpacing.vGap16,
-
-          // Quick Demo Controls
-          AppCard(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Quick Store Status',
-                  style: AppTypography.titleSmall.copyWith(
-                    color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                AppSpacing.vGap12,
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      _isShopOpen ? 'Accepting Customer Orders' : 'Store Currently Paused',
-                      style: AppTypography.bodyMedium.copyWith(
-                        color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
-                      ),
-                    ),
-                    AppSwitch(
-                      value: _isShopOpen,
-                      onChanged: (val) => setState(() => _isShopOpen = val),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-
-          AppSpacing.vGap16,
-
-          // Metric Card Demonstration Grid
-          Row(
-            children: [
-              Expanded(
-                child: StatCard(
-                  title: "Today's Sales",
-                  value: '\$1,420.50',
-                  trendText: '+12.4%',
-                  isTrendPositive: true,
-                  icon: Icons.attach_money_rounded,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: StatCard(
-                  title: 'Active Orders',
-                  value: '18',
-                  trendText: '+3 new',
-                  isTrendPositive: true,
-                  icon: Icons.shopping_bag_outlined,
-                  iconColor: AppColors.secondary,
-                ),
-              ),
-            ],
           ),
         ],
       ),
