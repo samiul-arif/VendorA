@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'core/constants/app_constants.dart';
 import 'core/theme/app_theme.dart';
 import 'core/routing/app_router.dart';
@@ -7,6 +8,7 @@ import 'core/routing/app_routes.dart';
 import 'core/routing/navigation_service.dart';
 import 'core/di/service_locator.dart';
 import 'core/storage/session_storage.dart';
+import 'features/auth/presentation/controllers/auth_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,7 +21,7 @@ void main() async {
     DeviceOrientation.landscapeRight,
   ]);
 
-  // Initialize Core Services (Storage, Session, Routing)
+  // Initialize Core Services & Feature Modules
   await ServiceLocator.initCoreServices();
 
   runApp(const VendorApp());
@@ -31,30 +33,37 @@ class VendorApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final sessionStorage = locate<SessionStorage>();
-    final isDark = sessionStorage.isDarkMode();
-    final isAuthenticated = sessionStorage.isAuthenticated;
+    final authController = locate<AuthController>();
 
-    return MaterialApp(
-      title: AppConstants.appName,
-      debugShowCheckedModeBanner: false,
-      navigatorKey: NavigationService.instance.navigatorKey,
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: isDark ? ThemeMode.dark : ThemeMode.light,
-      initialRoute: isAuthenticated ? AppRoutes.dashboard : AppRoutes.login,
-      onGenerateRoute: AppRouter.generateRoute,
-      builder: (context, child) {
-        // Enforce Text Scale Bounds for Accessibility (ui-ux-pro-max)
-        return MediaQuery(
-          data: MediaQuery.of(context).copyWith(
-            textScaler: MediaQuery.of(context).textScaler.clamp(
-                  minScaleFactor: 0.85,
-                  maxScaleFactor: 1.30,
-                ),
-          ),
-          child: child ?? const SizedBox.shrink(),
-        );
-      },
+    final isDark = sessionStorage.isDarkMode();
+    final isAuthenticated = authController.isAuthenticated;
+
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<AuthController>.value(value: authController),
+      ],
+      child: MaterialApp(
+        title: AppConstants.appName,
+        debugShowCheckedModeBanner: false,
+        navigatorKey: NavigationService.instance.navigatorKey,
+        theme: AppTheme.lightTheme,
+        darkTheme: AppTheme.darkTheme,
+        themeMode: isDark ? ThemeMode.dark : ThemeMode.light,
+        initialRoute: isAuthenticated ? AppRoutes.mainShell : AppRoutes.login,
+        onGenerateRoute: AppRouter.generateRoute,
+        builder: (context, child) {
+          // Enforce Text Scale Bounds for Accessibility (ui-ux-pro-max)
+          return MediaQuery(
+            data: MediaQuery.of(context).copyWith(
+              textScaler: MediaQuery.of(context).textScaler.clamp(
+                    minScaleFactor: 0.85,
+                    maxScaleFactor: 1.30,
+                  ),
+            ),
+            child: child ?? const SizedBox.shrink(),
+          );
+        },
+      ),
     );
   }
 }

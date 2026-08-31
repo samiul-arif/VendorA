@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'app_routes.dart';
+import '../../features/auth/presentation/views/login_screen.dart';
 import '../../features/navigation/views/main_shell_screen.dart';
 
 // Central Route Generator with custom page transitions
@@ -12,15 +13,10 @@ class AppRouter {
     switch (settings.name) {
       case AppRoutes.initial:
       case AppRoutes.splash:
-        return _buildPageRoute(
-          settings: settings,
-          builder: (_) => const _PlaceholderScreen(title: 'Splash Screen'),
-        );
-
       case AppRoutes.login:
         return _buildPageRoute(
           settings: settings,
-          builder: (_) => const _PlaceholderScreen(title: 'Vendor Login'),
+          builder: (_) => const LoginScreen(),
         );
 
       case AppRoutes.mainShell:
