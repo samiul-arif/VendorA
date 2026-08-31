@@ -130,7 +130,7 @@ class AppTypography {
     fontWeight: FontWeight.w700,
     lineHeight: 20.0,
     letterSpacing: 0.2,
-    color: AppColors.ctaPrimaryText,
+    color: AppColors.ctaPrimaryLightText,
   );
 
   static TextStyle buttonMedium = _baseStyle(
@@ -138,14 +138,14 @@ class AppTypography {
     fontWeight: FontWeight.w600,
     lineHeight: 18.0,
     letterSpacing: 0.1,
-    color: AppColors.ctaPrimaryText,
+    color: AppColors.ctaPrimaryLightText,
   );
 
   static TextStyle buttonSmall = _baseStyle(
     fontSize: 12.0,
     fontWeight: FontWeight.w600,
     lineHeight: 16.0,
-    color: AppColors.ctaPrimaryText,
+    color: AppColors.ctaPrimaryLightText,
   );
 
   // Badges & Micro Labels

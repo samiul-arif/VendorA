@@ -28,17 +28,17 @@ class AppTheme {
       // Color Scheme
       colorScheme: const ColorScheme.light(
         primary: AppColors.primary,
-        onPrimary: AppColors.textInverse,
+        onPrimary: AppColors.textInverseLight,
         primaryContainer: AppColors.primaryTint,
         onPrimaryContainer: AppColors.primary,
         secondary: AppColors.secondary,
-        onSecondary: AppColors.textInverse,
+        onSecondary: AppColors.textInverseLight,
         secondaryContainer: AppColors.secondaryTint,
         surface: AppColors.lightSurface,
         onSurface: AppColors.textPrimaryLight,
         surfaceContainerHighest: AppColors.lightSurfaceSubtle,
         error: AppColors.statusError,
-        onError: AppColors.textInverse,
+        onError: AppColors.textInverseLight,
         outline: AppColors.lightBorder,
       ),
 
@@ -77,8 +77,8 @@ class AppTheme {
       // Primary Button Theme (modern_ui_arif: Solid Near-Black Pill CTA)
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.ctaPrimary,
-          foregroundColor: AppColors.ctaPrimaryText,
+          backgroundColor: AppColors.ctaPrimaryLight,
+          foregroundColor: AppColors.ctaPrimaryLightText,
           elevation: 0,
           minimumSize: const Size(double.infinity, 52),
           padding: AppSpacing.buttonPadding,
@@ -203,17 +203,17 @@ class AppTheme {
       // Color Scheme
       colorScheme: const ColorScheme.dark(
         primary: AppColors.primary,
-        onPrimary: AppColors.textInverse,
-        primaryContainer: Color(0xFF4A0A26),
+        onPrimary: AppColors.textInverseLight,
+        primaryContainer: AppColors.primaryTintDark,
         onPrimaryContainer: AppColors.primaryLight,
         secondary: AppColors.secondary,
-        onSecondary: AppColors.textInverse,
-        secondaryContainer: Color(0xFF0F3A30),
+        onSecondary: AppColors.textInverseLight,
+        secondaryContainer: AppColors.secondaryTintDark,
         surface: AppColors.darkSurface,
         onSurface: AppColors.textPrimaryDark,
-        surfaceContainerHighest: AppColors.darkSurfaceSubtle,
+        surfaceContainerHighest: AppColors.darkSurfaceHighest,
         error: AppColors.statusError,
-        onError: AppColors.textInverse,
+        onError: AppColors.textInverseLight,
         outline: AppColors.darkBorder,
       ),
 
@@ -252,13 +252,13 @@ class AppTheme {
       // Primary Button Theme
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.textPrimaryDark,
-          foregroundColor: AppColors.ctaPrimary,
+          backgroundColor: AppColors.ctaPrimaryDark,
+          foregroundColor: AppColors.ctaPrimaryDarkText,
           elevation: 0,
           minimumSize: const Size(double.infinity, 52),
           padding: AppSpacing.buttonPadding,
           shape: const RoundedRectangleBorder(borderRadius: AppRadius.button),
-          textStyle: AppTypography.buttonLarge.copyWith(color: AppColors.ctaPrimary),
+          textStyle: AppTypography.buttonLarge.copyWith(color: AppColors.ctaPrimaryDarkText),
         ),
       ),
 
