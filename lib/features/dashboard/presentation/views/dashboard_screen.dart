@@ -5,20 +5,18 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../shared/components/shimmer_skeleton.dart';
 import '../../../../shared/components/error_state_view.dart';
-import '../../../../shared/components/shared_select_modal.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../../../orders/presentation/controllers/order_controller.dart';
 import '../../../shop/presentation/controllers/shop_controller.dart';
-import '../../../notifications/presentation/controllers/notification_controller.dart';
-import '../../../notifications/domain/models/notification_type.dart';
-import '../../../../shared/components/app_toast.dart';
+import '../../../shop/presentation/widgets/shop_switcher_bottom_sheet.dart';
 import '../controllers/dashboard_controller.dart';
 import '../widgets/store_status_header.dart';
 import '../widgets/hero_earnings_card.dart';
 import '../widgets/metric_stats_grid.dart';
+import '../widgets/quick_actions_bar.dart';
 import '../widgets/incoming_orders_stream.dart';
 
-// Vendor Dashboard Screen (modern_ui_arif Card-First Architecture - Revenue Chart Removed)
+/// Vendor Dashboard Screen matching Stitch brief (`dashboard/code.html`)
 class DashboardScreen extends StatefulWidget {
   final ValueChanged<int>? onNavigateTab;
 
@@ -56,55 +54,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     orderController.loadOrders(shopId: shopId);
   }
 
-  void _showShopSwitcherModal() async {
-    final authController = context.read<AuthController>();
-    final shopController = context.read<ShopController>();
-    final availableShops = authController.availableShops;
-    final currentShopId = shopController.currentShop?.id ?? authController.activeShop?.id ?? 'shop_01';
-
-    final options = availableShops.map((s) {
-      return SelectOptionItem<String>(
-        value: s.id,
-        title: s.name,
-        subtitle: s.description,
-        icon: Icons.storefront_rounded,
-      );
-    }).toList();
-
-    final selectedId = await SharedSelectModal.show<String>(
-      context: context,
-      title: 'Active Shop Switcher',
-      subtitle: 'Switch between stores in your merchant portfolio',
-      options: options,
-      selectedValue: currentShopId,
-    );
-
-    if (selectedId != null && selectedId != currentShopId) {
-      final result = await authController.switchShop(selectedId);
-      result.when(
-        success: (session) {
-          if (session.activeShop != null) {
-            shopController.setActiveShop(session.activeShop!);
-            context.read<DashboardController>().loadDashboard(shopId: session.activeShop!.id);
-            context.read<OrderController>().loadOrders(shopId: session.activeShop!.id);
-          }
-          if (mounted) {
-            context.read<NotificationController>().dispatchNotification(
-              context,
-              title: 'Switched Active Store',
-              message: 'Now viewing "${session.activeShop?.name ?? ''}".',
-              type: NotificationType.system,
-              toastVariant: AppToastVariant.success,
-            );
-          }
-        },
-        failure: (msg, _) {
-          if (mounted) {
-            AppToast.showError(context, title: 'Store Switch Failed', message: msg);
-          }
-        },
-      );
-    }
+  void _showShopSwitcherModal() {
+    ShopSwitcherBottomSheet.show(context);
   }
 
   @override
@@ -113,7 +64,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final dashboardController = context.watch<DashboardController>();
 
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: colors.surface,
       body: SafeArea(
         bottom: false,
         child: dashboardController.isLoading && dashboardController.metrics == null
@@ -127,16 +78,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     onRefresh: () => dashboardController.refreshDashboard(),
                     color: colors.primary,
                     child: ListView(
-                      padding: const EdgeInsets.fromLTRB(16, 12, 16, 110),
+                      padding: const EdgeInsets.fromLTRB(18, 14, 18, 120),
                       children: [
-                        // Store Header & Status Toggle
+                        // 1. Store Header & Open/Closed Status Toggle
                         StoreStatusHeader(
                           onSwitchShopRequested: _showShopSwitcherModal,
                         ),
 
                         AppSpacing.vGap16,
 
-                        // Hero Net Revenue Banner
+                        // 2. Hero Earnings Card with Mini Bar Chart Graphic
                         HeroEarningsCard(
                           metrics: dashboardController.metrics,
                           onAnalyticsTapped: () => widget.onNavigateTab?.call(0),
@@ -144,16 +95,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
                         AppSpacing.vGap16,
 
-                        // 2-Column Stat Cards (Active Orders, Next Payout)
+                        // 3. 2-Column Stat Cards (Total Orders, Total Payouts)
                         MetricStatsGrid(
                           metrics: dashboardController.metrics,
                           onOrdersTapped: () => widget.onNavigateTab?.call(1),
                           onPayoutsTapped: () => widget.onNavigateTab?.call(0),
                         ),
 
+                        AppSpacing.vGap16,
+
+                        // 4. Quick Action Chips (Add Product, View Products, Categories)
+                        QuickActionsBar(
+                          onNavigateTab: widget.onNavigateTab,
+                        ),
+
                         AppSpacing.vGap20,
 
-                        // Incoming Orders Live Stream
+                        // 5. Active Orders Section
                         IncomingOrdersStream(
                           onViewAllTapped: () => widget.onNavigateTab?.call(1),
                         ),
@@ -172,11 +130,11 @@ class _DashboardSkeletonLoading extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 96),
+      padding: const EdgeInsets.fromLTRB(18, 14, 18, 96),
       children: const [
         Row(
           children: [
-            ShimmerSkeleton(width: 44, height: 44, borderRadius: AppRadius.md),
+            ShimmerSkeleton(width: 48, height: 48, borderRadius: AppRadius.full),
             AppSpacing.hGap12,
             Expanded(
               child: Column(
@@ -188,7 +146,7 @@ class _DashboardSkeletonLoading extends StatelessWidget {
                 ],
               ),
             ),
-            ShimmerSkeleton(width: 70, height: 32, borderRadius: AppRadius.full),
+            ShimmerSkeleton(width: 40, height: 40, borderRadius: AppRadius.full),
           ],
         ),
         AppSpacing.vGap16,
@@ -196,11 +154,15 @@ class _DashboardSkeletonLoading extends StatelessWidget {
         AppSpacing.vGap16,
         Row(
           children: [
-            Expanded(child: ShimmerSkeleton(width: double.infinity, height: 110, borderRadius: AppRadius.card)),
-            SizedBox(width: 12),
-            Expanded(child: ShimmerSkeleton(width: double.infinity, height: 110, borderRadius: AppRadius.card)),
+            Expanded(child: ShimmerSkeleton(width: double.infinity, height: 100, borderRadius: AppRadius.card)),
+            SizedBox(width: 14),
+            Expanded(child: ShimmerSkeleton(width: double.infinity, height: 100, borderRadius: AppRadius.card)),
           ],
         ),
+        AppSpacing.vGap16,
+        ShimmerSkeleton(width: double.infinity, height: 42, borderRadius: AppRadius.full),
+        AppSpacing.vGap20,
+        ShimmerSkeleton(width: double.infinity, height: 140, borderRadius: AppRadius.card),
       ],
     );
   }

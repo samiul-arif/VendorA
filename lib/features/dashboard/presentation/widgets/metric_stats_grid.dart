@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_semantic_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
-import '../../../../shared/components/app_card.dart';
+import '../../../../core/utils/formatters.dart';
 import '../../domain/models/dashboard_metrics.dart';
 
-// 2-Column Responsive Metric Stats Grid (Screenshot 4 Matching)
+/// 2-Column Metric Stats Grid matching Stitch brief (`dashboard/code.html`)
 class MetricStatsGrid extends StatelessWidget {
   final DashboardMetrics? metrics;
   final VoidCallback? onOrdersTapped;
@@ -22,153 +21,119 @@ class MetricStatsGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.appColors;
 
-    final activeOrders = metrics?.activeOrdersCount ?? 18;
-    final nextPayout = metrics?.nextPayoutAmount ?? 8940.00;
+    final totalOrders = metrics?.totalOrdersToday ?? 48;
+    final totalPayouts = metrics?.nextPayoutAmount ?? 850.00;
 
     return Row(
       children: [
-        // Left Card: Active Orders
+        // Left Card: Total Orders
         Expanded(
-          child: AppCard(
+          child: GestureDetector(
             onTap: onOrdersTapped,
-            padding: const EdgeInsets.all(16),
-            borderRadius: BorderRadius.circular(22),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // Pink Bag Icon Box
-                    Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: colors.primaryContainer,
-                        borderRadius: BorderRadius.circular(12),
+            child: Container(
+              padding: const EdgeInsets.all(18),
+              decoration: BoxDecoration(
+                color: colors.surface,
+                borderRadius: BorderRadius.circular(18),
+                border: Border.all(color: colors.borderSubtle),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF15171C).withValues(alpha: 0.04),
+                    blurRadius: 16,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.shopping_bag_outlined,
+                        size: 20,
+                        color: colors.textSecondary,
                       ),
-                      child: Center(
-                        child: Icon(
-                          Icons.shopping_bag_outlined,
-                          color: colors.primary,
-                          size: 20,
-                        ),
-                      ),
-                    ),
-
-                    // +3 new green pill
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
-                      decoration: BoxDecoration(
-                        color: colors.successBg,
-                        borderRadius: AppRadius.full,
-                      ),
-                      child: Text(
-                        '+3 new',
+                      const SizedBox(width: 8),
+                      Text(
+                        'Total Orders',
                         style: TextStyle(
-                          color: colors.success,
-                          fontSize: 10,
-                          fontWeight: FontWeight.w800,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: colors.textSecondary,
                         ),
                       ),
+                    ],
+                  ),
+                  AppSpacing.vGap12,
+                  Text(
+                    '$totalOrders',
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.w900,
+                      color: colors.textPrimary,
+                      letterSpacing: -0.5,
                     ),
-                  ],
-                ),
-
-                AppSpacing.vGap16,
-
-                Text(
-                  '$activeOrders',
-                  style: TextStyle(
-                    fontSize: 26,
-                    fontWeight: FontWeight.w900,
-                    color: colors.textPrimary,
                   ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  'Active Orders',
-                  style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    color: colors.textMuted,
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
 
-        AppSpacing.hGap12,
+        const SizedBox(width: 14),
 
-        // Right Card: Next Payout
+        // Right Card: Total Payouts
         Expanded(
-          child: AppCard(
+          child: GestureDetector(
             onTap: onPayoutsTapped,
-            padding: const EdgeInsets.all(16),
-            borderRadius: BorderRadius.circular(22),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // Mint Card Icon Box
-                    Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: colors.infoBg,
-                        borderRadius: BorderRadius.circular(12),
+            child: Container(
+              padding: const EdgeInsets.all(18),
+              decoration: BoxDecoration(
+                color: colors.surface,
+                borderRadius: BorderRadius.circular(18),
+                border: Border.all(color: colors.borderSubtle),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF15171C).withValues(alpha: 0.04),
+                    blurRadius: 16,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.account_balance_wallet_outlined,
+                        size: 20,
+                        color: colors.textSecondary,
                       ),
-                      child: Center(
-                        child: Icon(
-                          Icons.credit_card_rounded,
-                          color: colors.info,
-                          size: 20,
-                        ),
-                      ),
-                    ),
-
-                    // Weekly blue pill
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
-                      decoration: BoxDecoration(
-                        color: colors.orderAcceptedBg,
-                        borderRadius: AppRadius.full,
-                      ),
-                      child: Text(
-                        'Weekly',
+                      const SizedBox(width: 8),
+                      Text(
+                        'Total Payouts',
                         style: TextStyle(
-                          color: colors.orderAccepted,
-                          fontSize: 10,
-                          fontWeight: FontWeight.w800,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: colors.textSecondary,
                         ),
                       ),
+                    ],
+                  ),
+                  AppSpacing.vGap12,
+                  Text(
+                    Formatters.formatCurrency(totalPayouts),
+                    style: TextStyle(
+                      fontSize: 26,
+                      fontWeight: FontWeight.w900,
+                      color: colors.textPrimary,
+                      letterSpacing: -0.5,
                     ),
-                  ],
-                ),
-
-                AppSpacing.vGap16,
-
-                Text(
-                  '\$${nextPayout.toStringAsFixed(0)}',
-                  style: TextStyle(
-                    fontSize: 26,
-                    fontWeight: FontWeight.w900,
-                    color: colors.textPrimary,
                   ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  'Next Payout',
-                  style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    color: colors.textMuted,
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
