@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'app_routes.dart';
+import '../../features/auth/presentation/views/splash_screen.dart';
 import '../../features/auth/presentation/views/login_screen.dart';
+import '../../features/auth/presentation/views/registration_screen.dart';
+import '../../features/auth/presentation/views/otp_verification_screen.dart';
+import '../../features/onboarding/presentation/views/welcome_screen.dart';
 import '../../features/navigation/views/main_shell_screen.dart';
 import '../../features/orders/presentation/views/order_details_screen.dart';
 import '../../features/products/domain/models/product_model.dart';
@@ -20,19 +24,43 @@ class AppRouter {
     final args = settings.arguments;
 
     switch (settings.name) {
+      case AppRoutes.initial:
+      case AppRoutes.splash:
+        return _buildPageRoute(
+          settings: settings,
+          builder: (_) => const SplashScreen(),
+        );
+
+      case AppRoutes.welcome:
+        return _buildPageRoute(
+          settings: settings,
+          builder: (_) => const WelcomeScreen(),
+        );
+
+      case AppRoutes.login:
+        return _buildPageRoute(
+          settings: settings,
+          builder: (_) => const LoginScreen(),
+        );
+
+      case AppRoutes.registration:
+        return _buildPageRoute(
+          settings: settings,
+          builder: (_) => const RegistrationScreen(),
+        );
+
+      case AppRoutes.otpVerification:
+        final phone = args is String ? args : '+1 (555) 123-4567';
+        return _buildPageRoute(
+          settings: settings,
+          builder: (_) => OtpVerificationScreen(phoneNumber: phone),
+        );
+
       case AppRoutes.onboarding:
         final isTourMode = args is bool ? args : false;
         return _buildPageRoute(
           settings: settings,
           builder: (_) => OnboardingScreen(isTourMode: isTourMode),
-        );
-
-      case AppRoutes.initial:
-      case AppRoutes.splash:
-      case AppRoutes.login:
-        return _buildPageRoute(
-          settings: settings,
-          builder: (_) => const LoginScreen(),
         );
 
       case AppRoutes.mainShell:

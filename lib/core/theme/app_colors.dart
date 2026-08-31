@@ -7,19 +7,28 @@ import 'package:flutter/material.dart';
 class AppColors {
   AppColors._();
 
-  // ── Brand Accent Tokens (Foodpanda / Food-Tech Partner Palette) ──────────
-  static const Color primary = Color(0xFFE21B70);          // Signature Merchant Magenta/Pink
-  static const Color primaryDark = Color(0xFFC0155C);      // Pressed primary
-  static const Color primaryLight = Color(0xFFFF4E9B);     // Light variant
+  // ── Brand Accent Tokens (Stitch Merchant Hub Palette) ───────────────────
+  static const Color primary = Color(0xFFB90058);          // Deep Vibrant Magenta
+  static const Color primaryContainer = Color(0xFFE21B70); // Lively Fuchsia/Pink Container
+  static const Color primaryDark = Color(0xFF8F0042);      // Dark variant
+  static const Color primaryLight = Color(0xFFFF5E9E);     // Gradient end / light variant
+  static const Color primaryFixed = Color(0xFFFFD9E0);     // Soft pastel pill
   static const Color primaryTint = Color(0xFFFFF0F6);      // Subtle bg tint for badges (light)
   static const Color primaryTintDark = Color(0xFF3A1428);  // Subtle bg tint for badges (dark)
   static const Color primarySurface = Color(0xFFFDE8F1);   // Light accent card surface
 
-  static const Color secondary = Color(0xFF2FBF9F);        // Fresh Mint / Success Accent
+  static const Color secondary = Color(0xFF006B57);        // Rich Emerald / Secondary Accent
+  static const Color secondaryContainer = Color(0xFF75F9D6);// Mint Teal Container
   static const Color secondaryTint = Color(0xFFE6F7F3);
   static const Color secondaryTintDark = Color(0xFF0F2B26);
 
   static const LinearGradient primaryGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [Color(0xFFE21B70), Color(0xFFFF5E9E)],
+  );
+
+  static const LinearGradient heroGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
     colors: [Color(0xFFE21B70), Color(0xFFFF5E9E)],
@@ -34,31 +43,32 @@ class AppColors {
   static const LinearGradient mintGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [Color(0xFF35C9A8), Color(0xFFBFEFDD)],
+    colors: [Color(0xFF006B57), Color(0xFF75F9D6)],
   );
 
   // ── Action & Button Tokens ────────────────────────────────────────────
-  // Light: solid near-black pill. Dark: soft off-white pill (inverted),
-  // which reads far more "modern app" than black-on-black in dark mode.
-  static const Color ctaPrimaryLight = Color(0xFF15171C);
-  static const Color ctaPrimaryLightHover = Color(0xFF272B33);
+  static const Color ctaPrimaryLight = Color(0xFF171C24);   // Stitch on-background solid pill
+  static const Color ctaPrimaryLightHover = Color(0xFF2C3039);
   static const Color ctaPrimaryLightText = Color(0xFFFFFFFF);
 
-  static const Color ctaPrimaryDark = Color(0xFFF5F6F8);
-  static const Color ctaPrimaryDarkHover = Color(0xFFE3E5E9);
-  static const Color ctaPrimaryDarkText = Color(0xFF15171C);
+  static const Color ctaPrimaryDark = Color(0xFFF9F9FF);
+  static const Color ctaPrimaryDarkHover = Color(0xFFEAEDF9);
+  static const Color ctaPrimaryDarkText = Color(0xFF171C24);
 
-  static const Color ctaSecondaryLight = Color(0xFFF1F2F5);
-  static const Color ctaSecondaryLightText = Color(0xFF15171C);
+  static const Color ctaSecondaryLight = Color(0xFFEAEDF9);
+  static const Color ctaSecondaryLightText = Color(0xFF171C24);
   static const Color ctaSecondaryDark = Color(0xFF232732);
-  static const Color ctaSecondaryDarkText = Color(0xFFF5F6F8);
+  static const Color ctaSecondaryDarkText = Color(0xFFF9F9FF);
 
   // ── Canvas & Surface Tokens (Light Theme) ─────────────────────────────
-  static const Color lightCanvas = Color(0xFFF6F7F9);       // Cool-toned, softer than flat grey
+  static const Color lightCanvas = Color(0xFFF9F9FF);       // Stitch background
   static const Color lightSurface = Color(0xFFFFFFFF);      // Primary card surface
-  static const Color lightSurfaceSubtle = Color(0xFFFBFBFD);// Secondary/nested surface
-  static const Color lightBorder = Color(0xFFE7E9EE);       // Card/input outline
-  static const Color lightDivider = Color(0xFFEEF0F3);
+  static const Color lightSurfaceSubtle = Color(0xFFEAEDF9);// Stitch surface-container
+  static const Color lightSurfaceLow = Color(0xFFF0F3FF);   // Stitch surface-container-low
+  static const Color lightSurfaceHigh = Color(0xFFE5E8F4);  // Stitch surface-container-high
+  static const Color lightSurfaceHighest = Color(0xFFDFE2EE);// Stitch surface-container-highest
+  static const Color lightBorder = Color(0xFFDFE2EE);       // Outline variant
+  static const Color lightDivider = Color(0xFFEAEDF9);
 
   // ── Canvas & Surface Tokens (Dark Theme) ──────────────────────────────
   // True elevation model (à la Material 3 / Linear dark): each level gets

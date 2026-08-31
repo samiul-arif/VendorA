@@ -51,15 +51,7 @@ class VendorApp extends StatelessWidget {
     final permissionController = locate<PermissionController>();
     final onboardingController = locate<OnboardingController>();
 
-    final isAuthenticated = authController.isAuthenticated;
-    final isOnboardingCompleted = onboardingController.isCompleted;
-
-    String initialRoute = AppRoutes.login;
-    if (isAuthenticated) {
-      initialRoute = AppRoutes.mainShell;
-    } else if (!isOnboardingCompleted) {
-      initialRoute = AppRoutes.onboarding;
-    }
+    const initialRoute = AppRoutes.splash;
 
     return MultiProvider(
       providers: [

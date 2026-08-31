@@ -5,10 +5,13 @@ class AppRoutes {
   // Root, Splash & Onboarding
   static const String initial = '/';
   static const String splash = '/splash';
+  static const String welcome = '/welcome';
   static const String onboarding = '/onboarding';
 
   // Authentication Flow
   static const String login = '/login';
+  static const String registration = '/registration';
+  static const String otpVerification = '/otp-verification';
   static const String forgotPassword = '/forgot-password';
 
   // Main Shell & Dashboard
