@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_semantic_colors.dart';
-import '../../../../core/theme/app_typography.dart';
 import '../controllers/product_controller.dart';
 
-// Category Horizontal Filter Bar with Item Counts
+/// Category Horizontal Filter Bar matching Stitch brief (`products_2x2_grid_view/code.html`)
 class CategoryFilterBar extends StatelessWidget {
   final List<CategoryFilterItem> categories;
   final String selectedCategoryId;
@@ -22,7 +21,7 @@ class CategoryFilterBar extends StatelessWidget {
     final colors = context.appColors;
 
     return SizedBox(
-      height: 40,
+      height: 38,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: categories.length,
@@ -36,23 +35,20 @@ class CategoryFilterBar extends StatelessWidget {
             borderRadius: AppRadius.full,
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 180),
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
-                color: isSelected
-                    ? colors.ctaPrimary
-                    : colors.surface,
+                color: isSelected ? colors.primary : colors.surface,
                 borderRadius: AppRadius.full,
                 border: Border.all(
-                  color: isSelected
-                      ? Colors.transparent
-                      : colors.borderSubtle,
+                  color: isSelected ? colors.primary : colors.borderSubtle,
+                  width: 1.0,
                 ),
                 boxShadow: isSelected
                     ? [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.12),
-                          offset: const Offset(0, 4),
-                          blurRadius: 10,
+                          color: colors.primary.withValues(alpha: 0.25),
+                          offset: const Offset(0, 3),
+                          blurRadius: 8,
                         ),
                       ]
                     : null,
@@ -62,33 +58,30 @@ class CategoryFilterBar extends StatelessWidget {
                 children: [
                   Text(
                     cat.name,
-                    style: AppTypography.labelMedium.copyWith(
-                      color: isSelected
-                          ? colors.ctaPrimaryText
-                          : colors.textPrimary,
+                    style: TextStyle(
+                      color: isSelected ? Colors.white : colors.textPrimary,
                       fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                      fontSize: 13,
                     ),
                   ),
-                  const SizedBox(width: 6),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
-                    decoration: BoxDecoration(
-                      color: isSelected
-                          ? colors.ctaPrimaryText.withValues(alpha: 0.2)
-                          : colors.surfaceSubtle,
-                      borderRadius: AppRadius.full,
-                    ),
-                    child: Text(
-                      '${cat.itemCount}',
-                      style: TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w800,
-                        color: isSelected
-                            ? colors.ctaPrimaryText
-                            : colors.textMuted,
+                  if (cat.itemCount > 0) ...[
+                    const SizedBox(width: 6),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
+                      decoration: BoxDecoration(
+                        color: isSelected ? Colors.white.withValues(alpha: 0.22) : colors.surfaceSubtle,
+                        borderRadius: AppRadius.full,
+                      ),
+                      child: Text(
+                        '${cat.itemCount}',
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w900,
+                          color: isSelected ? Colors.white : colors.textSecondary,
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ],
               ),
             ),

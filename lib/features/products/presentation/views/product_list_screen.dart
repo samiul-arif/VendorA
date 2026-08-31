@@ -4,7 +4,6 @@ import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_semantic_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/components/app_bottom_sheet.dart';
-import '../../../../shared/components/empty_state_view.dart';
 import '../../../../shared/components/error_state_view.dart';
 import '../../../../shared/components/shimmer_skeleton.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
@@ -14,12 +13,11 @@ import '../../../../shared/components/app_toast.dart';
 import '../../domain/models/product_model.dart';
 import '../controllers/product_controller.dart';
 import '../widgets/product_card.dart';
-import '../widgets/product_search_bar.dart';
 import '../widgets/category_filter_bar.dart';
 import '../widgets/quick_restock_bottom_sheet.dart';
 import 'add_edit_product_screen.dart';
 
-// Product Catalog & Inventory Screen (Content-First Merchant Layout)
+/// Product Catalog & Inventory Screen matching Stitch 2x2 Grid brief (`products_2x2_grid_view/code.html`)
 class ProductListScreen extends StatefulWidget {
   const ProductListScreen({super.key});
 
@@ -28,12 +26,20 @@ class ProductListScreen extends StatefulWidget {
 }
 
 class _ProductListScreenState extends State<ProductListScreen> {
+  final _searchController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadProducts();
     });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   void _loadProducts() {
@@ -90,7 +96,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
     final filteredProducts = productController.filteredProducts;
 
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: colors.surface,
       body: SafeArea(
         bottom: false,
         child: productController.isLoading && productController.products.isEmpty
@@ -104,100 +110,111 @@ class _ProductListScreenState extends State<ProductListScreen> {
                     onRefresh: () async => _loadProducts(),
                     color: colors.primary,
                     child: ListView(
-                      padding: const EdgeInsets.fromLTRB(16, 12, 16, 130),
+                      padding: const EdgeInsets.fromLTRB(18, 14, 18, 120),
                       children: [
-                        // Content-First Header (Scrollable Merchant Title)
+                        // Top Header: Title & "+ Add" Action Button
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Product Catalog',
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w900,
-                                    letterSpacing: -0.4,
-                                    color: colors.textPrimary,
-                                  ),
+                            Text(
+                              'Products',
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.w900,
+                                color: colors.textPrimary,
+                                letterSpacing: -0.4,
+                              ),
+                            ),
+                            ElevatedButton.icon(
+                              onPressed: () => _openAddEditScreen(),
+                              icon: const Icon(Icons.add_rounded, size: 18),
+                              label: const Text('Add'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: colors.primary,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                shape: const RoundedRectangleBorder(borderRadius: AppRadius.full),
+                                elevation: 0,
+                                textStyle: const TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w800,
                                 ),
-                                const SizedBox(height: 2),
-                                Text(
-                                  '${filteredProducts.length} items in inventory',
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w600,
-                                    color: colors.textMuted,
-                                  ),
-                                ),
-                              ],
+                              ),
                             ),
                           ],
                         ),
 
-                        AppSpacing.vGap16,
+                        AppSpacing.vGap14,
 
-                        // Search Bar (Standard Input Box Style)
-                        ProductSearchBar(
-                          initialQuery: productController.searchQuery,
-                          onQueryChanged: (q) => productController.setSearchQuery(q),
-                          onClear: () => productController.clearSearch(),
+                        // Search Input Bar matching Stitch
+                        Container(
+                          decoration: BoxDecoration(
+                            color: colors.surfaceSubtle,
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(color: colors.borderSubtle),
+                          ),
+                          child: TextField(
+                            controller: _searchController,
+                            onChanged: (query) => productController.setSearchQuery(query),
+                            style: TextStyle(color: colors.textPrimary, fontSize: 13.5),
+                            decoration: InputDecoration(
+                              hintText: 'Search products by name or category...',
+                              hintStyle: TextStyle(color: colors.textMuted, fontSize: 13),
+                              prefixIcon: Icon(Icons.search_rounded, size: 20, color: colors.textMuted),
+                              suffixIcon: _searchController.text.isNotEmpty
+                                  ? IconButton(
+                                      icon: const Icon(Icons.clear_rounded, size: 16),
+                                      onPressed: () {
+                                        _searchController.clear();
+                                        productController.setSearchQuery('');
+                                      },
+                                    )
+                                  : null,
+                              border: InputBorder.none,
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                            ),
+                          ),
                         ),
 
-                        AppSpacing.vGap12,
+                        AppSpacing.vGap14,
 
-                        // Horizontal Category Filter Pills
+                        // Category Chips Bar
                         CategoryFilterBar(
                           categories: productController.categories,
                           selectedCategoryId: productController.selectedCategoryId,
-                          onCategorySelected: (catId) =>
-                              productController.setCategoryFilter(catId),
+                          onCategorySelected: (catId) => productController.setCategoryFilter(catId),
                         ),
 
                         AppSpacing.vGap16,
 
-                        // Empty State if no matches found
+                        // 2x2 Product Bento Grid
                         if (filteredProducts.isEmpty)
-                          EmptyStateView(
-                            icon: Icons.inventory_2_outlined,
-                            title: 'No Products Found',
-                            description: productController.searchQuery.isNotEmpty
-                                ? 'No items match "${productController.searchQuery}".'
-                                : 'Add your first menu item to begin accepting orders.',
-                            actionButtonText: productController.searchQuery.isNotEmpty
-                                ? 'Clear Search'
-                                : '+ Add New Product',
-                            onActionButtonPressed: () {
-                              if (productController.searchQuery.isNotEmpty) {
-                                productController.clearSearch();
-                              } else {
-                                _openAddEditScreen();
-                              }
-                            },
-                          )
+                          _buildEmptyState(colors)
                         else
-                          // 2-Column Responsive High Density Grid
                           GridView.builder(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
                             itemCount: filteredProducts.length,
-                            gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
+                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 2,
-                              crossAxisSpacing: 10,
-                              mainAxisSpacing: 10,
-                              childAspectRatio: 0.80,
+                              crossAxisSpacing: 12,
+                              mainAxisSpacing: 12,
+                              childAspectRatio: 0.74,
                             ),
                             itemBuilder: (context, index) {
                               final product = filteredProducts[index];
                               return ProductCard(
                                 product: product,
-                                onToggleAvailability: (isAvailable) {
-                                  productController.toggleAvailability(
-                                    product.id,
-                                    isAvailable,
+                                onToggleAvailability: (available) async {
+                                  final result = await productController.toggleAvailability(product.id, available);
+                                  if (!context.mounted) return;
+                                  result.when(
+                                    success: (_) => AppToast.showSuccess(
+                                      context,
+                                      title: 'Availability Updated',
+                                      message: '${product.name} is now ${available ? "available" : "sold out"}.',
+                                    ),
+                                    failure: (msg, _) => AppToast.showError(context, title: 'Error', message: msg),
                                   );
                                 },
                                 onRestockTapped: () => _showRestockModal(product),
@@ -209,45 +226,87 @@ class _ProductListScreenState extends State<ProductListScreen> {
                     ),
                   ),
       ),
-      // Floating Action Button for Add Item
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 74.0),
-        child: FloatingActionButton.extended(
-          onPressed: () => _openAddEditScreen(),
-          backgroundColor: colors.ctaPrimary,
-          foregroundColor: colors.ctaPrimaryText,
-          elevation: 4,
-          icon: const Icon(Icons.add_rounded, size: 20),
-          label: const Text(
-            'Add Item',
-            style: TextStyle(fontWeight: FontWeight.w800, fontSize: 13),
+    );
+  }
+
+  Widget _buildEmptyState(AppSemanticColors colors) {
+    return Container(
+      margin: const EdgeInsets.only(top: 20),
+      padding: const EdgeInsets.all(32),
+      decoration: BoxDecoration(
+        color: colors.surface,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: colors.borderSubtle),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 56,
+            height: 56,
+            decoration: BoxDecoration(
+              color: colors.primaryContainer.withValues(alpha: 0.15),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(Icons.inventory_2_outlined, size: 28, color: colors.primary),
           ),
-        ),
+          AppSpacing.vGap16,
+          Text(
+            'No Products Found',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w800,
+              color: colors.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Add your kitchen items, dishes, or baked goods to start selling.',
+            style: TextStyle(
+              fontSize: 12.5,
+              color: colors.textSecondary,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          AppSpacing.vGap20,
+          ElevatedButton.icon(
+            onPressed: () => _openAddEditScreen(),
+            icon: const Icon(Icons.add_rounded, size: 18),
+            label: const Text('Add First Product'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: colors.ctaPrimary,
+              foregroundColor: colors.ctaPrimaryText,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              shape: const RoundedRectangleBorder(borderRadius: AppRadius.full),
+              textStyle: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13),
+            ),
+          ),
+        ],
       ),
     );
   }
 }
 
-// Skeleton Placeholder during initial loading
+// Skeleton Loading Grid
 class _ProductGridSkeleton extends StatelessWidget {
   const _ProductGridSkeleton();
 
   @override
   Widget build(BuildContext context) {
     return ListView(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 96),
+      padding: const EdgeInsets.fromLTRB(18, 14, 18, 96),
       children: [
-        const ShimmerSkeleton(width: double.infinity, height: 48, borderRadius: AppRadius.md),
-        AppSpacing.vGap12,
         const Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            ShimmerSkeleton(width: 90, height: 36, borderRadius: AppRadius.full),
-            SizedBox(width: 8),
-            ShimmerSkeleton(width: 90, height: 36, borderRadius: AppRadius.full),
-            SizedBox(width: 8),
-            ShimmerSkeleton(width: 90, height: 36, borderRadius: AppRadius.full),
+            ShimmerSkeleton(width: 120, height: 24),
+            ShimmerSkeleton(width: 70, height: 32, borderRadius: AppRadius.full),
           ],
         ),
+        AppSpacing.vGap14,
+        const ShimmerSkeleton(width: double.infinity, height: 44, borderRadius: BorderRadius.all(Radius.circular(14))),
+        AppSpacing.vGap14,
+        const ShimmerSkeleton(width: double.infinity, height: 36, borderRadius: AppRadius.full),
         AppSpacing.vGap16,
         GridView.builder(
           shrinkWrap: true,
@@ -255,14 +314,14 @@ class _ProductGridSkeleton extends StatelessWidget {
           itemCount: 4,
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
-            crossAxisSpacing: 10,
-            mainAxisSpacing: 10,
-            childAspectRatio: 0.88,
+            crossAxisSpacing: 12,
+            mainAxisSpacing: 12,
+            childAspectRatio: 0.74,
           ),
           itemBuilder: (_, __) => const ShimmerSkeleton(
             width: double.infinity,
             height: double.infinity,
-            borderRadius: AppRadius.card,
+            borderRadius: BorderRadius.all(Radius.circular(16)),
           ),
         ),
       ],

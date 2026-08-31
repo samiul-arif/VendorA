@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_semantic_colors.dart';
 import '../../../../core/utils/formatters.dart';
-import '../../../../shared/components/app_card.dart';
 import '../../domain/models/product_model.dart';
 
-// Product Card (Refined High-Density Grid Item matching arif.html visual rhythm)
+/// Product Card matching Stitch 2x2 Grid brief (`products_2x2_grid_view/code.html`)
 class ProductCard extends StatelessWidget {
   final ProductModel product;
   final ValueChanged<bool> onToggleAvailability;
@@ -23,105 +21,107 @@ class ProductCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.appColors;
-
     final isSoldOut = !product.isAvailable || product.stockQuantity == 0;
-    final isPopular = product.isPopular;
 
-    return AppCard(
-      padding: const EdgeInsets.all(8),
-      borderRadius: BorderRadius.circular(18),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Product Image with Badges & Edit Button (Taller 98px area)
-          ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: Container(
-              width: double.infinity,
-              height: 98,
-              color: colors.surfaceSubtle,
+    return GestureDetector(
+      onTap: onEditTapped,
+      child: Container(
+        decoration: BoxDecoration(
+          color: colors.surface,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: colors.borderSubtle),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF15171C).withValues(alpha: 0.04),
+              blurRadius: 16,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Product Image Aspect Square with Edit Button & Stock Chip
+            AspectRatio(
+              aspectRatio: 1.05,
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  Image.network(
-                    product.imageUrl,
-                    fit: BoxFit.cover,
-                    color: isSoldOut ? Colors.grey.withValues(alpha: 0.7) : null,
-                    colorBlendMode: isSoldOut ? BlendMode.saturation : null,
-                    errorBuilder: (_, __, ___) => Center(
-                      child: Icon(
-                        Icons.restaurant_rounded,
-                        size: 24,
-                        color: colors.textMuted,
+                  // Image / Placeholder
+                  Container(
+                    color: colors.surfaceSubtle,
+                    child: Image.network(
+                      product.imageUrl,
+                      fit: BoxFit.cover,
+                      color: isSoldOut ? Colors.grey.withValues(alpha: 0.7) : null,
+                      colorBlendMode: isSoldOut ? BlendMode.saturation : null,
+                      errorBuilder: (_, __, ___) => Center(
+                        child: Icon(
+                          Icons.restaurant_rounded,
+                          size: 32,
+                          color: colors.textMuted,
+                        ),
                       ),
                     ),
                   ),
 
-                  // Popular Badge
-                  if (isPopular)
-                    Positioned(
-                      top: 4,
-                      left: 4,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
-                        decoration: BoxDecoration(
-                          color: Colors.black.withValues(alpha: 0.75),
-                          borderRadius: AppRadius.full,
-                        ),
-                        child: const Text(
-                          'Popular',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 8,
-                            fontWeight: FontWeight.w800,
-                          ),
-                        ),
-                      ),
-                    ),
-
-                  // Edit Circular Button Top-Right
+                  // Floating Edit Button Top-Right
                   Positioned(
-                    top: 4,
-                    right: 4,
+                    top: 6,
+                    right: 6,
                     child: GestureDetector(
                       onTap: onEditTapped,
                       child: Container(
-                        width: 22,
-                        height: 22,
+                        width: 28,
+                        height: 28,
                         decoration: BoxDecoration(
-                          color: Colors.black.withValues(alpha: 0.65),
+                          color: colors.surface.withValues(alpha: 0.92),
                           shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.12),
+                              blurRadius: 6,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
                         ),
-                        child: const Center(
-                          child: Icon(
-                            Icons.edit_rounded,
-                            size: 11,
-                            color: Colors.white,
-                          ),
+                        child: Icon(
+                          Icons.edit_outlined,
+                          size: 14,
+                          color: colors.textPrimary,
                         ),
                       ),
                     ),
                   ),
 
-                  // Stock Quantity Pill Bottom-Right
+                  // Stock Chip Bottom-Left (Frosted Glass Effect matching Stitch HTML)
                   Positioned(
-                    bottom: 4,
-                    right: 4,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
-                      decoration: BoxDecoration(
-                        color: isSoldOut
-                            ? colors.error
-                            : Colors.black.withValues(alpha: 0.75),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Text(
-                        isSoldOut ? 'Sold Out' : 'Qty: ${product.stockQuantity}',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 8,
-                          fontWeight: FontWeight.w800,
+                    bottom: 6,
+                    left: 6,
+                    child: GestureDetector(
+                      onTap: onRestockTapped,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: isSoldOut
+                              ? colors.error.withValues(alpha: 0.9)
+                              : colors.surface.withValues(alpha: 0.92),
+                          borderRadius: BorderRadius.circular(6),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.08),
+                              blurRadius: 4,
+                            ),
+                          ],
+                        ),
+                        child: Text(
+                          isSoldOut ? 'Sold out' : '${product.stockQuantity} in stock',
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w800,
+                            color: isSoldOut ? Colors.white : colors.textPrimary,
+                          ),
                         ),
                       ),
                     ),
@@ -129,104 +129,56 @@ class ProductCard extends StatelessWidget {
                 ],
               ),
             ),
-          ),
 
-          const SizedBox(height: 6),
-
-          // Title & Description
-          GestureDetector(
-            onTap: onEditTapped,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  product.name,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w800,
-                    fontSize: 12,
-                    color: colors.textPrimary,
+            // Product Details (Title & Price)
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    product.name,
+                    style: TextStyle(
+                      fontSize: 13.5,
+                      fontWeight: FontWeight.w800,
+                      color: colors.textPrimary,
+                      height: 1.2,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  product.description.isNotEmpty ? product.description : 'Fresh kitchen specialty',
-                  style: TextStyle(
-                    fontSize: 9.5,
-                    color: colors.textMuted,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-          ),
-
-          // Spacing before divider to improve description breathing room
-          const SizedBox(height: 6),
-
-          // Subtle Horizontal Separator
-          Divider(
-            height: 1,
-            thickness: 0.8,
-            color: colors.divider,
-          ),
-
-          const SizedBox(height: 6),
-
-          // Footer: Price & Stock Status Badge (Clean & Compact)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                Formatters.formatCurrency(product.price),
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w900,
-                  color: colors.primary,
-                ),
-              ),
-              GestureDetector(
-                onTap: () => onToggleAvailability(!product.isAvailable),
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 150),
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: isSoldOut
-                        ? colors.errorBg
-                        : colors.successBg,
-                    borderRadius: AppRadius.full,
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
+                  const SizedBox(height: 4),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Container(
-                        width: 4,
-                        height: 4,
-                        decoration: BoxDecoration(
-                          color: isSoldOut ? colors.error : colors.success,
-                          shape: BoxShape.circle,
+                      Text(
+                        Formatters.formatCurrency(product.price),
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w900,
+                          color: colors.textPrimary,
                         ),
                       ),
-                      const SizedBox(width: 3),
-                      Text(
-                        isSoldOut ? 'Sold Out' : 'In Stock',
-                        style: TextStyle(
-                          fontSize: 8,
-                          fontWeight: FontWeight.w800,
-                          color: isSoldOut ? colors.error : colors.success,
+                      GestureDetector(
+                        onTap: () => onToggleAvailability(!product.isAvailable),
+                        child: Container(
+                          width: 8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            color: product.isAvailable && product.stockQuantity > 0
+                                ? const Color(0xFF006B57)
+                                : colors.error,
+                            shape: BoxShape.circle,
+                          ),
                         ),
                       ),
                     ],
                   ),
-                ),
+                ],
               ),
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }
