@@ -16,7 +16,7 @@ import '../widgets/category_filter_bar.dart';
 import '../widgets/quick_restock_bottom_sheet.dart';
 import 'add_edit_product_screen.dart';
 
-// Product Catalog & Inventory Screen (Screenshot 5 Matching)
+// Product Catalog & Inventory Screen (Floating Action Button & Standard Input Search)
 class ProductListScreen extends StatefulWidget {
   const ProductListScreen({super.key});
 
@@ -114,37 +114,6 @@ class _ProductListScreenState extends State<ProductListScreen> {
             ),
           ],
         ),
-        actions: [
-          // Foodie Pink "+ Add Item" Pill Button Matching Screenshot 5
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 14.0),
-            child: GestureDetector(
-              onTap: () => _openAddEditScreen(),
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                decoration: const BoxDecoration(
-                  color: AppColors.primary,
-                  borderRadius: AppRadius.full,
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: const [
-                    Icon(Icons.add_rounded, color: Colors.white, size: 16),
-                    SizedBox(width: 4),
-                    Text(
-                      'Add Item',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
       ),
       body: SafeArea(
         bottom: false,
@@ -159,9 +128,9 @@ class _ProductListScreenState extends State<ProductListScreen> {
                     onRefresh: () async => _loadProducts(),
                     color: AppColors.primary,
                     child: ListView(
-                      padding: const EdgeInsets.fromLTRB(16, 12, 16, 110),
+                      padding: const EdgeInsets.fromLTRB(16, 12, 16, 130),
                       children: [
-                        // Search Bar
+                        // Search Bar (Standard Input Box Style)
                         ProductSearchBar(
                           initialQuery: productController.searchQuery,
                           onQueryChanged: (q) => productController.setSearchQuery(q),
@@ -231,6 +200,21 @@ class _ProductListScreenState extends State<ProductListScreen> {
                     ),
                   ),
       ),
+      // Floating Action Button for Add Item
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 74.0),
+        child: FloatingActionButton.extended(
+          onPressed: () => _openAddEditScreen(),
+          backgroundColor: isDark ? Colors.white : AppColors.ctaPrimary,
+          foregroundColor: isDark ? AppColors.ctaPrimary : Colors.white,
+          elevation: 4,
+          icon: const Icon(Icons.add_rounded, size: 20),
+          label: const Text(
+            'Add Item',
+            style: TextStyle(fontWeight: FontWeight.w800, fontSize: 13),
+          ),
+        ),
+      ),
     );
   }
 }
@@ -244,7 +228,7 @@ class _ProductGridSkeleton extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 96),
       children: [
-        const ShimmerSkeleton(width: double.infinity, height: 48, borderRadius: AppRadius.full),
+        const ShimmerSkeleton(width: double.infinity, height: 48, borderRadius: AppRadius.md),
         AppSpacing.vGap12,
         Row(
           children: const [

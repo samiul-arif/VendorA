@@ -9,12 +9,13 @@ import '../../../../shared/components/app_card.dart';
 import '../../../../shared/components/app_dialog.dart';
 import '../../../../shared/components/app_switch.dart';
 import '../../../../shared/components/app_text_field.dart';
+import '../../../../shared/components/app_bottom_sheet.dart';
 import '../../../../shared/components/shared_select_modal.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../../domain/models/product_model.dart';
 import '../controllers/product_controller.dart';
 
-// Add / Edit Product View (arif.html Design Specification)
+// Add / Edit Product View (arif.html Design Specification with Permission Flow)
 class AddEditProductScreen extends StatefulWidget {
   final ProductModel? productToEdit;
 
@@ -42,6 +43,7 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
   bool _isAvailable = true;
   bool _isPopular = false;
   bool _isSubmitting = false;
+  bool _hasPhotoPermission = false; // System photo permission state
 
   final List<String> _presetCategories = const [
     'Burgers',
@@ -52,6 +54,33 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
     'Salads & Bowls',
     'Pizza',
     'Appetizers',
+  ];
+
+  final List<Map<String, String>> _sampleFoodGallery = const [
+    {
+      'title': 'Truffle Smash Burger',
+      'url': 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500&q=80',
+    },
+    {
+      'title': 'Crispy Onion Rings',
+      'url': 'https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=500&q=80',
+    },
+    {
+      'title': 'Gourmet French Fries',
+      'url': 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=500&q=80',
+    },
+    {
+      'title': 'Vanilla Milkshake',
+      'url': 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=500&q=80',
+    },
+    {
+      'title': 'Avocado Salad Bowl',
+      'url': 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&q=80',
+    },
+    {
+      'title': 'Crispy Chicken Tenders',
+      'url': 'https://images.unsplash.com/photo-1562967914-608f82629710?w=500&q=80',
+    },
   ];
 
   @override
@@ -114,18 +143,246 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
     }
   }
 
-  void _mockPickImage() {
-    final sampleImages = [
-      'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&q=80',
-      'https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=400&q=80',
-      'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=400&q=80',
-      'https://images.unsplash.com/photo-1544025162-d76694265947?w=400&q=80',
-      'https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=400&q=80',
-      'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=400&q=80',
-    ];
-    setState(() {
-      _imageUrl = (sampleImages..shuffle()).first;
-    });
+  // Handle Image Upload Flow: Check Permission -> Ask if Needed -> Open Gallery Popup
+  void _handleImageUploadRequest() {
+    if (_hasPhotoPermission) {
+      _showImagePickerPopup();
+    } else {
+      _showPermissionRequestDialog();
+    }
+  }
+
+  void _showPermissionRequestDialog() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: isDark ? const Color(0xFF1E242C) : Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        contentPadding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 56,
+              height: 56,
+              decoration: BoxDecoration(
+                color: isDark ? const Color(0xFF381223) : const Color(0xFFFFF0F6),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.photo_library_rounded,
+                color: AppColors.primary,
+                size: 28,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Allow Photo Access?',
+              style: TextStyle(
+                fontSize: 17,
+                fontWeight: FontWeight.w900,
+                color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Vendor Partner needs access to your device photo gallery so you can upload and showcase appetizing item pictures on your menu.',
+              style: TextStyle(
+                fontSize: 12,
+                color: isDark ? AppColors.textMutedDark : const Color(0xFF6B7280),
+                height: 1.4,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            Row(
+              children: [
+                Expanded(
+                  child: TextButton(
+                    onPressed: () => Navigator.of(ctx).pop(),
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                    child: Text(
+                      'Not Now',
+                      style: TextStyle(
+                        color: isDark ? AppColors.textMutedDark : const Color(0xFF6B7280),
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(ctx).pop();
+                      setState(() => _hasPhotoPermission = true);
+                      _showImagePickerPopup();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(borderRadius: AppRadius.full),
+                    ),
+                    child: const Text(
+                      'Allow Access',
+                      style: TextStyle(fontWeight: FontWeight.w800, fontSize: 13),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showImagePickerPopup() {
+    AppBottomSheet.show(
+      context: context,
+      title: 'Select Product Photo',
+      subtitle: 'Upload a picture from your device gallery or curated stock',
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ListTile(
+            leading: Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: AppColors.primary.withValues(alpha: 0.1),
+                borderRadius: AppRadius.md,
+              ),
+              child: const Icon(Icons.photo_library_rounded, color: AppColors.primary, size: 20),
+            ),
+            title: const Text('Device Photo Gallery', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
+            subtitle: const Text('Pick high-resolution food photo from camera roll', style: TextStyle(fontSize: 11)),
+            trailing: const Icon(Icons.chevron_right_rounded),
+            onTap: () {
+              Navigator.of(context).pop();
+              // Pick sample photo from library
+              setState(() {
+                _imageUrl = _sampleFoodGallery.first['url']!;
+              });
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Selected photo from gallery.'),
+                  backgroundColor: AppColors.statusSuccess,
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
+            },
+          ),
+          const Divider(height: 1),
+          ListTile(
+            leading: Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: const Color(0xFF10B981).withValues(alpha: 0.1),
+                borderRadius: AppRadius.md,
+              ),
+              child: const Icon(Icons.camera_alt_rounded, color: Color(0xFF10B981), size: 20),
+            ),
+            title: const Text('Take Picture with Camera', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
+            subtitle: const Text('Capture live freshly plated kitchen dish', style: TextStyle(fontSize: 11)),
+            trailing: const Icon(Icons.chevron_right_rounded),
+            onTap: () {
+              Navigator.of(context).pop();
+              setState(() {
+                _imageUrl = _sampleFoodGallery[1]['url']!;
+              });
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Captured photo with camera.'),
+                  backgroundColor: AppColors.statusSuccess,
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
+            },
+          ),
+          const Divider(height: 1),
+          ListTile(
+            leading: Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: const Color(0xFF6366F1).withValues(alpha: 0.1),
+                borderRadius: AppRadius.md,
+              ),
+              child: const Icon(Icons.collections_rounded, color: Color(0xFF6366F1), size: 20),
+            ),
+            title: const Text('Curated Chef Food Photos', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
+            subtitle: const Text('Select from royalty-free restaurant dish library', style: TextStyle(fontSize: 11)),
+            trailing: const Icon(Icons.chevron_right_rounded),
+            onTap: () {
+              Navigator.of(context).pop();
+              _showCuratedFoodGalleryModal();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showCuratedFoodGalleryModal() {
+    AppBottomSheet.show(
+      context: context,
+      title: 'Curated Food Library',
+      subtitle: 'Tap any dish photo to apply to this menu item',
+      child: SizedBox(
+        height: 240,
+        child: GridView.builder(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10,
+          ),
+          itemCount: _sampleFoodGallery.length,
+          itemBuilder: (ctx, idx) {
+            final item = _sampleFoodGallery[idx];
+            return GestureDetector(
+              onTap: () {
+                Navigator.of(context).pop();
+                setState(() => _imageUrl = item['url']!);
+              },
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    Image.network(item['url']!, fit: BoxFit.cover),
+                    Positioned(
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                        color: Colors.black.withValues(alpha: 0.6),
+                        child: Text(
+                          item['title']!,
+                          style: const TextStyle(color: Colors.white, fontSize: 8, fontWeight: FontWeight.w700),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
   }
 
   Future<void> _handleSave() async {
@@ -331,7 +588,7 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
           child: ListView(
             padding: const EdgeInsets.all(16),
             children: [
-              // Photo Uploader Card
+              // Photo Uploader Card with Permission Trigger
               AppCard(
                 padding: const EdgeInsets.all(16),
                 child: Column(
@@ -364,7 +621,7 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                     ),
                     AppSpacing.vGap12,
                     GestureDetector(
-                      onTap: _mockPickImage,
+                      onTap: _handleImageUploadRequest,
                       child: Container(
                         width: double.infinity,
                         height: 140,
