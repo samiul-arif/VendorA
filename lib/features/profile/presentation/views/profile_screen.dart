@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/routing/app_routes.dart';
 import '../../../../shared/components/app_dialog.dart';
 import '../../../../shared/components/app_card.dart';
 import '../../../../shared/components/app_toast.dart';
+import '../../../notifications/presentation/controllers/notification_controller.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../controllers/profile_controller.dart';
 import '../widgets/profile_header_card.dart';
@@ -62,6 +64,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final authController = context.watch<AuthController>();
+    final notifController = context.watch<NotificationController>();
     final vendor = authController.vendor;
     final activeShop = authController.activeShop;
 
@@ -134,8 +137,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
               title: 'Store Operations',
               items: [
                 SettingsTileItem(
-                  icon: Icons.storefront_rounded,
+                  icon: Icons.notifications_active_rounded,
                   iconColor: AppColors.primary,
+                  title: 'Notification Center',
+                  subtitle: 'Order dispatch alerts, payouts & activity history',
+                  trailing: notifController.unreadCount > 0
+                      ? Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          decoration: const BoxDecoration(
+                            color: AppColors.primary,
+                            borderRadius: AppRadius.full,
+                          ),
+                          child: Text(
+                            '${notifController.unreadCount} new',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                        )
+                      : null,
+                  onTap: () {
+                    Navigator.of(context).pushNamed(AppRoutes.notifications);
+                  },
+                ),
+                SettingsTileItem(
+                  icon: Icons.storefront_rounded,
+                  iconColor: const Color(0xFF6366F1),
                   title: 'Store Preference',
                   onTap: () {
                     Navigator.of(context).push(

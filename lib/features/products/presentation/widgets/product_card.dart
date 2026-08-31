@@ -5,7 +5,7 @@ import '../../../../core/utils/formatters.dart';
 import '../../../../shared/components/app_card.dart';
 import '../../domain/models/product_model.dart';
 
-// Product Card (Compact High Information Density Grid Item)
+// Product Card (Refined High-Density Grid Item matching arif.html visual rhythm)
 class ProductCard extends StatelessWidget {
   final ProductModel product;
   final ValueChanged<bool> onToggleAvailability;
@@ -35,12 +35,12 @@ class ProductCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Product Image with Badges & Edit Button
+          // Product Image with Badges & Edit Button (Taller 98px area)
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
             child: Container(
               width: double.infinity,
-              height: 88,
+              height: 98,
               color: isDark ? const Color(0xFF232A34) : const Color(0xFFF3F4F6),
               child: Stack(
                 fit: StackFit.expand,
@@ -132,9 +132,9 @@ class ProductCard extends StatelessWidget {
             ),
           ),
 
-          const SizedBox(height: 5),
+          const SizedBox(height: 6),
 
-          // Title
+          // Title & Description
           GestureDetector(
             onTap: onEditTapped,
             child: Column(
@@ -151,7 +151,7 @@ class ProductCard extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 1),
+                const SizedBox(height: 2),
                 Text(
                   product.description.isNotEmpty ? product.description : 'Fresh kitchen specialty',
                   style: TextStyle(
@@ -165,17 +165,19 @@ class ProductCard extends StatelessWidget {
             ),
           ),
 
+          // Spacing before divider to improve description breathing room
+          const SizedBox(height: 6),
+
           // Subtle Horizontal Separator
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4.0),
-            child: Divider(
-              height: 1,
-              thickness: 0.8,
-              color: isDark ? AppColors.darkDivider : const Color(0xFFF3F4F6),
-            ),
+          Divider(
+            height: 1,
+            thickness: 0.8,
+            color: isDark ? AppColors.darkDivider : const Color(0xFFF3F4F6),
           ),
 
-          // Footer: Price & Stock Status Badge
+          const SizedBox(height: 6),
+
+          // Footer: Price & Stock Status Badge (Clean & Compact)
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,

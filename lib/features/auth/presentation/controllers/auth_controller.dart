@@ -85,6 +85,20 @@ class AuthController extends BaseController {
     );
   }
 
+  // Update Active Shop and Available Shops in Session
+  void updateActiveShop(ShopModel updatedShop) {
+    if (_session == null) return;
+    final updatedList = _session!.availableShops.map((s) {
+      return s.id == updatedShop.id ? updatedShop : s;
+    }).toList();
+
+    _session = _session!.copyWith(
+      activeShop: updatedShop,
+      availableShops: updatedList,
+    );
+    notifyListeners();
+  }
+
   // Logout Action
   Future<Result<void>> logout() async {
     return await runWithState<void>(() async {

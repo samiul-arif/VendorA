@@ -235,7 +235,27 @@ class _ShopSettingsScreenState extends State<ShopSettingsScreen> {
                       ),
                       AppSwitch(
                         value: isOpen,
-                        onChanged: (val) => shopController.toggleStoreStatus(val),
+                        onChanged: (val) {
+                          shopController.toggleStoreStatus(val, authController: authController);
+                          final notif = context.read<NotificationController>();
+                          if (val) {
+                            notif.dispatchNotification(
+                              context,
+                              title: 'Shop Opened',
+                              message: 'Your kitchen is now accepting incoming orders.',
+                              type: NotificationType.system,
+                              toastVariant: AppToastVariant.success,
+                            );
+                          } else {
+                            notif.dispatchNotification(
+                              context,
+                              title: 'Shop Closed / Paused',
+                              message: 'Store marked offline. Incoming orders are paused.',
+                              type: NotificationType.system,
+                              toastVariant: AppToastVariant.warning,
+                            );
+                          }
+                        },
                       ),
                     ],
                   ),

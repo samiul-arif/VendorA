@@ -4,6 +4,8 @@ import '../../../../shared/models/shop_model.dart';
 import '../../domain/usecases/toggle_shop_status_usecase.dart';
 import '../../domain/usecases/update_shop_info_usecase.dart';
 
+import '../../../auth/presentation/controllers/auth_controller.dart';
+
 // Shop Management & Status Controller
 class ShopController extends BaseController {
   final ToggleShopStatusUseCase _toggleStatusUseCase;
@@ -27,30 +29,36 @@ class ShopController extends BaseController {
     notifyListeners();
   }
 
-  // Instant Store Open/Close Toggle Action (Optimistic Update)
-  Future<Result<ShopModel>> toggleStoreStatus(bool isOpen) async {
-    if (_currentShop == null) {
+  // Instant Store Open/Close Toggle Action (Optimistic Update synchronized across all screens)
+  Future<Result<ShopModel>> toggleStoreStatus(bool isOpen, {AuthController? authController}) async {
+    final targetShop = _currentShop ?? authController?.activeShop;
+    if (targetShop == null) {
       return const Failure('No active shop selected.');
     }
 
     // Optimistic Update
-    final previousState = _currentShop!.isOpen;
-    _currentShop = _currentShop!.copyWith(isOpen: isOpen);
+    final previousState = targetShop.isOpen;
+    final updated = targetShop.copyWith(isOpen: isOpen);
+    _currentShop = updated;
+    authController?.updateActiveShop(updated);
     notifyListeners();
 
     final result = await _toggleStatusUseCase.execute(
-      shopId: _currentShop!.id,
+      shopId: updated.id,
       isOpen: isOpen,
     );
 
     result.when(
-      success: (updated) {
-        _currentShop = updated;
+      success: (syncedShop) {
+        _currentShop = syncedShop;
+        authController?.updateActiveShop(syncedShop);
         notifyListeners();
       },
       failure: (message, _) {
         // Rollback on failure
-        _currentShop = _currentShop!.copyWith(isOpen: previousState);
+        final rollback = targetShop.copyWith(isOpen: previousState);
+        _currentShop = rollback;
+        authController?.updateActiveShop(rollback);
         notifyListeners();
       },
     );
