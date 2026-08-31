@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/routing/app_routes.dart';
 import '../../../../shared/components/app_bottom_sheet.dart';
 import '../../../../shared/components/empty_state_view.dart';
 import '../../../../shared/components/error_state_view.dart';
@@ -101,6 +102,11 @@ class _ProductListScreenState extends State<ProductListScreen> {
       appBar: AppBar(
         title: const Text('Product Catalog'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.category_outlined, size: 22),
+            tooltip: 'Manage Categories',
+            onPressed: () => Navigator.of(context).pushNamed(AppRoutes.categories),
+          ),
           IconButton(
             icon: const Icon(Icons.add_rounded, size: 24),
             tooltip: 'Add New Product',

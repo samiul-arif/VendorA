@@ -4,6 +4,7 @@ import '../../features/auth/presentation/views/login_screen.dart';
 import '../../features/navigation/views/main_shell_screen.dart';
 import '../../features/products/domain/models/product_model.dart';
 import '../../features/products/presentation/views/add_edit_product_screen.dart';
+import '../../features/categories/presentation/views/category_list_screen.dart';
 
 // Central Route Generator with custom page transitions
 class AppRouter {
@@ -64,7 +65,7 @@ class AppRouter {
       case AppRoutes.categories:
         return _buildPageRoute(
           settings: settings,
-          builder: (_) => const _PlaceholderScreen(title: 'Categories'),
+          builder: (_) => const CategoryListScreen(),
         );
 
       case AppRoutes.shopManagement:

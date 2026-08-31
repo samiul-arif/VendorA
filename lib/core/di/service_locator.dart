@@ -27,6 +27,13 @@ import '../../features/products/domain/usecases/toggle_product_availability_usec
 import '../../features/products/domain/usecases/restock_product_usecase.dart';
 import '../../features/products/data/repositories/mock_product_repository.dart';
 import '../../features/products/presentation/controllers/product_controller.dart';
+import '../../features/categories/domain/repositories/category_repository_interface.dart';
+import '../../features/categories/domain/usecases/get_categories_usecase.dart';
+import '../../features/categories/domain/usecases/add_category_usecase.dart';
+import '../../features/categories/domain/usecases/update_category_usecase.dart';
+import '../../features/categories/domain/usecases/delete_category_usecase.dart';
+import '../../features/categories/data/repositories/mock_category_repository.dart';
+import '../../features/categories/presentation/controllers/category_controller.dart';
 
 // Lightweight Service Locator for Dependency Injection
 class ServiceLocator {
@@ -169,6 +176,30 @@ class ServiceLocator {
       restockProductUseCase: restockProductUseCase,
     );
     instance.register<ProductController>(productController);
+
+    // Category Module Services & Use Cases
+    final categoryRepository = MockCategoryRepository();
+    instance.register<ICategoryRepository>(categoryRepository);
+
+    final getCategoriesUseCase = GetCategoriesUseCase(categoryRepository);
+    instance.register<GetCategoriesUseCase>(getCategoriesUseCase);
+
+    final addCategoryUseCase = AddCategoryUseCase(categoryRepository);
+    instance.register<AddCategoryUseCase>(addCategoryUseCase);
+
+    final updateCategoryUseCase = UpdateCategoryUseCase(categoryRepository);
+    instance.register<UpdateCategoryUseCase>(updateCategoryUseCase);
+
+    final deleteCategoryUseCase = DeleteCategoryUseCase(categoryRepository);
+    instance.register<DeleteCategoryUseCase>(deleteCategoryUseCase);
+
+    final categoryController = CategoryController(
+      getCategoriesUseCase: getCategoriesUseCase,
+      addCategoryUseCase: addCategoryUseCase,
+      updateCategoryUseCase: updateCategoryUseCase,
+      deleteCategoryUseCase: deleteCategoryUseCase,
+    );
+    instance.register<CategoryController>(categoryController);
   }
 }
 
