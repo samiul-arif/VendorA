@@ -17,7 +17,7 @@ import '../widgets/category_filter_bar.dart';
 import '../widgets/quick_restock_bottom_sheet.dart';
 import 'add_edit_product_screen.dart';
 
-// Product Catalog & Inventory Screen (arif.html Styled 2-Column Grid)
+// Product Catalog & Inventory Screen (arif.html Styled 2-Column Grid with Floating Action Button)
 class ProductListScreen extends StatefulWidget {
   const ProductListScreen({super.key});
 
@@ -115,42 +115,10 @@ class _ProductListScreenState extends State<ProductListScreen> {
             ),
           ],
         ),
-        actions: [
-          // Foodie Pink "+ Add Item" Pill Button
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10.0),
-            child: GestureDetector(
-              onTap: () => _openAddEditScreen(),
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                decoration: const BoxDecoration(
-                  color: AppColors.primary,
-                  borderRadius: AppRadius.full,
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: const [
-                    Icon(Icons.add_rounded, color: Colors.white, size: 16),
-                    SizedBox(width: 4),
-                    Text(
-                      'Add Item',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-
-          const SizedBox(width: 4),
-
+        actions: const [
           // Notification Bell Icon with Live Badge
-          const NotificationBadgeIcon(),
-          const SizedBox(width: 6),
+          NotificationBadgeIcon(),
+          SizedBox(width: 8),
         ],
       ),
       body: SafeArea(
@@ -166,7 +134,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                     onRefresh: () async => _loadProducts(),
                     color: AppColors.primary,
                     child: ListView(
-                      padding: const EdgeInsets.fromLTRB(16, 12, 16, 96),
+                      padding: const EdgeInsets.fromLTRB(16, 12, 16, 120),
                       children: [
                         // Search Bar
                         ProductSearchBar(
@@ -237,6 +205,20 @@ class _ProductListScreenState extends State<ProductListScreen> {
                       ],
                     ),
                   ),
+      ),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 72.0),
+        child: FloatingActionButton.extended(
+          onPressed: () => _openAddEditScreen(),
+          backgroundColor: isDark ? Colors.white : AppColors.ctaPrimary,
+          foregroundColor: isDark ? AppColors.ctaPrimary : Colors.white,
+          elevation: 4,
+          icon: const Icon(Icons.add_rounded, size: 20),
+          label: const Text(
+            'Add Item',
+            style: TextStyle(fontWeight: FontWeight.w800, fontSize: 13),
+          ),
+        ),
       ),
     );
   }
