@@ -22,7 +22,7 @@ class SelectOptionItem<T> {
   });
 }
 
-// Reusable Shared Select Modal (arif.html inspired)
+// Shared Select Modal
 class SharedSelectModal<T> extends StatefulWidget {
   final String title;
   final String? subtitle;

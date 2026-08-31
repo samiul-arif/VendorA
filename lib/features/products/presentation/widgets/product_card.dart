@@ -5,7 +5,7 @@ import '../../../../core/utils/formatters.dart';
 import '../../../../shared/components/app_card.dart';
 import '../../domain/models/product_model.dart';
 
-// Product Card (arif.html Styled Compact 2-Column Grid Item with Divider)
+// Product Card
 class ProductCard extends StatelessWidget {
   final ProductModel product;
   final ValueChanged<bool> onToggleAvailability;
@@ -165,7 +165,7 @@ class ProductCard extends StatelessWidget {
             ),
           ),
 
-          // Horizontal Line Separator (arif.html Matching)
+          // Horizontal Separator
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 6.0),
             child: Divider(

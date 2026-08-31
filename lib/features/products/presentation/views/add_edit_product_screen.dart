@@ -15,7 +15,7 @@ import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../../domain/models/product_model.dart';
 import '../controllers/product_controller.dart';
 
-// Add / Edit Product View (arif.html Design Specification with Permission Flow)
+// Add / Edit Product Screen
 class AddEditProductScreen extends StatefulWidget {
   final ProductModel? productToEdit;
 
