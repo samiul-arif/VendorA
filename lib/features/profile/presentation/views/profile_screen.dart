@@ -65,7 +65,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final authController = context.watch<AuthController>();
     final notifController = context.watch<NotificationController>();
     final vendor = authController.vendor;
-    final activeShop = authController.activeShop;
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -104,7 +103,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             // Profile Header Card
             ProfileHeaderCard(
               vendor: vendor,
-              activeShop: activeShop,
               onEditTapped: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const EditProfileScreen()),
@@ -206,6 +204,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       context,
                       title: 'Support Desk',
                       message: 'Connecting to priority merchant partner dispatch...',
+                    );
+                  },
+                ),
+                SettingsTileItem(
+                  icon: Icons.auto_awesome_rounded,
+                  iconColor: const Color(0xFFEC4899),
+                  title: 'App Tour & Feature Showcase',
+                  onTap: () {
+                    Navigator.of(context).pushNamed(
+                      AppRoutes.onboarding,
+                      arguments: true, // isTourMode = true
                     );
                   },
                 ),

@@ -100,3 +100,6 @@ Thumbs.db
 **/*.iml
 *.swp
 *.swo
+
+stitch_merchant_hub_app_brief/
+stitch_merchant_hub_app_brief.md

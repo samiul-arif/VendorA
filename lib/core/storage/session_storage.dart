@@ -82,6 +82,15 @@ class SessionStorage {
     return _storage.getBool(StorageKeys.orderAlertSoundEnabled) ?? true;
   }
 
+  // Onboarding Status
+  Future<void> setOnboardingCompleted(bool completed) async {
+    await _storage.setBool(StorageKeys.onboardingCompleted, completed);
+  }
+
+  bool isOnboardingCompleted() {
+    return _storage.getBool(StorageKeys.onboardingCompleted) ?? false;
+  }
+
   // Secure Session Cleanup (Logout Flow)
   Future<void> clearSession() async {
     await _storage.remove(StorageKeys.authToken);

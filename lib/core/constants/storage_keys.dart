@@ -12,4 +12,5 @@ class StorageKeys {
   static const String orderAlertSoundEnabled = 'vendor_pref_order_sound';
   static const String pushNotificationsEnabled = 'vendor_pref_push_notifications';
   static const String autoAcceptOrders = 'vendor_pref_auto_accept_orders';
+  static const String onboardingCompleted = 'vendor_pref_onboarding_completed';
 }

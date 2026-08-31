@@ -16,6 +16,7 @@ import 'features/orders/presentation/controllers/order_controller.dart';
 import 'features/profile/presentation/controllers/profile_controller.dart';
 import 'features/notifications/presentation/controllers/notification_controller.dart';
 import 'features/permissions/presentation/controllers/permission_controller.dart';
+import 'features/onboarding/presentation/controllers/onboarding_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -48,8 +49,17 @@ class VendorApp extends StatelessWidget {
     final profileController = locate<ProfileController>();
     final notificationController = locate<NotificationController>();
     final permissionController = locate<PermissionController>();
+    final onboardingController = locate<OnboardingController>();
 
     final isAuthenticated = authController.isAuthenticated;
+    final isOnboardingCompleted = onboardingController.isCompleted;
+
+    String initialRoute = AppRoutes.login;
+    if (isAuthenticated) {
+      initialRoute = AppRoutes.mainShell;
+    } else if (!isOnboardingCompleted) {
+      initialRoute = AppRoutes.onboarding;
+    }
 
     return MultiProvider(
       providers: [
@@ -62,6 +72,7 @@ class VendorApp extends StatelessWidget {
         ChangeNotifierProvider<ProfileController>.value(value: profileController),
         ChangeNotifierProvider<NotificationController>.value(value: notificationController),
         ChangeNotifierProvider<PermissionController>.value(value: permissionController),
+        ChangeNotifierProvider<OnboardingController>.value(value: onboardingController),
       ],
       child: Consumer<ProfileController>(
         builder: (context, profile, _) {
@@ -72,7 +83,7 @@ class VendorApp extends StatelessWidget {
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
             themeMode: profile.themeMode,
-            initialRoute: isAuthenticated ? AppRoutes.mainShell : AppRoutes.login,
+            initialRoute: initialRoute,
             onGenerateRoute: AppRouter.generateRoute,
             builder: (context, child) {
               // Enforce Text Scale Bounds for Accessibility (ui-ux-pro-max)

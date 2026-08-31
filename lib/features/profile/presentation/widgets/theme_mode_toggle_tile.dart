@@ -48,18 +48,10 @@ class ThemeModeToggleTile extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'App Display Theme',
+                      'Theme',
                       style: AppTypography.titleSmall.copyWith(
                         fontWeight: FontWeight.w700,
                         color: colors.textPrimary,
-                      ),
-                    ),
-                    Text(
-                      currentMode == ThemeMode.system
-                          ? 'Synchronized with device system settings'
-                          : (currentMode == ThemeMode.dark ? 'Dark night theme active' : 'Bright daylight theme active'),
-                      style: AppTypography.bodySmall.copyWith(
-                        color: colors.textMuted,
                       ),
                     ),
                   ],

@@ -1,22 +1,18 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_semantic_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../shared/components/app_card.dart';
 import '../../../../shared/models/vendor_model.dart';
-import '../../../../shared/models/shop_model.dart';
 
 // Profile Header Card with Avatar & Verified Partner Badge
 class ProfileHeaderCard extends StatelessWidget {
   final VendorModel? vendor;
-  final ShopModel? activeShop;
   final VoidCallback onEditTapped;
 
   const ProfileHeaderCard({
     super.key,
     required this.vendor,
-    required this.activeShop,
     required this.onEditTapped,
   });
 
@@ -26,8 +22,7 @@ class ProfileHeaderCard extends StatelessWidget {
 
     final displayName = vendor?.name ?? 'Samiul Arif';
     final businessName = vendor?.businessName ?? 'Arif Food Enterprises LLC';
-    final shopName = activeShop?.name ?? 'Foodie Hub Express';
-    final phone = activeShop?.phone ?? '+1 (555) 234-5678';
+    final phone = vendor?.phoneNumber ?? '+1 (555) 234-5678';
 
     return AppCard(
       padding: const EdgeInsets.all(20),
@@ -150,41 +145,6 @@ class ProfileHeaderCard extends StatelessWidget {
             ],
           ),
 
-          AppSpacing.vGap16,
-
-          // Active Store Banner (Clean banner without Operational tag)
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-            decoration: BoxDecoration(
-              color: colors.surfaceSubtle,
-              borderRadius: AppRadius.md,
-              border: Border.all(
-                color: colors.borderSubtle,
-                width: 1.0,
-              ),
-            ),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.storefront_rounded,
-                  size: 18,
-                  color: colors.primary,
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    'Active: $shopName',
-                    style: AppTypography.labelMedium.copyWith(
-                      fontWeight: FontWeight.w700,
-                      color: colors.textPrimary,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
-            ),
-          ),
         ],
       ),
     );

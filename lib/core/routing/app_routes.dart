@@ -2,9 +2,10 @@
 class AppRoutes {
   AppRoutes._();
 
-  // Root & Splash
+  // Root, Splash & Onboarding
   static const String initial = '/';
   static const String splash = '/splash';
+  static const String onboarding = '/onboarding';
 
   // Authentication Flow
   static const String login = '/login';

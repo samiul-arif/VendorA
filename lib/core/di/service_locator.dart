@@ -60,6 +60,12 @@ import '../../features/permissions/domain/usecases/check_permission_usecase.dart
 import '../../features/permissions/domain/usecases/request_permission_usecase.dart';
 import '../../features/permissions/data/repositories/mock_permission_repository.dart';
 import '../../features/permissions/presentation/controllers/permission_controller.dart';
+import '../../features/onboarding/domain/repositories/onboarding_repository_interface.dart';
+import '../../features/onboarding/domain/usecases/get_onboarding_status_usecase.dart';
+import '../../features/onboarding/domain/usecases/complete_onboarding_usecase.dart';
+import '../../features/onboarding/domain/usecases/get_onboarding_slides_usecase.dart';
+import '../../features/onboarding/data/repositories/mock_onboarding_repository.dart';
+import '../../features/onboarding/presentation/controllers/onboarding_controller.dart';
 
 // Lightweight Service Locator for Dependency Injection
 class ServiceLocator {
@@ -315,6 +321,26 @@ class ServiceLocator {
       requestPermissionUseCase: requestPermissionUseCase,
     );
     instance.register<PermissionController>(permissionController);
+
+    // Onboarding Module Services & Controller
+    final onboardingRepository = MockOnboardingRepository(sessionStorage);
+    instance.register<IOnboardingRepository>(onboardingRepository);
+
+    final getOnboardingStatusUseCase = GetOnboardingStatusUseCase(onboardingRepository);
+    instance.register<GetOnboardingStatusUseCase>(getOnboardingStatusUseCase);
+
+    final completeOnboardingUseCase = CompleteOnboardingUseCase(onboardingRepository);
+    instance.register<CompleteOnboardingUseCase>(completeOnboardingUseCase);
+
+    final getOnboardingSlidesUseCase = GetOnboardingSlidesUseCase(onboardingRepository);
+    instance.register<GetOnboardingSlidesUseCase>(getOnboardingSlidesUseCase);
+
+    final onboardingController = OnboardingController(
+      getStatusUseCase: getOnboardingStatusUseCase,
+      completeUseCase: completeOnboardingUseCase,
+      getSlidesUseCase: getOnboardingSlidesUseCase,
+    );
+    instance.register<OnboardingController>(onboardingController);
   }
 }
 

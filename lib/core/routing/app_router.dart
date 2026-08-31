@@ -10,6 +10,7 @@ import '../../features/profile/presentation/views/edit_profile_screen.dart';
 import '../../features/profile/presentation/views/shop_settings_screen.dart';
 import '../../features/notifications/presentation/views/notification_center_screen.dart';
 import '../../features/permissions/presentation/views/permissions_settings_screen.dart';
+import '../../features/onboarding/presentation/views/onboarding_screen.dart';
 
 // Central Route Generator with custom page transitions
 class AppRouter {
@@ -19,6 +20,13 @@ class AppRouter {
     final args = settings.arguments;
 
     switch (settings.name) {
+      case AppRoutes.onboarding:
+        final isTourMode = args is bool ? args : false;
+        return _buildPageRoute(
+          settings: settings,
+          builder: (_) => OnboardingScreen(isTourMode: isTourMode),
+        );
+
       case AppRoutes.initial:
       case AppRoutes.splash:
       case AppRoutes.login:
