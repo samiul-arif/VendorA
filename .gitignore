@@ -1,0 +1,102 @@
+# ==========================================
+# 1. Credentials, Secrets & Environment
+# ==========================================
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.cert
+*.crt
+*.pfx
+*.p12
+credentials.json
+service-account*.json
+*.keystore
+*.jks
+id_rsa
+id_ed25519
+
+# ==========================================
+# 2. AI Prompts, Continuation Files & Temp Docs
+# ==========================================
+docs/
+docs/**
+*.prompt
+*.prompt.md
+prompt-*.md
+next-phase-*.md
+scratch/
+.system_generated/
+*.log
+
+# Markdown files (all markdown files and folders ignored)
+*.md
+**/*.md
+!README.md
+
+# ==========================================
+# 3. Bulky Document & Binary Artifacts
+# ==========================================
+*.pdf
+*.pptx
+*.potx
+*.ppt
+*.docx
+*.dotx
+*.doc
+*.xlsx
+*.xlsm
+*.xltx
+*.xls
+*.csv
+*.tsv
+*.zip
+*.tar.gz
+*.dmg
+
+# ==========================================
+# 4. Flutter & Dart System Exclusions
+# ==========================================
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+/build/
+ios/.symlinks/
+ios/Pods/
+ios/Podfile.lock
+ios/.symlinks
+ios/Flutter/Generated.xcconfig
+ios/Flutter/flutter_export_environment.sh
+ios/Flutter/App.framework
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/ServiceDefinitions.json
+android/app/debug/
+android/app/profile/
+android/app/release/
+android/.gradle
+android/captures/
+android/gradlew
+android/gradlew.bat
+android/local.properties
+android/**/generated/
+coverage/
+
+# ==========================================
+# 5. OS & IDE System Files
+# ==========================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
