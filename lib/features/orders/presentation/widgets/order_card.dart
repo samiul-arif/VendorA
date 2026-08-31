@@ -42,18 +42,41 @@ class OrderCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header: Order #FP-XXXX + Status Badge
+          // Header: Order #FP-XXXX • Time + Status Badge
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'Order #${order.orderNumber}',
-                style: AppTypography.titleSmall.copyWith(
-                  fontWeight: FontWeight.w800,
-                  fontSize: 14,
-                  color: colors.textPrimary,
+              Expanded(
+                child: Row(
+                  children: [
+                    Text(
+                      'Order #${order.orderNumber}',
+                      style: AppTypography.titleSmall.copyWith(
+                        fontWeight: FontWeight.w800,
+                        fontSize: 14,
+                        color: colors.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: colors.surfaceSubtle,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        Formatters.formatTime(order.createdAt),
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: colors.textMuted,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
+              const SizedBox(width: 8),
               _buildStatusBadge(order.status, colors),
             ],
           ),

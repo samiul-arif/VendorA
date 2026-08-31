@@ -3,7 +3,6 @@ import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_semantic_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
-import '../../../../core/routing/app_routes.dart';
 import '../../../../shared/components/app_card.dart';
 import '../../domain/models/notification_model.dart';
 
@@ -53,15 +52,7 @@ class NotificationTile extends StatelessWidget {
             ? null
             : colors.primaryContainer,
         child: InkWell(
-          onTap: () {
-            onTap();
-            if (notification.relatedOrderId != null) {
-              Navigator.of(context).pushNamed(
-                 AppRoutes.orderDetails,
-                arguments: notification.relatedOrderId,
-              );
-            }
-          },
+          onTap: onTap,
           borderRadius: BorderRadius.circular(16),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,

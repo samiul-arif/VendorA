@@ -215,23 +215,30 @@ class _ShopSettingsScreenState extends State<ShopSettingsScreen> {
               child: Column(
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Store Status',
-                            style: AppTypography.titleSmall.copyWith(fontWeight: FontWeight.w700),
-                          ),
-                          Text(
-                            isOpen ? 'Accepting customer orders' : 'Store marked offline',
-                            style: AppTypography.bodySmall.copyWith(
-                              color: colors.textMuted,
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Store Status',
+                              style: AppTypography.titleSmall.copyWith(
+                                fontWeight: FontWeight.w700,
+                                color: colors.textPrimary,
+                              ),
                             ),
-                          ),
-                        ],
+                            const SizedBox(height: 2),
+                            Text(
+                              isOpen ? 'Accepting customer orders' : 'Store marked offline',
+                              style: AppTypography.bodySmall.copyWith(
+                                color: colors.textMuted,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
+                      AppSpacing.hGap16,
                       AppSwitch(
                         value: isOpen,
                         onChanged: (val) {
@@ -260,23 +267,30 @@ class _ShopSettingsScreenState extends State<ShopSettingsScreen> {
                   ),
                   Divider(height: 24, color: colors.divider),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Auto-Accept Live Orders',
-                            style: AppTypography.titleSmall.copyWith(fontWeight: FontWeight.w700),
-                          ),
-                          Text(
-                            'Instantly dispatch to kitchen queue',
-                            style: AppTypography.bodySmall.copyWith(
-                              color: colors.textMuted,
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Auto-Accept Live Orders',
+                              style: AppTypography.titleSmall.copyWith(
+                                fontWeight: FontWeight.w700,
+                                color: colors.textPrimary,
+                              ),
                             ),
-                          ),
-                        ],
+                            const SizedBox(height: 2),
+                            Text(
+                              'Instantly dispatch to kitchen queue',
+                              style: AppTypography.bodySmall.copyWith(
+                                color: colors.textMuted,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
+                      AppSpacing.hGap16,
                       AppSwitch(
                         value: autoAccept,
                         onChanged: (val) {

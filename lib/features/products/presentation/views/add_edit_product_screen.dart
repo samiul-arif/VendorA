@@ -729,33 +729,37 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
 
               // Stock Status & Popular Badges Card
               AppCard(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 child: Column(
                   children: [
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              _isAvailable ? 'Stock Available (In Stock)' : 'Marked as Sold Out',
-                              style: TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w700,
-                                color: _isAvailable ? colors.success : colors.error,
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                _isAvailable ? 'Stock Available (In Stock)' : 'Marked as Sold Out',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w700,
+                                  color: _isAvailable ? colors.success : colors.error,
+                                ),
                               ),
-                            ),
-                            Text(
-                              _isAvailable
-                                  ? 'Visible for immediate customer ordering'
-                                  : 'Hidden from customer checkout',
-                              style: AppTypography.bodySmall.copyWith(
-                                color: colors.textMuted,
+                              const SizedBox(height: 2),
+                              Text(
+                                _isAvailable
+                                    ? 'Visible for immediate customer ordering'
+                                    : 'Hidden from customer checkout',
+                                style: AppTypography.bodySmall.copyWith(
+                                  color: colors.textMuted,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
+                        AppSpacing.hGap16,
                         AppSwitch(
                           value: _isAvailable,
                           onChanged: (val) {
@@ -769,25 +773,32 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                         ),
                       ],
                     ),
-                    Divider(height: 20, color: colors.divider),
+                    Divider(height: 24, color: colors.divider),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Highlight as "Popular"',
-                              style: AppTypography.titleSmall.copyWith(fontWeight: FontWeight.w700),
-                            ),
-                            Text(
-                              'Displays prominent badge on product card',
-                              style: AppTypography.bodySmall.copyWith(
-                                color: colors.textMuted,
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Highlight as "Popular"',
+                                style: AppTypography.titleSmall.copyWith(
+                                  fontWeight: FontWeight.w700,
+                                  color: colors.textPrimary,
+                                ),
                               ),
-                            ),
-                          ],
+                              const SizedBox(height: 2),
+                              Text(
+                                'Displays prominent badge on product card',
+                                style: AppTypography.bodySmall.copyWith(
+                                  color: colors.textMuted,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
+                        AppSpacing.hGap16,
                         AppSwitch(
                           value: _isPopular,
                           onChanged: (val) => setState(() => _isPopular = val),

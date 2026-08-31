@@ -7,10 +7,7 @@ import '../../../../shared/components/shimmer_skeleton.dart';
 import '../../../../shared/components/app_circular_back_button.dart';
 import '../../../../shared/components/app_header_action_button.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
-import '../../../orders/presentation/views/order_details_screen.dart';
-import '../../../profile/presentation/views/bank_payout_screen.dart';
 import '../../domain/models/notification_model.dart';
-import '../../domain/models/notification_type.dart';
 import '../controllers/notification_controller.dart';
 import '../widgets/notification_tile.dart';
 import '../widgets/notification_filter_bar.dart';
@@ -37,20 +34,7 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
   void _handleNotificationTap(NotificationModel item) {
     final controller = context.read<NotificationController>();
     controller.markAsRead(item.id);
-
-    if (item.relatedOrderId != null && item.relatedOrderId!.isNotEmpty) {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) => OrderDetailsScreen(orderId: item.relatedOrderId!),
-        ),
-      );
-    } else if (item.type == NotificationType.payout) {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) => const BankPayoutScreen(),
-        ),
-      );
-    }
+    // Clicking any notification does nothing for now (no external link / navigation)
   }
 
   @override

@@ -24,33 +24,46 @@ class OrderItemTile extends StatelessWidget {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10),
+          padding: const EdgeInsets.symmetric(vertical: 12),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Quantity Badge
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: colors.primaryContainer,
-                  borderRadius: AppRadius.sm,
-                  border: Border.all(
-                    color: colors.primary.withValues(alpha: 0.3),
+              // Product Image Thumbnail
+              ClipRRect(
+                borderRadius: AppRadius.sm,
+                child: Container(
+                  width: 52,
+                  height: 52,
+                  decoration: BoxDecoration(
+                    color: colors.surfaceSubtle,
+                    borderRadius: AppRadius.sm,
+                    border: Border.all(color: colors.borderSubtle),
                   ),
-                ),
-                child: Text(
-                  '${item.quantity}x',
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w800,
-                    color: colors.primary,
-                  ),
+                  child: item.imageUrl != null && item.imageUrl!.isNotEmpty
+                      ? Image.network(
+                          item.imageUrl!,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => Center(
+                            child: Icon(
+                              Icons.fastfood_outlined,
+                              size: 22,
+                              color: colors.textMuted,
+                            ),
+                          ),
+                        )
+                      : Center(
+                          child: Icon(
+                            Icons.fastfood_outlined,
+                            size: 22,
+                            color: colors.textMuted,
+                          ),
+                        ),
                 ),
               ),
 
               AppSpacing.hGap12,
 
-              // Name, Addons & Special Instructions
+              // Product Info & Price Breakdown
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -62,9 +75,38 @@ class OrderItemTile extends StatelessWidget {
                         color: colors.textPrimary,
                       ),
                     ),
+                    const SizedBox(height: 3),
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: colors.primaryContainer,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            'Qty: ${item.quantity}',
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w800,
+                              color: colors.primary,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          '${Formatters.formatCurrency(item.unitPrice)} each',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: colors.textMuted,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
 
                     if (item.selectedAddons.isNotEmpty) ...[
-                      AppSpacing.vGap4,
+                      AppSpacing.vGap6,
                       Wrap(
                         spacing: 4,
                         runSpacing: 4,
@@ -74,6 +116,7 @@ class OrderItemTile extends StatelessWidget {
                             decoration: BoxDecoration(
                               color: colors.surfaceSubtle,
                               borderRadius: AppRadius.xs,
+                              border: Border.all(color: colors.borderSubtle),
                             ),
                             child: Text(
                               '+ $addon',
@@ -89,7 +132,7 @@ class OrderItemTile extends StatelessWidget {
                     ],
 
                     if (item.specialInstructions != null && item.specialInstructions!.isNotEmpty) ...[
-                      AppSpacing.vGap4,
+                      AppSpacing.vGap6,
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
@@ -125,13 +168,26 @@ class OrderItemTile extends StatelessWidget {
 
               AppSpacing.hGap12,
 
-              // Total Price for Line Item
-              Text(
-                Formatters.formatCurrency(item.totalPrice),
-                style: AppTypography.titleSmall.copyWith(
-                  fontWeight: FontWeight.w800,
-                  color: colors.textPrimary,
-                ),
+              // Item Subtotal (Formatted Currency)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    Formatters.formatCurrency(item.totalPrice),
+                    style: AppTypography.titleSmall.copyWith(
+                      fontWeight: FontWeight.w800,
+                      color: colors.textPrimary,
+                    ),
+                  ),
+                  Text(
+                    'Subtotal',
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: colors.textMuted,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

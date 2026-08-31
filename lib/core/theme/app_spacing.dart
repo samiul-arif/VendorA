@@ -33,6 +33,7 @@ class AppSpacing {
   static const Widget vGap8 = SizedBox(height: xs);
   static const Widget vGap10 = SizedBox(height: 10.0);
   static const Widget vGap12 = SizedBox(height: sm);
+  static const Widget vGap14 = SizedBox(height: 14.0);
   static const Widget vGap16 = SizedBox(height: md);
   static const Widget vGap20 = SizedBox(height: lg);
   static const Widget vGap24 = SizedBox(height: xl);

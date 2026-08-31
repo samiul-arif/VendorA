@@ -134,7 +134,20 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
 
     if (order == null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Order Details')),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        appBar: AppBar(
+          backgroundColor: colors.surface,
+          elevation: 0,
+          leading: const AppCircularBackButton(),
+          title: Text(
+            'Order Details',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w900,
+              color: colors.textPrimary,
+            ),
+          ),
+        ),
         body: Center(
           child: CircularProgressIndicator(color: colors.primary),
         ),
@@ -182,31 +195,41 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
       ),
       body: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 110),
+          padding: const EdgeInsets.fromLTRB(16, 14, 16, 110),
           children: [
-            // 1. Order Status Timeline Progression Card
-            _buildStatusProgressCard(order, colors),
+            // 1. Order Information Card
+            _buildOrderInfoCard(order, colors),
 
             AppSpacing.vGap16,
 
-            // 2. Customer Information Card
+            // 2. Customer Information Card (with Call Customer & Open in Maps)
             _buildCustomerCard(order, colors),
 
             AppSpacing.vGap16,
 
-            // 3. Rider / Courier Details Card
-            if (order.riderName != null) ...[
-              _buildRiderCard(order, colors),
-              AppSpacing.vGap16,
-            ],
-
-            // 4. Line Items Breakdown Card
+            // 3. Ordered Items Card (Images, quantities, unit prices, subtotals)
             _buildItemsBreakdownCard(order, colors),
 
             AppSpacing.vGap16,
 
-            // 5. Payment & Price Receipt Card
-            _buildReceiptCard(order, colors),
+            // 4. Payment Information Card (Method, TXN ID, Status)
+            _buildPaymentInfoCard(order, colors),
+
+            AppSpacing.vGap16,
+
+            // 5. Order Summary Card (Subtotal, Delivery, Tax, Total)
+            _buildOrderSummaryCard(order, colors),
+
+            if (order.riderName != null) ...[
+              AppSpacing.vGap16,
+              // 6. Rider Information Card (if assigned)
+              _buildRiderCard(order, colors),
+            ],
+
+            AppSpacing.vGap16,
+
+            // 7. Order Timeline Card (Milestones & Stepper)
+            _buildOrderTimelineCard(order, colors),
 
             if (order.rejectionReason != null) ...[
               AppSpacing.vGap16,
@@ -219,31 +242,77 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
     );
   }
 
-  Widget _buildStatusProgressCard(OrderModel order, AppSemanticColors colors) {
-    final stages = [
-      {'status': OrderStatus.pending, 'label': 'Placed'},
-      {'status': OrderStatus.accepted, 'label': 'Accepted'},
-      {'status': OrderStatus.preparing, 'label': 'Kitchen'},
-      {'status': OrderStatus.ready, 'label': 'Ready'},
-      {'status': OrderStatus.delivered, 'label': 'Delivered'},
-    ];
-
-    final currentIdx = stages.indexWhere((s) => s['status'] == order.status);
-
+  // 1. Order Information Card
+  Widget _buildOrderInfoCard(OrderModel order, AppSemanticColors colors) {
     return AppCard(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(18),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'Kitchen Dispatch Timeline',
-                style: AppTypography.titleSmall.copyWith(
-                  fontWeight: FontWeight.w800,
-                  color: colors.textPrimary,
-                ),
+              Row(
+                children: [
+                  Container(
+                    width: 36,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      color: colors.primaryContainer,
+                      borderRadius: AppRadius.sm,
+                    ),
+                    child: Icon(
+                      Icons.receipt_long_rounded,
+                      size: 20,
+                      color: colors.primary,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Order #${order.orderNumber}',
+                        style: AppTypography.titleSmall.copyWith(
+                          fontWeight: FontWeight.w900,
+                          color: colors.textPrimary,
+                        ),
+                      ),
+                      Text(
+                        'Placed ${Formatters.formatRelativeTime(order.createdAt)}',
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: colors.textMuted,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              StatusBadge(
+                type: order.status.badgeType,
+                label: order.status.label,
+              ),
+            ],
+          ),
+          Divider(height: 24, color: colors.divider),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Icon(Icons.calendar_today_rounded, size: 14, color: colors.textMuted),
+                  const SizedBox(width: 6),
+                  Text(
+                    Formatters.formatDateTime(order.createdAt),
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: colors.textSecondary,
+                    ),
+                  ),
+                ],
               ),
               if (order.estimatedPrepMinutes > 0)
                 Container(
@@ -252,20 +321,461 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                     color: colors.primaryContainer,
                     borderRadius: AppRadius.full,
                   ),
-                  child: Text(
-                    '~${order.estimatedPrepMinutes}m prep',
-                    style: TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w800,
-                      color: colors.primary,
-                    ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.timer_outlined, size: 12, color: colors.primary),
+                      const SizedBox(width: 4),
+                      Text(
+                        '~${order.estimatedPrepMinutes}m prep',
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w800,
+                          color: colors.primary,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
             ],
           ),
+        ],
+      ),
+    );
+  }
 
+  // 2. Customer Information Card
+  Widget _buildCustomerCard(OrderModel order, AppSemanticColors colors) {
+    return AppCard(
+      padding: const EdgeInsets.all(18),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: colors.surfaceSubtle,
+                  borderRadius: AppRadius.sm,
+                ),
+                child: Icon(
+                  Icons.person_outline_rounded,
+                  size: 18,
+                  color: colors.textPrimary,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Text(
+                'Customer Information',
+                style: AppTypography.titleSmall.copyWith(
+                  fontWeight: FontWeight.w800,
+                  color: colors.textPrimary,
+                ),
+              ),
+            ],
+          ),
+
+          AppSpacing.vGap14,
+
+          Text(
+            order.customerName,
+            style: AppTypography.titleMedium.copyWith(
+              fontWeight: FontWeight.w800,
+              color: colors.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            order.customerPhone,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: colors.textMuted,
+            ),
+          ),
+
+          AppSpacing.vGap12,
+
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(
+                Icons.location_on_outlined,
+                size: 18,
+                color: colors.primary,
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  order.deliveryAddress,
+                  style: AppTypography.bodyMedium.copyWith(
+                    color: colors.textSecondary,
+                    height: 1.35,
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          AppSpacing.vGap14,
+
+          // Action Buttons: Call Customer & Open Location in Maps
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    AppToast.showInfo(
+                      context,
+                      title: 'Calling Customer',
+                      message: 'Connecting dispatch phone to ${order.customerPhone}...',
+                    );
+                  },
+                  icon: const Icon(Icons.call_rounded, size: 15),
+                  label: const Text('Call Customer'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: colors.primaryContainer,
+                    foregroundColor: colors.primary,
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    shape: const RoundedRectangleBorder(borderRadius: AppRadius.full),
+                  ),
+                ),
+              ),
+              AppSpacing.hGap10,
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    AppToast.showInfo(
+                      context,
+                      title: 'Opening Map Location',
+                      message: 'Navigating to: ${order.deliveryAddress}',
+                    );
+                  },
+                  icon: const Icon(Icons.map_outlined, size: 15),
+                  label: const Text('Open in Maps'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: colors.surfaceSubtle,
+                    foregroundColor: colors.textPrimary,
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    shape: const RoundedRectangleBorder(borderRadius: AppRadius.full),
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          if (order.customerNotes != null && order.customerNotes!.isNotEmpty) ...[
+            AppSpacing.vGap12,
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: colors.warningBg,
+                borderRadius: AppRadius.md,
+                border: Border.all(
+                  color: colors.warning.withValues(alpha: 0.3),
+                ),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(Icons.notes_rounded, size: 18, color: colors.warning),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'Delivery Instruction: ${order.customerNotes}',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: colors.warning,
+                        height: 1.3,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  // 3. Ordered Items Card
+  Widget _buildItemsBreakdownCard(OrderModel order, AppSemanticColors colors) {
+    return AppCard(
+      padding: const EdgeInsets.all(18),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Ordered Items (${order.totalItemCount})',
+                style: AppTypography.titleSmall.copyWith(
+                  fontWeight: FontWeight.w800,
+                  color: colors.textPrimary,
+                ),
+              ),
+              Text(
+                '${order.items.length} ${order.items.length == 1 ? "line item" : "line items"}',
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: colors.textMuted,
+                ),
+              ),
+            ],
+          ),
+          AppSpacing.vGap8,
+          ...order.items.asMap().entries.map((entry) {
+            final idx = entry.key;
+            final item = entry.value;
+            final isLast = idx == order.items.length - 1;
+            return OrderItemTile(
+              item: item,
+              showDivider: !isLast,
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
+  // 4. Payment Information Card
+  Widget _buildPaymentInfoCard(OrderModel order, AppSemanticColors colors) {
+    return AppCard(
+      padding: const EdgeInsets.all(18),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Payment Information',
+            style: AppTypography.titleSmall.copyWith(
+              fontWeight: FontWeight.w800,
+              color: colors.textPrimary,
+            ),
+          ),
+          AppSpacing.vGap14,
+          _buildSummaryRow(
+            'Payment Method',
+            order.paymentMethod,
+            colors,
+            icon: Icons.credit_card_rounded,
+          ),
+          AppSpacing.vGap10,
+          _buildSummaryRow(
+            'Transaction ID',
+            'TXN-${order.orderNumber.replaceAll("#", "").replaceAll("-", "")}-PAY',
+            colors,
+            icon: Icons.confirmation_number_outlined,
+          ),
+          AppSpacing.vGap10,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Icon(Icons.verified_outlined, size: 16, color: colors.textMuted),
+                  const SizedBox(width: 6),
+                  Text(
+                    'Payment Status',
+                    style: AppTypography.bodyMedium.copyWith(
+                      color: colors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: order.isPaid ? colors.successBg : colors.warningBg,
+                  borderRadius: AppRadius.full,
+                ),
+                child: Text(
+                  order.isPaid ? 'Paid Online' : 'Payment Pending',
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w800,
+                    color: order.isPaid ? colors.success : colors.warning,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  // 5. Order Summary Card
+  Widget _buildOrderSummaryCard(OrderModel order, AppSemanticColors colors) {
+    return AppCard(
+      padding: const EdgeInsets.all(18),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Order Summary',
+            style: AppTypography.titleSmall.copyWith(
+              fontWeight: FontWeight.w800,
+              color: colors.textPrimary,
+            ),
+          ),
           AppSpacing.vGap16,
+          _buildSummaryRow('Subtotal', Formatters.formatCurrency(order.subtotal), colors),
+          AppSpacing.vGap8,
+          _buildSummaryRow(
+            'Delivery Fee',
+            order.deliveryFee == 0 ? 'Free' : Formatters.formatCurrency(order.deliveryFee),
+            colors,
+          ),
+          if (order.tax > 0) ...[
+            AppSpacing.vGap8,
+            _buildSummaryRow('Estimated Tax', Formatters.formatCurrency(order.tax), colors),
+          ],
+          if (order.discount > 0) ...[
+            AppSpacing.vGap8,
+            _buildSummaryRow(
+              'Merchant Discount',
+              '- ${Formatters.formatCurrency(order.discount)}',
+              colors,
+              textColor: colors.success,
+            ),
+          ],
+          AppSpacing.vGap12,
+          Divider(
+            height: 1,
+            color: colors.divider,
+          ),
+          AppSpacing.vGap12,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Total Amount',
+                style: AppTypography.titleMedium.copyWith(
+                  fontWeight: FontWeight.w800,
+                  color: colors.textPrimary,
+                ),
+              ),
+              Text(
+                Formatters.formatCurrency(order.totalAmount),
+                style: AppTypography.headlineSmall.copyWith(
+                  fontWeight: FontWeight.w900,
+                  color: colors.primary,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 
+  // 6. Rider Information Card (if assigned)
+  Widget _buildRiderCard(OrderModel order, AppSemanticColors colors) {
+    return AppCard(
+      padding: const EdgeInsets.all(16),
+      child: Row(
+        children: [
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: colors.successBg,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.delivery_dining_rounded,
+              color: colors.success,
+              size: 24,
+            ),
+          ),
+          AppSpacing.hGap12,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Assigned Courier / Rider',
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: colors.textMuted,
+                  ),
+                ),
+                Text(
+                  order.riderName!,
+                  style: AppTypography.titleSmall.copyWith(
+                    fontWeight: FontWeight.w800,
+                    color: colors.textPrimary,
+                  ),
+                ),
+                if (order.riderPhone != null)
+                  Text(
+                    order.riderPhone!,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: colors.textSecondary,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          ElevatedButton.icon(
+            onPressed: () {
+              AppToast.showInfo(
+                context,
+                title: 'Calling Courier',
+                message: 'Connecting dispatch line with ${order.riderName}...',
+              );
+            },
+            icon: const Icon(Icons.phone_in_talk_rounded, size: 14),
+            label: const Text('Call'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: colors.successBg,
+              foregroundColor: colors.success,
+              elevation: 0,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              shape: const RoundedRectangleBorder(borderRadius: AppRadius.full),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // 7. Order Timeline Card
+  Widget _buildOrderTimelineCard(OrderModel order, AppSemanticColors colors) {
+    final stages = [
+      {'status': OrderStatus.pending, 'label': 'Order Placed'},
+      {'status': OrderStatus.accepted, 'label': 'Accepted'},
+      {'status': OrderStatus.preparing, 'label': 'Kitchen Prep'},
+      {'status': OrderStatus.ready, 'label': 'Ready for Pickup'},
+      {'status': OrderStatus.delivered, 'label': 'Delivered'},
+    ];
+
+    final currentIdx = stages.indexWhere((s) => s['status'] == order.status);
+
+    return AppCard(
+      padding: const EdgeInsets.all(18),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Order Timeline',
+            style: AppTypography.titleSmall.copyWith(
+              fontWeight: FontWeight.w800,
+              color: colors.textPrimary,
+            ),
+          ),
+          AppSpacing.vGap16,
           Row(
             children: List.generate(stages.length * 2 - 1, (index) {
               if (index.isOdd) {
@@ -313,296 +823,15 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                   Text(
                     stages[stepIdx]['label'] as String,
                     style: TextStyle(
-                      fontSize: 10,
+                      fontSize: 9.5,
                       fontWeight: isCurrent ? FontWeight.w800 : FontWeight.w500,
-                      color: isCurrent
-                          ? colors.primary
-                          : colors.textMuted,
+                      color: isCurrent ? colors.primary : colors.textMuted,
                     ),
+                    textAlign: TextAlign.center,
                   ),
                 ],
               );
             }),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCustomerCard(OrderModel order, AppSemanticColors colors) {
-    return AppCard(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Customer Details',
-                style: AppTypography.titleSmall.copyWith(
-                  fontWeight: FontWeight.w800,
-                  color: colors.textPrimary,
-                ),
-              ),
-              ElevatedButton.icon(
-                onPressed: () {
-                  AppToast.showInfo(
-                    context,
-                    title: 'Initiating Call',
-                    message: 'Connecting to customer at ${order.customerPhone}...',
-                  );
-                },
-                icon: const Icon(Icons.call_rounded, size: 14),
-                label: const Text('Call'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: colors.primaryContainer,
-                  foregroundColor: colors.primary,
-                  elevation: 0,
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  shape: const RoundedRectangleBorder(borderRadius: AppRadius.full),
-                ),
-              ),
-            ],
-          ),
-
-          AppSpacing.vGap12,
-
-          Text(
-            order.customerName,
-            style: AppTypography.titleMedium.copyWith(
-              fontWeight: FontWeight.w800,
-              color: colors.textPrimary,
-            ),
-          ),
-
-          Text(
-            order.customerPhone,
-            style: AppTypography.bodySmall.copyWith(
-              color: colors.textMuted,
-            ),
-          ),
-
-          AppSpacing.vGap12,
-
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Icon(
-                Icons.location_on_outlined,
-                size: 18,
-                color: colors.primary,
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  order.deliveryAddress,
-                  style: AppTypography.bodyMedium.copyWith(
-                    color: colors.textSecondary,
-                  ),
-                ),
-              ),
-            ],
-          ),
-
-          if (order.customerNotes != null && order.customerNotes!.isNotEmpty) ...[
-            AppSpacing.vGap12,
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: colors.warningBg,
-                borderRadius: AppRadius.md,
-                border: Border.all(
-                  color: colors.warning.withValues(alpha: 0.3),
-                ),
-              ),
-              child: Row(
-                children: [
-                  Icon(Icons.info_outline_rounded, size: 18, color: colors.warning),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      'Delivery Instruction: ${order.customerNotes}',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: colors.warning,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-
-  Widget _buildRiderCard(OrderModel order, AppSemanticColors colors) {
-    return AppCard(
-      padding: const EdgeInsets.all(16),
-      child: Row(
-        children: [
-          Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              color: colors.successBg,
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              Icons.delivery_dining_rounded,
-              color: colors.success,
-              size: 24,
-            ),
-          ),
-          AppSpacing.hGap12,
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Assigned Courier',
-                  style: AppTypography.labelSmall.copyWith(
-                    color: colors.textMuted,
-                  ),
-                ),
-                Text(
-                  order.riderName!,
-                  style: AppTypography.titleSmall.copyWith(
-                    fontWeight: FontWeight.w800,
-                    color: colors.textPrimary,
-                  ),
-                ),
-                if (order.riderPhone != null)
-                  Text(
-                    order.riderPhone!,
-                    style: AppTypography.bodySmall.copyWith(
-                      color: colors.textMuted,
-                    ),
-                  ),
-              ],
-            ),
-          ),
-          IconButton(
-            onPressed: () {
-              AppToast.showInfo(
-                context,
-                title: 'Calling Courier',
-                message: 'Connecting dispatch line with ${order.riderName}...',
-              );
-            },
-            icon: Icon(Icons.phone_in_talk_rounded, color: colors.success),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildItemsBreakdownCard(OrderModel order, AppSemanticColors colors) {
-    return AppCard(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Order Items (${order.totalItemCount})',
-            style: AppTypography.titleSmall.copyWith(
-              fontWeight: FontWeight.w800,
-              color: colors.textPrimary,
-            ),
-          ),
-          AppSpacing.vGap8,
-          ...order.items.asMap().entries.map((entry) {
-            final idx = entry.key;
-            final item = entry.value;
-            final isLast = idx == order.items.length - 1;
-            return OrderItemTile(
-              item: item,
-              showDivider: !isLast,
-            );
-          }),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildReceiptCard(OrderModel order, AppSemanticColors colors) {
-    return AppCard(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Payment Summary',
-            style: AppTypography.titleSmall.copyWith(
-              fontWeight: FontWeight.w800,
-              color: colors.textPrimary,
-            ),
-          ),
-          AppSpacing.vGap16,
-          _buildSummaryRow('Subtotal', Formatters.formatCurrency(order.subtotal), colors),
-          AppSpacing.vGap8,
-          _buildSummaryRow('Delivery Fee', Formatters.formatCurrency(order.deliveryFee), colors),
-          if (order.tax > 0) ...[
-            AppSpacing.vGap8,
-            _buildSummaryRow('Estimated Tax', Formatters.formatCurrency(order.tax), colors),
-          ],
-          if (order.discount > 0) ...[
-            AppSpacing.vGap8,
-            _buildSummaryRow(
-              'Merchant Discount',
-              '- ${Formatters.formatCurrency(order.discount)}',
-              colors,
-              textColor: colors.success,
-            ),
-          ],
-          AppSpacing.vGap12,
-          Divider(
-            height: 1,
-            color: colors.divider,
-          ),
-          AppSpacing.vGap12,
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Total Revenue',
-                style: AppTypography.titleMedium.copyWith(
-                  fontWeight: FontWeight.w800,
-                  color: colors.textPrimary,
-                ),
-              ),
-              Text(
-                Formatters.formatCurrency(order.totalAmount),
-                style: AppTypography.headlineSmall.copyWith(
-                  fontWeight: FontWeight.w800,
-                  color: colors.primary,
-                ),
-              ),
-            ],
-          ),
-          AppSpacing.vGap12,
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: colors.surfaceSubtle,
-              borderRadius: AppRadius.sm,
-            ),
-            child: Row(
-              children: [
-                Icon(Icons.payment_rounded, size: 16, color: colors.primary),
-                const SizedBox(width: 8),
-                Text(
-                  '${order.paymentMethod} • ${order.isPaid ? "Paid Online" : "Payment Pending"}',
-                  style: AppTypography.bodySmall.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: colors.textSecondary,
-                  ),
-                ),
-              ],
-            ),
           ),
         ],
       ),
@@ -650,15 +879,24 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
     String value,
     AppSemanticColors colors, {
     Color? textColor,
+    IconData? icon,
   }) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          label,
-          style: AppTypography.bodyMedium.copyWith(
-            color: colors.textSecondary,
-          ),
+        Row(
+          children: [
+            if (icon != null) ...[
+              Icon(icon, size: 15, color: colors.textMuted),
+              const SizedBox(width: 6),
+            ],
+            Text(
+              label,
+              style: AppTypography.bodyMedium.copyWith(
+                color: colors.textSecondary,
+              ),
+            ),
+          ],
         ),
         Text(
           value,
@@ -671,6 +909,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
     );
   }
 
+  // 8. Contextual Actions
   Widget _buildBottomActionBar(
     OrderModel order,
     OrderStatus? nextStatus,
