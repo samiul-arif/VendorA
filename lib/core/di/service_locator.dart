@@ -18,6 +18,15 @@ import '../../features/shop/domain/usecases/toggle_shop_status_usecase.dart';
 import '../../features/shop/domain/usecases/update_shop_info_usecase.dart';
 import '../../features/shop/data/repositories/mock_shop_repository.dart';
 import '../../features/shop/presentation/controllers/shop_controller.dart';
+import '../../features/products/domain/repositories/product_repository_interface.dart';
+import '../../features/products/domain/usecases/get_products_usecase.dart';
+import '../../features/products/domain/usecases/add_product_usecase.dart';
+import '../../features/products/domain/usecases/update_product_usecase.dart';
+import '../../features/products/domain/usecases/delete_product_usecase.dart';
+import '../../features/products/domain/usecases/toggle_product_availability_usecase.dart';
+import '../../features/products/domain/usecases/restock_product_usecase.dart';
+import '../../features/products/data/repositories/mock_product_repository.dart';
+import '../../features/products/presentation/controllers/product_controller.dart';
 
 // Lightweight Service Locator for Dependency Injection
 class ServiceLocator {
@@ -128,6 +137,38 @@ class ServiceLocator {
       shopController.setActiveShop(authController.activeShop!);
     }
     instance.register<ShopController>(shopController);
+
+    // Product Module Services & Use Cases
+    final productRepository = MockProductRepository();
+    instance.register<IProductRepository>(productRepository);
+
+    final getProductsUseCase = GetProductsUseCase(productRepository);
+    instance.register<GetProductsUseCase>(getProductsUseCase);
+
+    final addProductUseCase = AddProductUseCase(productRepository);
+    instance.register<AddProductUseCase>(addProductUseCase);
+
+    final updateProductUseCase = UpdateProductUseCase(productRepository);
+    instance.register<UpdateProductUseCase>(updateProductUseCase);
+
+    final deleteProductUseCase = DeleteProductUseCase(productRepository);
+    instance.register<DeleteProductUseCase>(deleteProductUseCase);
+
+    final toggleAvailabilityUseCase = ToggleProductAvailabilityUseCase(productRepository);
+    instance.register<ToggleProductAvailabilityUseCase>(toggleAvailabilityUseCase);
+
+    final restockProductUseCase = RestockProductUseCase(productRepository);
+    instance.register<RestockProductUseCase>(restockProductUseCase);
+
+    final productController = ProductController(
+      getProductsUseCase: getProductsUseCase,
+      addProductUseCase: addProductUseCase,
+      updateProductUseCase: updateProductUseCase,
+      deleteProductUseCase: deleteProductUseCase,
+      toggleAvailabilityUseCase: toggleAvailabilityUseCase,
+      restockProductUseCase: restockProductUseCase,
+    );
+    instance.register<ProductController>(productController);
   }
 }
 

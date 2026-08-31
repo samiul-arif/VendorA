@@ -7,6 +7,7 @@ import '../../../shared/components/stat_card.dart';
 import '../../../shared/components/status_badge.dart';
 import '../../../shared/components/app_switch.dart';
 import '../../dashboard/presentation/views/dashboard_screen.dart';
+import '../../products/presentation/views/product_list_screen.dart';
 import '../widgets/floating_nav_bar.dart';
 
 // Main Application Navigation Shell
@@ -86,13 +87,8 @@ class _MainShellScreenState extends State<MainShellScreen> {
                 accentColor: AppColors.secondary,
               ),
 
-              // Tab 2: Products Tab Placeholder
-              _TabPlaceholder(
-                title: 'Product Catalog',
-                subtitle: 'Organize menu categories, items, and availability status.',
-                icon: Icons.restaurant_menu_rounded,
-                accentColor: AppColors.statusInfo,
-              ),
+              // Tab 2: Real Product Catalog & Inventory Screen
+              const ProductListScreen(),
 
               // Tab 3: Shop Settings Placeholder
               _TabPlaceholder(

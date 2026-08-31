@@ -11,6 +11,7 @@ import 'core/storage/session_storage.dart';
 import 'features/auth/presentation/controllers/auth_controller.dart';
 import 'features/dashboard/presentation/controllers/dashboard_controller.dart';
 import 'features/shop/presentation/controllers/shop_controller.dart';
+import 'features/products/presentation/controllers/product_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,6 +39,7 @@ class VendorApp extends StatelessWidget {
     final authController = locate<AuthController>();
     final dashboardController = locate<DashboardController>();
     final shopController = locate<ShopController>();
+    final productController = locate<ProductController>();
 
     final isDark = sessionStorage.isDarkMode();
     final isAuthenticated = authController.isAuthenticated;
@@ -47,6 +49,7 @@ class VendorApp extends StatelessWidget {
         ChangeNotifierProvider<AuthController>.value(value: authController),
         ChangeNotifierProvider<DashboardController>.value(value: dashboardController),
         ChangeNotifierProvider<ShopController>.value(value: shopController),
+        ChangeNotifierProvider<ProductController>.value(value: productController),
       ],
       child: MaterialApp(
         title: AppConstants.appName,

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'app_routes.dart';
 import '../../features/auth/presentation/views/login_screen.dart';
 import '../../features/navigation/views/main_shell_screen.dart';
+import '../../features/products/domain/models/product_model.dart';
+import '../../features/products/presentation/views/add_edit_product_screen.dart';
 
 // Central Route Generator with custom page transitions
 class AppRouter {
@@ -48,13 +50,15 @@ class AppRouter {
       case AppRoutes.addProduct:
         return _buildPageRoute(
           settings: settings,
-          builder: (_) => const _PlaceholderScreen(title: 'Add Product'),
+          builder: (_) => const AddEditProductScreen(),
         );
 
       case AppRoutes.editProduct:
         return _buildPageRoute(
           settings: settings,
-          builder: (_) => _PlaceholderScreen(title: 'Edit Product', subtitle: 'Args: $args'),
+          builder: (_) => AddEditProductScreen(
+            productToEdit: args is ProductModel ? args : null,
+          ),
         );
 
       case AppRoutes.categories:
