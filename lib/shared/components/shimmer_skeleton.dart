@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radius.dart';
 
 // Animated Shimmer Skeleton Placeholder (ui-ux-pro-max loading feedback)

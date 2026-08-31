@@ -5,7 +5,6 @@ import '../../features/navigation/views/main_shell_screen.dart';
 import '../../features/orders/presentation/views/order_details_screen.dart';
 import '../../features/products/domain/models/product_model.dart';
 import '../../features/products/presentation/views/add_edit_product_screen.dart';
-import '../../features/categories/presentation/views/category_list_screen.dart';
 import '../../features/profile/presentation/views/profile_screen.dart';
 import '../../features/profile/presentation/views/edit_profile_screen.dart';
 import '../../features/profile/presentation/views/shop_settings_screen.dart';
@@ -49,6 +48,7 @@ class AppRouter {
         );
 
       case AppRoutes.products:
+      case AppRoutes.categories:
         return _buildPageRoute(
           settings: settings,
           builder: (_) => const MainShellScreen(initialIndex: 2),
@@ -66,12 +66,6 @@ class AppRouter {
           builder: (_) => AddEditProductScreen(
             productToEdit: args is ProductModel ? args : null,
           ),
-        );
-
-      case AppRoutes.categories:
-        return _buildPageRoute(
-          settings: settings,
-          builder: (_) => const CategoryListScreen(),
         );
 
       case AppRoutes.shopManagement:

@@ -1,6 +1,5 @@
 import '../../../../core/utils/result.dart';
 import '../../../../shared/models/user_session.dart';
-import '../../../../shared/models/shop_model.dart';
 
 // Authentication Repository Contract (API-Ready Domain Interface)
 abstract class IAuthRepository {

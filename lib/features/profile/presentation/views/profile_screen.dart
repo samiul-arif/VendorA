@@ -138,12 +138,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   },
                 ),
                 SettingsTileItem(
-                  icon: Icons.category_rounded,
+                  icon: Icons.restaurant_menu_rounded,
                   iconColor: const Color(0xFFF59E0B),
-                  title: 'Manage Categories',
-                  subtitle: 'Menu categories and item grouping',
+                  title: 'Manage Menu Items',
+                  subtitle: 'Dishes, stock quantities & prices',
                   onTap: () {
-                    Navigator.of(context).pushNamed(AppRoutes.categories);
+                    Navigator.of(context).pushNamed(AppRoutes.products);
                   },
                 ),
               ],

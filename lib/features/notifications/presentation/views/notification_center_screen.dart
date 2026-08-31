@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
-import '../../../../core/theme/app_typography.dart';
 import '../../../../shared/components/empty_state_view.dart';
 import '../../../../shared/components/shimmer_skeleton.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';

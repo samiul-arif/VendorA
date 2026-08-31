@@ -4,7 +4,6 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
-import '../../../../core/utils/formatters.dart';
 import '../../../../shared/components/app_button.dart';
 import '../../../../shared/components/app_card.dart';
 import '../../../../shared/components/app_switch.dart';

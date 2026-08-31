@@ -3,12 +3,12 @@ import 'package:provider/provider.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
-import '../../../../core/routing/app_routes.dart';
 import '../../../../shared/components/app_bottom_sheet.dart';
 import '../../../../shared/components/empty_state_view.dart';
 import '../../../../shared/components/error_state_view.dart';
 import '../../../../shared/components/shimmer_skeleton.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
+import '../../../notifications/presentation/widgets/notification_badge_icon.dart';
 import '../../domain/models/product_model.dart';
 import '../controllers/product_controller.dart';
 import '../widgets/product_card.dart';
@@ -16,9 +16,8 @@ import '../widgets/product_search_bar.dart';
 import '../widgets/category_filter_bar.dart';
 import '../widgets/quick_restock_bottom_sheet.dart';
 import 'add_edit_product_screen.dart';
-import '../../../notifications/presentation/widgets/notification_badge_icon.dart';
 
-// Product & Inventory Catalog Screen (2-Column Grid with Quantity Management)
+// Product Catalog & Inventory Screen (arif.html Styled 2-Column Grid)
 class ProductListScreen extends StatefulWidget {
   const ProductListScreen({super.key});
 
@@ -98,19 +97,60 @@ class _ProductListScreenState extends State<ProductListScreen> {
     return Scaffold(
       backgroundColor: isDark ? AppColors.darkCanvas : AppColors.lightCanvas,
       appBar: AppBar(
-        title: const Text('Product Catalog'),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'Product Catalog',
+              style: TextStyle(fontWeight: FontWeight.w800),
+            ),
+            Text(
+              '${filteredProducts.length} items listed',
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
+                color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
+              ),
+            ),
+          ],
+        ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.category_outlined, size: 22),
-            tooltip: 'Manage Categories',
-            onPressed: () => Navigator.of(context).pushNamed(AppRoutes.categories),
+          // Foodie Pink "+ Add Item" Pill Button
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10.0),
+            child: GestureDetector(
+              onTap: () => _openAddEditScreen(),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                decoration: const BoxDecoration(
+                  color: AppColors.primary,
+                  borderRadius: AppRadius.full,
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: const [
+                    Icon(Icons.add_rounded, color: Colors.white, size: 16),
+                    SizedBox(width: 4),
+                    Text(
+                      'Add Item',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ),
-          IconButton(
-            icon: const Icon(Icons.add_rounded, size: 24),
-            tooltip: 'Add New Product',
-            onPressed: () => _openAddEditScreen(),
-          ),
+
+          const SizedBox(width: 4),
+
+          // Notification Bell Icon with Live Badge
           const NotificationBadgeIcon(),
+          const SizedBox(width: 6),
         ],
       ),
       body: SafeArea(
@@ -167,7 +207,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                             },
                           )
                         else
-                          // 2-Column Responsive Grid (modern_ui_arif)
+                          // 2-Column Responsive Grid
                           GridView.builder(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
@@ -177,7 +217,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                               crossAxisCount: 2,
                               crossAxisSpacing: 12,
                               mainAxisSpacing: 12,
-                              childAspectRatio: 0.64,
+                              childAspectRatio: 0.62,
                             ),
                             itemBuilder: (context, index) {
                               final product = filteredProducts[index];
@@ -231,7 +271,7 @@ class _ProductGridSkeleton extends StatelessWidget {
             crossAxisCount: 2,
             crossAxisSpacing: 12,
             mainAxisSpacing: 12,
-            childAspectRatio: 0.64,
+            childAspectRatio: 0.62,
           ),
           itemBuilder: (_, __) => const ShimmerSkeleton(
             width: double.infinity,
