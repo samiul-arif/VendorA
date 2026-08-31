@@ -40,6 +40,14 @@ import '../../features/orders/domain/usecases/get_order_details_usecase.dart';
 import '../../features/orders/domain/usecases/update_order_status_usecase.dart';
 import '../../features/orders/data/repositories/mock_order_repository.dart';
 import '../../features/orders/presentation/controllers/order_controller.dart';
+import '../../features/profile/domain/repositories/profile_repository_interface.dart';
+import '../../features/profile/domain/usecases/get_operating_hours_usecase.dart';
+import '../../features/profile/domain/usecases/update_operating_hours_usecase.dart';
+import '../../features/profile/domain/usecases/get_bank_account_usecase.dart';
+import '../../features/profile/domain/usecases/update_bank_account_usecase.dart';
+import '../../features/profile/domain/usecases/update_vendor_profile_usecase.dart';
+import '../../features/profile/data/repositories/mock_profile_repository.dart';
+import '../../features/profile/presentation/controllers/profile_controller.dart';
 
 // Lightweight Service Locator for Dependency Injection
 class ServiceLocator {
@@ -226,6 +234,35 @@ class ServiceLocator {
       updateOrderStatusUseCase: updateOrderStatusUseCase,
     );
     instance.register<OrderController>(orderController);
+
+    // Profile & Settings Module Services & Use Cases
+    final profileRepository = MockProfileRepository();
+    instance.register<IProfileRepository>(profileRepository);
+
+    final getHoursUseCase = GetOperatingHoursUseCase(profileRepository);
+    instance.register<GetOperatingHoursUseCase>(getHoursUseCase);
+
+    final updateHoursUseCase = UpdateOperatingHoursUseCase(profileRepository);
+    instance.register<UpdateOperatingHoursUseCase>(updateHoursUseCase);
+
+    final getBankUseCase = GetBankAccountUseCase(profileRepository);
+    instance.register<GetBankAccountUseCase>(getBankUseCase);
+
+    final updateBankUseCase = UpdateBankAccountUseCase(profileRepository);
+    instance.register<UpdateBankAccountUseCase>(updateBankUseCase);
+
+    final updateProfileUseCase = UpdateVendorProfileUseCase(profileRepository);
+    instance.register<UpdateVendorProfileUseCase>(updateProfileUseCase);
+
+    final profileController = ProfileController(
+      sessionStorage: sessionStorage,
+      getOperatingHoursUseCase: getHoursUseCase,
+      updateOperatingHoursUseCase: updateHoursUseCase,
+      getBankAccountUseCase: getBankUseCase,
+      updateBankAccountUseCase: updateBankUseCase,
+      updateVendorProfileUseCase: updateProfileUseCase,
+    );
+    instance.register<ProfileController>(profileController);
   }
 }
 

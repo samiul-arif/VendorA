@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'app_routes.dart';
 import '../../features/auth/presentation/views/login_screen.dart';
 import '../../features/navigation/views/main_shell_screen.dart';
-import '../../features/orders/presentation/views/order_list_screen.dart';
 import '../../features/orders/presentation/views/order_details_screen.dart';
 import '../../features/products/domain/models/product_model.dart';
 import '../../features/products/presentation/views/add_edit_product_screen.dart';
 import '../../features/categories/presentation/views/category_list_screen.dart';
+import '../../features/profile/presentation/views/profile_screen.dart';
+import '../../features/profile/presentation/views/edit_profile_screen.dart';
+import '../../features/profile/presentation/views/shop_settings_screen.dart';
 
 // Central Route Generator with custom page transitions
 class AppRouter {
@@ -74,7 +76,7 @@ class AppRouter {
       case AppRoutes.shopManagement:
         return _buildPageRoute(
           settings: settings,
-          builder: (_) => const MainShellScreen(initialIndex: 3),
+          builder: (_) => const ShopSettingsScreen(),
         );
 
       case AppRoutes.notifications:
@@ -86,19 +88,19 @@ class AppRouter {
       case AppRoutes.profile:
         return _buildPageRoute(
           settings: settings,
-          builder: (_) => const MainShellScreen(initialIndex: 4),
+          builder: (_) => const ProfileScreen(),
         );
 
       case AppRoutes.editProfile:
         return _buildPageRoute(
           settings: settings,
-          builder: (_) => const _PlaceholderScreen(title: 'Edit Profile'),
+          builder: (_) => const EditProfileScreen(),
         );
 
       case AppRoutes.settings:
         return _buildPageRoute(
           settings: settings,
-          builder: (_) => const _PlaceholderScreen(title: 'Settings'),
+          builder: (_) => const ProfileScreen(),
         );
 
       default:
@@ -145,9 +147,8 @@ class AppRouter {
 // Temporary Scaffolding Placeholder Screen for Route Verification
 class _PlaceholderScreen extends StatelessWidget {
   final String title;
-  final String? subtitle;
 
-  const _PlaceholderScreen({required this.title, this.subtitle});
+  const _PlaceholderScreen({required this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -170,7 +171,7 @@ class _PlaceholderScreen extends StatelessWidget {
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
-                  Icons.storefront_outlined,
+                  Icons.notifications_none_rounded,
                   size: 32,
                   color: theme.colorScheme.primary,
                 ),
@@ -181,14 +182,6 @@ class _PlaceholderScreen extends StatelessWidget {
                 style: theme.textTheme.headlineSmall,
                 textAlign: TextAlign.center,
               ),
-              if (subtitle != null) ...[
-                const SizedBox(height: 8),
-                Text(
-                  subtitle!,
-                  style: theme.textTheme.bodyMedium,
-                  textAlign: TextAlign.center,
-                ),
-              ],
             ],
           ),
         ),

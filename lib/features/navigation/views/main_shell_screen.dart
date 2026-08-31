@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_typography.dart';
-import '../../../core/theme/app_spacing.dart';
-import '../../../shared/components/app_card.dart';
-import '../../../shared/components/status_badge.dart';
 import '../../dashboard/presentation/views/dashboard_screen.dart';
 import '../../orders/presentation/views/order_list_screen.dart';
 import '../../products/presentation/views/product_list_screen.dart';
+import '../../profile/presentation/views/shop_settings_screen.dart';
+import '../../profile/presentation/views/profile_screen.dart';
 import '../widgets/floating_nav_bar.dart';
 
 // Main Application Navigation Shell
@@ -84,21 +82,11 @@ class _MainShellScreenState extends State<MainShellScreen> {
               // Tab 2: Real Product Catalog & Inventory Screen
               const ProductListScreen(),
 
-              // Tab 3: Shop Settings Placeholder
-              const _TabPlaceholder(
-                title: 'Shop Settings',
-                subtitle: 'Manage store hours, open/close toggle, and delivery radius.',
-                icon: Icons.storefront_rounded,
-                accentColor: AppColors.statusWarning,
-              ),
+              // Tab 3: Real Shop Management Screen
+              const ShopSettingsScreen(),
 
-              // Tab 4: Vendor Profile Placeholder
-              const _TabPlaceholder(
-                title: 'Vendor Profile',
-                subtitle: 'Account preferences, business details, and secure logout.',
-                icon: Icons.person_rounded,
-                accentColor: AppColors.primary,
-              ),
+              // Tab 4: Real Vendor Profile & Settings Screen
+              const ProfileScreen(),
             ],
           ),
 
@@ -111,111 +99,6 @@ class _MainShellScreenState extends State<MainShellScreen> {
               currentIndex: _currentIndex,
               onTap: (index) => setState(() => _currentIndex = index),
               items: _navItems,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// Scaffolding Tab View Placeholder
-class _TabPlaceholder extends StatefulWidget {
-  final String title;
-  final String subtitle;
-  final IconData icon;
-  final Color accentColor;
-
-  const _TabPlaceholder({
-    required this.title,
-    required this.subtitle,
-    required this.icon,
-    required this.accentColor,
-  });
-
-  @override
-  State<_TabPlaceholder> createState() => _TabPlaceholderState();
-}
-
-class _TabPlaceholderState extends State<_TabPlaceholder> {
-  final bool _isShopOpen = true;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-
-    return SafeArea(
-      child: ListView(
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.title,
-                    style: AppTypography.headlineMedium.copyWith(
-                      color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                  AppSpacing.vGap4,
-                  Text(
-                    'Vendor Partner Merchant App',
-                    style: AppTypography.bodySmall.copyWith(
-                      color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
-                    ),
-                  ),
-                ],
-              ),
-              StatusBadge(
-                type: _isShopOpen ? BadgeType.open : BadgeType.closed,
-                label: _isShopOpen ? 'Shop Open' : 'Shop Closed',
-              ),
-            ],
-          ),
-
-          AppSpacing.vGap20,
-
-          AppCard(
-            gradient: isDark ? AppColors.darkCardGradient : null,
-            child: Row(
-              children: [
-                Container(
-                  width: 52,
-                  height: 52,
-                  decoration: BoxDecoration(
-                    color: widget.accentColor.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                  child: Icon(widget.icon, size: 26, color: widget.accentColor),
-                ),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        widget.title,
-                        style: AppTypography.titleMedium.copyWith(
-                          color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      AppSpacing.vGap4,
-                      Text(
-                        widget.subtitle,
-                        style: AppTypography.bodySmall.copyWith(
-                          color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
             ),
           ),
         ],

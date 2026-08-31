@@ -29,6 +29,7 @@ class AppSpacing {
   // Common Spacers / Gaps (SizedBox Helpers)
   static const Widget vGap2 = SizedBox(height: xxxs);
   static const Widget vGap4 = SizedBox(height: xxs);
+  static const Widget vGap6 = SizedBox(height: 6.0);
   static const Widget vGap8 = SizedBox(height: xs);
   static const Widget vGap10 = SizedBox(height: 10.0);
   static const Widget vGap12 = SizedBox(height: sm);
@@ -43,6 +44,7 @@ class AppSpacing {
   static const Widget hGap8 = SizedBox(width: xs);
   static const Widget hGap10 = SizedBox(width: 10.0);
   static const Widget hGap12 = SizedBox(width: sm);
+  static const Widget hGap14 = SizedBox(width: 14.0);
   static const Widget hGap16 = SizedBox(width: md);
   static const Widget hGap20 = SizedBox(width: lg);
   static const Widget hGap24 = SizedBox(width: xl);
