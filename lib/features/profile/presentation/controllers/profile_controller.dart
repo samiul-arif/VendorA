@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import '../../../../core/base/base_controller.dart';
 import '../../../../core/storage/session_storage.dart';
 import '../../../../core/utils/result.dart';
@@ -20,7 +21,7 @@ class ProfileController extends BaseController {
   final UpdateBankAccountUseCase _updateBankAccountUseCase;
   final UpdateVendorProfileUseCase _updateVendorProfileUseCase;
 
-  bool _isDarkMode = false;
+  ThemeMode _themeMode = ThemeMode.system;
   List<OperatingHoursModel> _operatingHours = [];
   BankAccountModel? _bankAccount;
   NotificationPreferencesModel _preferences = const NotificationPreferencesModel();
@@ -38,20 +39,26 @@ class ProfileController extends BaseController {
         _getBankAccountUseCase = getBankAccountUseCase,
         _updateBankAccountUseCase = updateBankAccountUseCase,
         _updateVendorProfileUseCase = updateVendorProfileUseCase {
-    _isDarkMode = _sessionStorage.isDarkMode();
+    _themeMode = _sessionStorage.getThemeMode();
   }
 
   // Getters
-  bool get isDarkMode => _isDarkMode;
+  ThemeMode get themeMode => _themeMode;
+  bool get isDarkMode => _themeMode == ThemeMode.dark;
   List<OperatingHoursModel> get operatingHours => _operatingHours;
   BankAccountModel? get bankAccount => _bankAccount;
   NotificationPreferencesModel get preferences => _preferences;
 
+  // Set Theme Mode (System Default / Light / Dark)
+  Future<void> setThemeMode(ThemeMode mode) async {
+    _themeMode = mode;
+    await _sessionStorage.setThemeMode(mode);
+    notifyListeners();
+  }
+
   // Toggle Dark Mode
   Future<void> toggleDarkMode(bool enabled) async {
-    _isDarkMode = enabled;
-    await _sessionStorage.setDarkMode(enabled);
-    notifyListeners();
+    await setThemeMode(enabled ? ThemeMode.dark : ThemeMode.light);
   }
 
   // Load Settings & Operating Hours

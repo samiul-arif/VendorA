@@ -16,6 +16,7 @@ import '../widgets/product_search_bar.dart';
 import '../widgets/category_filter_bar.dart';
 import '../widgets/quick_restock_bottom_sheet.dart';
 import 'add_edit_product_screen.dart';
+import '../../../notifications/presentation/widgets/notification_badge_icon.dart';
 
 // Product & Inventory Catalog Screen (2-Column Grid with Quantity Management)
 class ProductListScreen extends StatefulWidget {
@@ -109,6 +110,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
             tooltip: 'Add New Product',
             onPressed: () => _openAddEditScreen(),
           ),
+          const NotificationBadgeIcon(),
         ],
       ),
       body: SafeArea(

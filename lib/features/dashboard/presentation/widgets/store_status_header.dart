@@ -4,9 +4,9 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/theme/app_spacing.dart';
-import '../../../../shared/models/shop_model.dart';
 import '../../../../features/auth/presentation/controllers/auth_controller.dart';
 import '../../../../features/shop/presentation/controllers/shop_controller.dart';
+import '../../../notifications/presentation/widgets/notification_badge_icon.dart';
 
 // Top Store Header with Open/Closed Status Toggle & Multi-Shop Switcher
 class StoreStatusHeader extends StatelessWidget {
@@ -101,8 +101,6 @@ class StoreStatusHeader extends StatelessWidget {
           ),
         ),
 
-        AppSpacing.hGap8,
-
         // Store Open/Close Toggle Pill (Instant Visual Feedback)
         GestureDetector(
           onTap: () {
@@ -110,7 +108,7 @@ class StoreStatusHeader extends StatelessWidget {
           },
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
             decoration: BoxDecoration(
               color: isStoreOpen
                   ? (isDark ? const Color(0xFF0F3A2E) : AppColors.statusSuccessBg)
@@ -125,17 +123,17 @@ class StoreStatusHeader extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
-                  width: 8,
-                  height: 8,
+                  width: 7,
+                  height: 7,
                   decoration: BoxDecoration(
                     color: isStoreOpen ? AppColors.statusSuccess : AppColors.statusError,
                     shape: BoxShape.circle,
                   ),
                 ),
-                const SizedBox(width: 6),
+                const SizedBox(width: 5),
                 Text(
                   isStoreOpen ? 'Open' : 'Closed',
-                  style: AppTypography.labelMedium.copyWith(
+                  style: AppTypography.labelSmall.copyWith(
                     color: isStoreOpen ? AppColors.statusSuccess : AppColors.statusError,
                     fontWeight: FontWeight.w800,
                   ),
@@ -144,6 +142,9 @@ class StoreStatusHeader extends StatelessWidget {
             ),
           ),
         ),
+
+        // Notification Bell Icon with Badge
+        const NotificationBadgeIcon(),
       ],
     );
   }

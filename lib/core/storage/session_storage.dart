@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import '../constants/storage_keys.dart';
 import 'storage_service.dart';
 
@@ -43,13 +44,34 @@ class SessionStorage {
     }
   }
 
-  // Preferences
+  // Theme Preferences (System Default / Light / Dark)
+  Future<void> setThemeMode(ThemeMode mode) async {
+    String val = 'system';
+    if (mode == ThemeMode.light) val = 'light';
+    if (mode == ThemeMode.dark) val = 'dark';
+    await _storage.setString('app_theme_mode', val);
+    await _storage.setBool(StorageKeys.isDarkMode, mode == ThemeMode.dark);
+  }
+
+  ThemeMode getThemeMode() {
+    final val = _storage.getString('app_theme_mode');
+    if (val == 'light') return ThemeMode.light;
+    if (val == 'dark') return ThemeMode.dark;
+    if (val == 'system') return ThemeMode.system;
+
+    // Fallback legacy boolean check
+    final isDarkBool = _storage.getBool(StorageKeys.isDarkMode);
+    if (isDarkBool == true) return ThemeMode.dark;
+    if (isDarkBool == false) return ThemeMode.light;
+    return ThemeMode.system;
+  }
+
   Future<void> setDarkMode(bool isDark) async {
-    await _storage.setBool(StorageKeys.isDarkMode, isDark);
+    await setThemeMode(isDark ? ThemeMode.dark : ThemeMode.light);
   }
 
   bool isDarkMode() {
-    return _storage.getBool(StorageKeys.isDarkMode) ?? false;
+    return getThemeMode() == ThemeMode.dark;
   }
 
   Future<void> setOrderSound(bool enabled) async {

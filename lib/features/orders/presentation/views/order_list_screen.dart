@@ -14,6 +14,7 @@ import '../controllers/order_controller.dart';
 import '../widgets/order_card.dart';
 import '../widgets/order_status_tab_bar.dart';
 import 'order_details_screen.dart';
+import '../../../notifications/presentation/widgets/notification_badge_icon.dart';
 
 // Order Dispatch & Kitchen Live Queue Screen (Tab 1 in Main Shell)
 class OrderListScreen extends StatefulWidget {
@@ -139,6 +140,9 @@ class _OrderListScreenState extends State<OrderListScreen> {
       backgroundColor: isDark ? AppColors.darkCanvas : AppColors.lightCanvas,
       appBar: AppBar(
         title: const Text('Live Orders'),
+        actions: const [
+          NotificationBadgeIcon(),
+        ],
       ),
       body: SafeArea(
         bottom: false,

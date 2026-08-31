@@ -7,7 +7,6 @@ import 'core/routing/app_router.dart';
 import 'core/routing/app_routes.dart';
 import 'core/routing/navigation_service.dart';
 import 'core/di/service_locator.dart';
-import 'core/storage/session_storage.dart';
 import 'features/auth/presentation/controllers/auth_controller.dart';
 import 'features/dashboard/presentation/controllers/dashboard_controller.dart';
 import 'features/shop/presentation/controllers/shop_controller.dart';
@@ -15,6 +14,7 @@ import 'features/products/presentation/controllers/product_controller.dart';
 import 'features/categories/presentation/controllers/category_controller.dart';
 import 'features/orders/presentation/controllers/order_controller.dart';
 import 'features/profile/presentation/controllers/profile_controller.dart';
+import 'features/notifications/presentation/controllers/notification_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -45,6 +45,7 @@ class VendorApp extends StatelessWidget {
     final categoryController = locate<CategoryController>();
     final orderController = locate<OrderController>();
     final profileController = locate<ProfileController>();
+    final notificationController = locate<NotificationController>();
 
     final isAuthenticated = authController.isAuthenticated;
 
@@ -57,6 +58,7 @@ class VendorApp extends StatelessWidget {
         ChangeNotifierProvider<CategoryController>.value(value: categoryController),
         ChangeNotifierProvider<OrderController>.value(value: orderController),
         ChangeNotifierProvider<ProfileController>.value(value: profileController),
+        ChangeNotifierProvider<NotificationController>.value(value: notificationController),
       ],
       child: Consumer<ProfileController>(
         builder: (context, profile, _) {
@@ -66,7 +68,7 @@ class VendorApp extends StatelessWidget {
             navigatorKey: NavigationService.instance.navigatorKey,
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
-            themeMode: profile.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+            themeMode: profile.themeMode,
             initialRoute: isAuthenticated ? AppRoutes.mainShell : AppRoutes.login,
             onGenerateRoute: AppRouter.generateRoute,
             builder: (context, child) {

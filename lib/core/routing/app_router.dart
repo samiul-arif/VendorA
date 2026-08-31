@@ -9,6 +9,7 @@ import '../../features/categories/presentation/views/category_list_screen.dart';
 import '../../features/profile/presentation/views/profile_screen.dart';
 import '../../features/profile/presentation/views/edit_profile_screen.dart';
 import '../../features/profile/presentation/views/shop_settings_screen.dart';
+import '../../features/notifications/presentation/views/notification_center_screen.dart';
 
 // Central Route Generator with custom page transitions
 class AppRouter {
@@ -82,7 +83,7 @@ class AppRouter {
       case AppRoutes.notifications:
         return _buildPageRoute(
           settings: settings,
-          builder: (_) => const _PlaceholderScreen(title: 'Notifications'),
+          builder: (_) => const NotificationCenterScreen(),
         );
 
       case AppRoutes.profile:
@@ -140,52 +141,6 @@ class AppRouter {
       },
       transitionDuration: const Duration(milliseconds: 220),
       reverseTransitionDuration: const Duration(milliseconds: 180),
-    );
-  }
-}
-
-// Temporary Scaffolding Placeholder Screen for Route Verification
-class _PlaceholderScreen extends StatelessWidget {
-  final String title;
-
-  const _PlaceholderScreen({required this.title});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(title),
-      ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 64,
-                height: 64,
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.primaryContainer,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.notifications_none_rounded,
-                  size: 32,
-                  color: theme.colorScheme.primary,
-                ),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                title,
-                style: theme.textTheme.headlineSmall,
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }

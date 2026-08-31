@@ -48,6 +48,13 @@ import '../../features/profile/domain/usecases/update_bank_account_usecase.dart'
 import '../../features/profile/domain/usecases/update_vendor_profile_usecase.dart';
 import '../../features/profile/data/repositories/mock_profile_repository.dart';
 import '../../features/profile/presentation/controllers/profile_controller.dart';
+import '../../features/notifications/domain/repositories/notification_repository_interface.dart';
+import '../../features/notifications/domain/usecases/get_notifications_usecase.dart';
+import '../../features/notifications/domain/usecases/mark_notification_read_usecase.dart';
+import '../../features/notifications/domain/usecases/mark_all_notifications_read_usecase.dart';
+import '../../features/notifications/domain/usecases/delete_notification_usecase.dart';
+import '../../features/notifications/data/repositories/mock_notification_repository.dart';
+import '../../features/notifications/presentation/controllers/notification_controller.dart';
 
 // Lightweight Service Locator for Dependency Injection
 class ServiceLocator {
@@ -263,6 +270,30 @@ class ServiceLocator {
       updateVendorProfileUseCase: updateProfileUseCase,
     );
     instance.register<ProfileController>(profileController);
+
+    // Notification Module Services & Use Cases
+    final notificationRepository = MockNotificationRepository();
+    instance.register<INotificationRepository>(notificationRepository);
+
+    final getNotificationsUseCase = GetNotificationsUseCase(notificationRepository);
+    instance.register<GetNotificationsUseCase>(getNotificationsUseCase);
+
+    final markNotificationReadUseCase = MarkNotificationReadUseCase(notificationRepository);
+    instance.register<MarkNotificationReadUseCase>(markNotificationReadUseCase);
+
+    final markAllNotificationsReadUseCase = MarkAllNotificationsReadUseCase(notificationRepository);
+    instance.register<MarkAllNotificationsReadUseCase>(markAllNotificationsReadUseCase);
+
+    final deleteNotificationUseCase = DeleteNotificationUseCase(notificationRepository);
+    instance.register<DeleteNotificationUseCase>(deleteNotificationUseCase);
+
+    final notificationController = NotificationController(
+      getNotificationsUseCase: getNotificationsUseCase,
+      markNotificationReadUseCase: markNotificationReadUseCase,
+      markAllNotificationsReadUseCase: markAllNotificationsReadUseCase,
+      deleteNotificationUseCase: deleteNotificationUseCase,
+    );
+    instance.register<NotificationController>(notificationController);
   }
 }
 
