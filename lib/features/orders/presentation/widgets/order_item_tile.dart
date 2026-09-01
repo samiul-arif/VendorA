@@ -79,15 +79,19 @@ class OrderItemTile extends StatelessWidget {
                     Row(
                       children: [
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2.5),
                           decoration: BoxDecoration(
-                            color: colors.primaryContainer,
-                            borderRadius: BorderRadius.circular(4),
+                            color: colors.primary.withValues(alpha: 0.12),
+                            borderRadius: AppRadius.xs,
+                            border: Border.all(
+                              color: colors.primary.withValues(alpha: 0.25),
+                              width: 1,
+                            ),
                           ),
                           child: Text(
                             'Qty: ${item.quantity}',
                             style: TextStyle(
-                              fontSize: 11,
+                              fontSize: 11.5,
                               fontWeight: FontWeight.w800,
                               color: colors.primary,
                             ),
