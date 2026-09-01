@@ -139,7 +139,7 @@ class ShopSwitcherBottomSheet extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.all(14),
                     decoration: BoxDecoration(
-                      color: isSelected ? colors.primaryContainer.withValues(alpha: 0.08) : colors.surfaceSubtle,
+                      color: isSelected ? colors.primary.withValues(alpha: 0.08) : colors.surfaceSubtle,
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
                         color: isSelected ? colors.primary : colors.borderSubtle,

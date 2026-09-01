@@ -9,7 +9,8 @@ class AppColors {
 
   // ── Brand Accent Tokens (Stitch Merchant Hub Palette) ───────────────────
   static const Color primary = Color(0xFFB90058);          // Deep Vibrant Magenta
-  static const Color primaryContainer = Color(0xFFE21B70); // Lively Fuchsia/Pink Container
+  static const Color primaryContainer = Color(0xFFFFF0F6); // Soft Pastel Pink/Magenta Container
+  static const Color primaryContainerSolid = Color(0xFFE21B70); // Lively Fuchsia/Pink Container
   static const Color primaryDark = Color(0xFF8F0042);      // Dark variant
   static const Color primaryLight = Color(0xFFFF5E9E);     // Gradient end / light variant
   static const Color primaryFixed = Color(0xFFFFD9E0);     // Soft pastel pill

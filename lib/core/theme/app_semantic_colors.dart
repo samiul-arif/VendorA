@@ -100,7 +100,7 @@ class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
   /// Standard Light Theme Semantic Tokens
   static const AppSemanticColors light = AppSemanticColors(
     primary: AppColors.primary,
-    primaryContainer: AppColors.primaryContainer,
+    primaryContainer: AppColors.primaryTint,
     primaryLight: AppColors.primaryLight,
     secondary: AppColors.secondary,
     secondaryContainer: AppColors.secondaryContainer,
@@ -147,7 +147,7 @@ class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
   /// Standard Dark Theme Semantic Tokens
   static const AppSemanticColors dark = AppSemanticColors(
     primary: AppColors.primary,
-    primaryContainer: AppColors.primaryDark,
+    primaryContainer: AppColors.primaryTintDark,
     primaryLight: AppColors.primaryLight,
     secondary: AppColors.secondaryContainer,
     secondaryContainer: AppColors.secondaryTintDark,
