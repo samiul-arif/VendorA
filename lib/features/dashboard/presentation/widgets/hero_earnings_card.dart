@@ -31,8 +31,8 @@ class HeroEarningsCard extends StatelessWidget {
       decoration: const BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            AppColors.primary,          // #B90058
-            AppColors.primaryContainer, // #E21B70
+            AppColors.primary,               // #B90058 (Deep Magenta)
+            AppColors.primaryContainerSolid, // #E21B70 (Vivid Fuchsia/Pink)
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,

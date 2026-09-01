@@ -125,6 +125,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             // 1. Profile Overview Hero Card (Bento Style with Avatar, Name, Phone & Address)
             ProfileHeaderCard(
               vendor: vendor,
+              onEditTapped: () {
+                Navigator.of(context).pushNamed(AppRoutes.editProfile);
+              },
             ),
 
             AppSpacing.vGap24,

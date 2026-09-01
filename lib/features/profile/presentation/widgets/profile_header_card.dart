@@ -31,15 +31,18 @@ class ProfileHeaderCard extends StatelessWidget {
         : 'House 42, Road 27, Dhanmondi, Dhaka';
     final avatarUrl = vendor?.profileImageUrl;
 
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 22, horizontal: 20),
-      decoration: BoxDecoration(
-        color: colors.surface,
-        borderRadius: AppRadius.lg,
-        border: Border.all(color: colors.borderSubtle),
-        boxShadow: isDark ? AppShadows.darkCard : AppShadows.card,
-      ),
-      child: Column(
+    return GestureDetector(
+      onTap: onEditTapped,
+      behavior: HitTestBehavior.opaque,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 22, horizontal: 20),
+        decoration: BoxDecoration(
+          color: colors.surface,
+          borderRadius: AppRadius.lg,
+          border: Border.all(color: colors.borderSubtle),
+          boxShadow: isDark ? AppShadows.darkCard : AppShadows.card,
+        ),
+        child: Column(
         children: [
           // 1. Avatar (Clean circular image / initial badge)
           Container(
@@ -166,7 +169,8 @@ class ProfileHeaderCard extends StatelessWidget {
           ),
         ],
       ),
-    );
+    ),
+  );
   }
 
   Widget _buildInitials(String displayName, AppSemanticColors colors) {
