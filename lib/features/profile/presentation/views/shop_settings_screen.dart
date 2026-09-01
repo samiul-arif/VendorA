@@ -448,30 +448,30 @@ class _ShopSettingsScreenState extends State<ShopSettingsScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         // Button 1: Open / Close Store Action
-                        SizedBox(
-                          width: 82,
-                          height: 32,
-                          child: OutlinedButton(
-                            onPressed: () {
-                              shopController.toggleStoreStatus(!isOpen, authController: authController);
-                              AppToast.showInfo(
-                                context,
-                                title: isOpen ? 'Store Closed' : 'Store Opened',
-                                message: isOpen
-                                    ? 'Your store is marked closed for incoming orders.'
-                                    : 'Your store is live and accepting customer orders.',
-                              );
-                            },
-                            style: OutlinedButton.styleFrom(
-                              side: BorderSide(
+                        InkWell(
+                          onTap: () {
+                            shopController.toggleStoreStatus(!isOpen, authController: authController);
+                            AppToast.showInfo(
+                              context,
+                              title: isOpen ? 'Store Closed' : 'Store Opened',
+                              message: isOpen
+                                  ? 'Your store is marked closed for incoming orders.'
+                                  : 'Your store is live and accepting customer orders.',
+                            );
+                          },
+                          borderRadius: AppRadius.full,
+                          child: Container(
+                            width: 82,
+                            padding: const EdgeInsets.symmetric(vertical: 6),
+                            decoration: BoxDecoration(
+                              color: colors.surface,
+                              borderRadius: AppRadius.full,
+                              border: Border.all(
                                 color: isOpen ? colors.error : colors.secondary,
                                 width: 1.2,
                               ),
-                              padding: EdgeInsets.zero,
-                              shape: const RoundedRectangleBorder(
-                                borderRadius: AppRadius.full,
-                              ),
                             ),
+                            alignment: Alignment.center,
                             child: Text(
                               isOpen ? 'Close' : 'Open',
                               style: AppTypography.labelSmall.copyWith(
@@ -484,28 +484,37 @@ class _ShopSettingsScreenState extends State<ShopSettingsScreen> {
                         ),
                         AppSpacing.vGap6,
                         // Button 2: Switch Branch Action
-                        SizedBox(
-                          width: 82,
-                          height: 32,
-                          child: ElevatedButton.icon(
-                            onPressed: _showShopSwitcherModal,
-                            icon: Icon(Icons.swap_horiz_rounded, size: 14, color: colors.textInverse),
-                            label: Text(
-                              'Switch',
-                              style: AppTypography.labelSmall.copyWith(
-                                color: colors.textInverse,
-                                fontWeight: FontWeight.w800,
-                                fontSize: 11,
-                              ),
+                        InkWell(
+                          onTap: _showShopSwitcherModal,
+                          borderRadius: AppRadius.full,
+                          child: Container(
+                            width: 82,
+                            padding: const EdgeInsets.symmetric(vertical: 6),
+                            decoration: BoxDecoration(
+                              color: colors.primary,
+                              borderRadius: AppRadius.full,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: colors.primary.withValues(alpha: 0.25),
+                                  blurRadius: 6,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
                             ),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: colors.primary,
-                              foregroundColor: colors.textInverse,
-                              padding: const EdgeInsets.symmetric(horizontal: 6),
-                              elevation: 0,
-                              shape: const RoundedRectangleBorder(
-                                borderRadius: AppRadius.full,
-                              ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.swap_horiz_rounded, size: 14, color: colors.textInverse),
+                                const SizedBox(width: 4),
+                                Text(
+                                  'Switch',
+                                  style: AppTypography.labelSmall.copyWith(
+                                    color: colors.textInverse,
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: 11,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ),

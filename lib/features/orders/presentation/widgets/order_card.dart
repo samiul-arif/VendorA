@@ -199,16 +199,15 @@ class OrderCard extends StatelessWidget {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               if (onDecline != null)
-                                SizedBox(
-                                  height: 36,
-                                  child: OutlinedButton(
-                                    onPressed: onDecline,
-                                    style: OutlinedButton.styleFrom(
-                                      side: BorderSide(color: colors.borderSubtle, width: 1.2),
-                                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                                      shape: const RoundedRectangleBorder(
-                                        borderRadius: AppRadius.full,
-                                      ),
+                                InkWell(
+                                  onTap: onDecline,
+                                  borderRadius: AppRadius.full,
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                    decoration: BoxDecoration(
+                                      color: colors.surface,
+                                      borderRadius: AppRadius.full,
+                                      border: Border.all(color: colors.borderSubtle, width: 1.2),
                                     ),
                                     child: Text(
                                       'Decline',
@@ -221,18 +220,21 @@ class OrderCard extends StatelessWidget {
                                   ),
                                 ),
                               if (onDecline != null) AppSpacing.hGap8,
-                              SizedBox(
-                                height: 36,
-                                child: ElevatedButton(
-                                  onPressed: onAccept,
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: colors.primary,
-                                    foregroundColor: colors.textInverse,
-                                    padding: const EdgeInsets.symmetric(horizontal: 22),
-                                    shape: const RoundedRectangleBorder(
-                                      borderRadius: AppRadius.full,
-                                    ),
-                                    elevation: 1,
+                              InkWell(
+                                onTap: onAccept,
+                                borderRadius: AppRadius.full,
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 8),
+                                  decoration: BoxDecoration(
+                                    color: colors.primary,
+                                    borderRadius: AppRadius.full,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: colors.primary.withValues(alpha: 0.25),
+                                        blurRadius: 8,
+                                        offset: const Offset(0, 2),
+                                      ),
+                                    ],
                                   ),
                                   child: Text(
                                     'Accept',
@@ -247,18 +249,21 @@ class OrderCard extends StatelessWidget {
                             ],
                           )
                         else if (isAccepted)
-                          SizedBox(
-                            height: 36,
-                            child: ElevatedButton(
-                              onPressed: onReady,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: colors.ctaPrimary,
-                                foregroundColor: colors.ctaPrimaryText,
-                                padding: const EdgeInsets.symmetric(horizontal: 24),
-                                shape: const RoundedRectangleBorder(
-                                  borderRadius: AppRadius.full,
-                                ),
-                                elevation: 1,
+                          InkWell(
+                            onTap: onReady,
+                            borderRadius: AppRadius.full,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                              decoration: BoxDecoration(
+                                color: colors.ctaPrimary,
+                                borderRadius: AppRadius.full,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: colors.ctaPrimary.withValues(alpha: 0.25),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
                               ),
                               child: Text(
                                 'Ready',
@@ -271,16 +276,15 @@ class OrderCard extends StatelessWidget {
                             ),
                           )
                         else
-                          SizedBox(
-                            height: 36,
-                            child: OutlinedButton(
-                              onPressed: onTap,
-                              style: OutlinedButton.styleFrom(
-                                side: BorderSide(color: colors.borderSubtle, width: 1.2),
-                                padding: const EdgeInsets.symmetric(horizontal: 18),
-                                shape: const RoundedRectangleBorder(
-                                  borderRadius: AppRadius.full,
-                                ),
+                          InkWell(
+                            onTap: onTap,
+                            borderRadius: AppRadius.full,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+                              decoration: BoxDecoration(
+                                color: colors.surface,
+                                borderRadius: AppRadius.full,
+                                border: Border.all(color: colors.borderSubtle, width: 1.2),
                               ),
                               child: Text(
                                 'Details',
