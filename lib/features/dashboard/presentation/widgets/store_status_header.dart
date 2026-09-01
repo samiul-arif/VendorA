@@ -71,72 +71,42 @@ class _StoreStatusHeaderState extends State<StoreStatusHeader> with SingleTicker
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // 1. Welcome Row: Avatar, Greeting & Store Name (Tappable to switch shop)
+        // 1. Welcome Greeting & Store Name (Tappable to switch shop)
         GestureDetector(
           onTap: widget.onSwitchShopRequested,
           behavior: HitTestBehavior.opaque,
-          child: Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Store Avatar / Logo Badge
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: colors.primary.withValues(alpha: 0.12),
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: colors.borderSubtle,
-                    width: 1.2,
-                  ),
-                ),
-                child: Center(
-                  child: Icon(
-                    Icons.storefront_rounded,
-                    color: colors.primary,
-                    size: 24,
-                  ),
+              Text(
+                _getGreeting(),
+                style: AppTypography.bodyMedium.copyWith(
+                  color: colors.textSecondary,
+                  fontSize: 13,
                 ),
               ),
-
-              AppSpacing.hGap12,
-
-              // Greeting & Shop Name with dropdown indicator
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      _getGreeting(),
-                      style: AppTypography.bodyMedium.copyWith(
-                        color: colors.textSecondary,
-                        fontSize: 13,
+              Row(
+                children: [
+                  Flexible(
+                    child: Text(
+                      cleanName,
+                      style: AppTypography.headlineMedium.copyWith(
+                        color: colors.textPrimary,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 22,
+                        letterSpacing: -0.3,
                       ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    Row(
-                      children: [
-                        Flexible(
-                          child: Text(
-                            cleanName,
-                            style: AppTypography.headlineMedium.copyWith(
-                              color: colors.textPrimary,
-                              fontWeight: FontWeight.w800,
-                              fontSize: 20,
-                              letterSpacing: -0.3,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        AppSpacing.hGap4,
-                        Icon(
-                          Icons.keyboard_arrow_down_rounded,
-                          size: 20,
-                          color: colors.textMuted,
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                  ),
+                  AppSpacing.hGap4,
+                  Icon(
+                    Icons.keyboard_arrow_down_rounded,
+                    size: 20,
+                    color: colors.textMuted,
+                  ),
+                ],
               ),
             ],
           ),

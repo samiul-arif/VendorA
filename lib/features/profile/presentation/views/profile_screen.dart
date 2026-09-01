@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_semantic_colors.dart';
+import '../../../../core/theme/app_shadows.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/app_typography.dart';
 import '../../../../core/routing/app_routes.dart';
 import '../../../../shared/components/app_dialog.dart';
 import '../../../../shared/components/app_toast.dart';
@@ -13,7 +15,7 @@ import 'edit_profile_screen.dart';
 import 'shop_settings_screen.dart';
 import 'bank_payout_screen.dart';
 
-/// Vendor Profile & Settings Screen matching Stitch brief (`settings/code.html` & `vendor_profile_with_account_settings_link/code.html`)
+/// Vendor Profile & Settings Screen strictly matching Stitch brief (`settings/code.html` & `vendor_profile_with_account_settings_link/code.html`)
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
@@ -23,8 +25,6 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   bool _pushNotifications = true;
-  bool _darkMode = false;
-  bool _biometricLogin = true;
 
   @override
   void initState() {
@@ -61,8 +61,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final colors = context.appColors;
+    final isDark = context.isDark;
     final authController = context.watch<AuthController>();
+    final profileController = context.watch<ProfileController>();
     final vendor = authController.vendor;
+    final isDarkMode = profileController.isDarkMode;
 
     return Scaffold(
       backgroundColor: colors.surface,
@@ -77,17 +80,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
               children: [
                 Text(
                   'Settings',
-                  style: TextStyle(
+                  style: AppTypography.headlineMedium.copyWith(
                     fontSize: 24,
                     fontWeight: FontWeight.w900,
                     color: colors.textPrimary,
                     letterSpacing: -0.4,
                   ),
                 ),
-                const SizedBox(height: 2),
+                AppSpacing.vGap2,
                 Text(
                   'Manage your app-level preferences and account settings.',
-                  style: TextStyle(
+                  style: AppTypography.bodySmall.copyWith(
                     fontSize: 12.5,
                     color: colors.textSecondary,
                   ),
@@ -115,22 +118,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Container(
               decoration: BoxDecoration(
                 color: colors.surface,
-                borderRadius: BorderRadius.circular(18),
+                borderRadius: AppRadius.lg,
                 border: Border.all(color: colors.borderSubtle),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFF15171C).withValues(alpha: 0.04),
-                    blurRadius: 16,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
+                boxShadow: isDark ? AppShadows.darkCard : AppShadows.card,
               ),
               clipBehavior: Clip.antiAlias,
               child: Column(
                 children: [
                   _buildNavTile(
                     icon: Icons.person_outline_rounded,
-                    iconBg: colors.primaryContainer.withValues(alpha: 0.15),
+                    iconBg: colors.primary.withValues(alpha: 0.12),
                     iconColor: colors.primary,
                     title: 'Profile Details',
                     subtitle: 'Update your personal information & contact',
@@ -144,7 +141,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   _buildDivider(colors),
                   _buildNavTile(
                     icon: Icons.storefront_rounded,
-                    iconBg: colors.surfaceSubtle,
+                    iconBg: colors.surfaceLow,
                     iconColor: colors.textPrimary,
                     title: 'Shop Management',
                     subtitle: 'Manage storefront details, location & banner',
@@ -158,8 +155,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   _buildDivider(colors),
                   _buildNavTile(
                     icon: Icons.account_balance_rounded,
-                    iconBg: colors.surfaceSubtle,
-                    iconColor: const Color(0xFF006B57),
+                    iconBg: colors.surfaceLow,
+                    iconColor: colors.secondary,
                     title: 'Bank & Payout Account',
                     subtitle: 'Manage revenue withdrawal methods',
                     onTap: () {
@@ -172,7 +169,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   _buildDivider(colors),
                   _buildNavTile(
                     icon: Icons.analytics_outlined,
-                    iconBg: colors.surfaceSubtle,
+                    iconBg: colors.surfaceLow,
                     iconColor: colors.primary,
                     title: 'Analytics & Reports',
                     subtitle: 'View performance and revenue analytics',
@@ -187,21 +184,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             AppSpacing.vGap24,
 
-            // 3. Preferences Section (Switches matching Stitch)
+            // 3. Preferences Section (Switches connected to ProfileController)
             _buildSectionHeader('PREFERENCES', colors),
             AppSpacing.vGap8,
             Container(
               decoration: BoxDecoration(
                 color: colors.surface,
-                borderRadius: BorderRadius.circular(18),
+                borderRadius: AppRadius.lg,
                 border: Border.all(color: colors.borderSubtle),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFF15171C).withValues(alpha: 0.04),
-                    blurRadius: 16,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
+                boxShadow: isDark ? AppShadows.darkCard : AppShadows.card,
               ),
               clipBehavior: Clip.antiAlias,
               child: Column(
@@ -211,25 +202,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     title: 'Push Notifications',
                     subtitle: 'Receive real-time alerts for incoming orders',
                     value: _pushNotifications,
-                    onChanged: (val) => setState(() => _pushNotifications = val),
+                    onChanged: (val) {
+                      setState(() => _pushNotifications = val);
+                      AppToast.showSuccess(
+                        context,
+                        title: val ? 'Notifications Enabled' : 'Notifications Muted',
+                        message: val ? 'Live push alerts are active.' : 'Order push alerts are silenced.',
+                      );
+                    },
                     colors: colors,
                   ),
                   _buildDivider(colors),
                   _buildSwitchTile(
                     icon: Icons.dark_mode_outlined,
                     title: 'Dark Mode',
-                    subtitle: 'Switch to sleek dark theme appearance',
-                    value: _darkMode,
-                    onChanged: (val) => setState(() => _darkMode = val),
-                    colors: colors,
-                  ),
-                  _buildDivider(colors),
-                  _buildSwitchTile(
-                    icon: Icons.fingerprint_rounded,
-                    title: 'Biometric Login',
-                    subtitle: 'Quick access via fingerprint or Face ID',
-                    value: _biometricLogin,
-                    onChanged: (val) => setState(() => _biometricLogin = val),
+                    subtitle: 'Switch between sleek light and dark theme appearance',
+                    value: isDarkMode,
+                    onChanged: (val) {
+                      profileController.toggleDarkMode(val);
+                      AppToast.showInfo(
+                        context,
+                        title: val ? 'Dark Theme Activated' : 'Light Theme Activated',
+                        message: val ? 'App theme set to dark mode.' : 'App theme set to light mode.',
+                      );
+                    },
                     colors: colors,
                   ),
                 ],
@@ -244,22 +240,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Container(
               decoration: BoxDecoration(
                 color: colors.surface,
-                borderRadius: BorderRadius.circular(18),
+                borderRadius: AppRadius.lg,
                 border: Border.all(color: colors.borderSubtle),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFF15171C).withValues(alpha: 0.04),
-                    blurRadius: 16,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
+                boxShadow: isDark ? AppShadows.darkCard : AppShadows.card,
               ),
               clipBehavior: Clip.antiAlias,
               child: Column(
                 children: [
                   _buildNavTile(
                     icon: Icons.help_outline_rounded,
-                    iconBg: colors.surfaceSubtle,
+                    iconBg: colors.surfaceLow,
                     iconColor: colors.textPrimary,
                     title: 'Help Center',
                     subtitle: 'Guides, FAQs, and live merchant chat',
@@ -275,21 +265,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   _buildDivider(colors),
                   _buildNavTile(
                     icon: Icons.policy_outlined,
-                    iconBg: colors.surfaceSubtle,
+                    iconBg: colors.surfaceLow,
                     iconColor: colors.textPrimary,
                     title: 'Privacy Policy',
                     subtitle: 'How we manage merchant and order data',
-                    onTap: () {},
+                    onTap: () {
+                      AppToast.showInfo(
+                        context,
+                        title: 'Privacy Policy',
+                        message: 'Opening Merchant Privacy Policy...',
+                      );
+                    },
                     colors: colors,
                   ),
                   _buildDivider(colors),
                   _buildNavTile(
                     icon: Icons.description_outlined,
-                    iconBg: colors.surfaceSubtle,
+                    iconBg: colors.surfaceLow,
                     iconColor: colors.textPrimary,
                     title: 'Terms of Service',
                     subtitle: 'Merchant marketplace terms & conditions',
-                    onTap: () {},
+                    onTap: () {
+                      AppToast.showInfo(
+                        context,
+                        title: 'Terms of Service',
+                        message: 'Opening Terms & Conditions...',
+                      );
+                    },
                     colors: colors,
                   ),
                 ],
@@ -306,7 +308,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 icon: Icon(Icons.logout_rounded, size: 18, color: colors.error),
                 label: Text(
                   'Sign Out',
-                  style: TextStyle(
+                  style: AppTypography.labelLarge.copyWith(
                     fontSize: 14,
                     fontWeight: FontWeight.w800,
                     color: colors.error,
@@ -325,8 +327,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             // 6. App Version & Build
             Center(
               child: Text(
-                'Lumina Vendor App v2.4.1 (Build 482)',
-                style: TextStyle(
+                'CamPlus Vendor App v2.4.1 (Build 482)',
+                style: AppTypography.labelSmall.copyWith(
                   fontSize: 11.5,
                   fontWeight: FontWeight.w600,
                   color: colors.textMuted,
@@ -344,7 +346,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 4),
       child: Text(
         title,
-        style: TextStyle(
+        style: AppTypography.labelSmall.copyWith(
           fontSize: 11.5,
           fontWeight: FontWeight.w900,
           color: colors.primary,
@@ -378,23 +380,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               child: Icon(icon, size: 20, color: iconColor),
             ),
-            const SizedBox(width: 14),
+            AppSpacing.hGap14,
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     title,
-                    style: TextStyle(
+                    style: AppTypography.titleSmall.copyWith(
                       fontSize: 14,
                       fontWeight: FontWeight.w800,
                       color: colors.textPrimary,
                     ),
                   ),
-                  const SizedBox(height: 2),
+                  AppSpacing.vGap2,
                   Text(
                     subtitle,
-                    style: TextStyle(
+                    style: AppTypography.bodySmall.copyWith(
                       fontSize: 11.5,
                       color: colors.textSecondary,
                     ),
@@ -425,28 +427,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
             width: 38,
             height: 38,
             decoration: BoxDecoration(
-              color: colors.surfaceSubtle,
+              color: colors.surfaceLow,
               shape: BoxShape.circle,
             ),
             child: Icon(icon, size: 20, color: colors.textPrimary),
           ),
-          const SizedBox(width: 14),
+          AppSpacing.hGap14,
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   title,
-                  style: TextStyle(
+                  style: AppTypography.titleSmall.copyWith(
                     fontSize: 14,
                     fontWeight: FontWeight.w800,
                     color: colors.textPrimary,
                   ),
                 ),
-                const SizedBox(height: 2),
+                AppSpacing.vGap2,
                 Text(
                   subtitle,
-                  style: TextStyle(
+                  style: AppTypography.bodySmall.copyWith(
                     fontSize: 11.5,
                     color: colors.textSecondary,
                   ),
@@ -458,8 +460,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             scale: 0.85,
             child: Switch.adaptive(
               value: value,
-              activeThumbColor: const Color(0xFF006B57),
-              activeTrackColor: const Color(0xFF75F9D6),
+              activeThumbColor: colors.secondary,
+              activeTrackColor: colors.secondary.withValues(alpha: 0.35),
               onChanged: onChanged,
             ),
           ),
