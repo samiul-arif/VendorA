@@ -51,9 +51,9 @@ class _MainShellScreenState extends State<MainShellScreen> {
       label: 'Shop',
     ),
     NavItem(
-      icon: Icons.settings_outlined,
-      selectedIcon: Icons.settings_rounded,
-      label: 'Settings',
+      icon: Icons.person_outline_rounded,
+      selectedIcon: Icons.person_rounded,
+      label: 'Profile',
     ),
   ];
 

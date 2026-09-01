@@ -10,12 +10,12 @@ import '../../../../shared/components/app_dialog.dart';
 import '../../../../shared/components/app_toast.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../../presentation/controllers/profile_controller.dart';
+import '../widgets/profile_header_card.dart';
 import 'edit_profile_screen.dart';
-import 'shop_settings_screen.dart';
 import 'bank_payout_screen.dart';
 import 'change_password_screen.dart';
 
-/// Vendor Settings Screen strictly matching Stitch brief (`settings/code.html`)
+/// Vendor Profile & Settings Screen strictly matching Stitch brief (`settings/code.html` & `vendor_profile_with_account_settings_link/code.html`)
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
@@ -62,7 +62,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     final colors = context.appColors;
     final isDark = context.isDark;
+    final authController = context.watch<AuthController>();
     final profileController = context.watch<ProfileController>();
+    final vendor = authController.vendor;
     final isDarkMode = profileController.isDarkMode;
 
     return Scaffold(
@@ -99,12 +101,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
         child: ListView(
           padding: const EdgeInsets.fromLTRB(18, 14, 18, 120),
           children: [
-            // Page Header: "Settings" + Subtitle
+            // Page Header: "Profile" + Subtitle
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Settings',
+                  'Profile',
                   style: AppTypography.headlineMedium.copyWith(
                     fontSize: 28,
                     fontWeight: FontWeight.w900,
@@ -114,7 +116,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 AppSpacing.vGap4,
                 Text(
-                  'Manage your app-level preferences and account settings.',
+                  'Manage your profile preferences and account settings.',
                   style: AppTypography.bodySmall.copyWith(
                     fontSize: 13,
                     color: colors.textSecondary,
@@ -123,9 +125,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ],
             ),
 
+            AppSpacing.vGap16,
+
+            // 1. Profile Overview Hero Card (Bento Style with Clean Avatar)
+            ProfileHeaderCard(
+              vendor: vendor,
+            ),
+
             AppSpacing.vGap24,
 
-            // 1. Account Section matching Stitch (`settings/code.html`)
+            // 2. Account Section
             _buildSectionHeader('ACCOUNT', colors),
             AppSpacing.vGap8,
             Container(
@@ -147,20 +156,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(builder: (_) => const EditProfileScreen()),
-                      );
-                    },
-                    colors: colors,
-                  ),
-                  _buildDivider(colors),
-                  _buildNavTile(
-                    icon: Icons.storefront_rounded,
-                    iconBg: colors.surfaceLow,
-                    iconColor: colors.textPrimary,
-                    title: 'Shop Management',
-                    subtitle: 'Manage business details and location',
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => const ShopSettingsScreen()),
                       );
                     },
                     colors: colors,
@@ -211,7 +206,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             AppSpacing.vGap24,
 
-            // 2. Preferences Section matching Stitch (`settings/code.html`)
+            // 3. Preferences Section
             _buildSectionHeader('PREFERENCES', colors),
             AppSpacing.vGap8,
             Container(
@@ -261,7 +256,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             AppSpacing.vGap24,
 
-            // 3. Support & Legal Section matching Stitch (`settings/code.html`)
+            // 4. Support & Legal Section
             _buildSectionHeader('SUPPORT & LEGAL', colors),
             AppSpacing.vGap8,
             Container(
@@ -327,7 +322,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             AppSpacing.vGap24,
 
-            // 4. Sign Out Button matching Stitch (`settings/code.html`)
+            // 5. Sign Out Button
             SizedBox(
               height: 48,
               child: ElevatedButton.icon(
@@ -351,7 +346,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             AppSpacing.vGap20,
 
-            // 5. App Version & Build
+            // 6. App Version & Build
             Center(
               child: Text(
                 'Lumina Vendor App v2.4.1 (Build 482)',

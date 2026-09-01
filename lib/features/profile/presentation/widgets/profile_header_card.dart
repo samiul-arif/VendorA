@@ -6,12 +6,12 @@ import '../../../../shared/models/vendor_model.dart';
 /// Profile Header Card matching Stitch brief (`vendor_profile_with_account_settings_link/code.html`)
 class ProfileHeaderCard extends StatelessWidget {
   final VendorModel? vendor;
-  final VoidCallback onEditTapped;
+  final VoidCallback? onEditTapped;
 
   const ProfileHeaderCard({
     super.key,
     required this.vendor,
-    required this.onEditTapped,
+    this.onEditTapped,
   });
 
   @override
@@ -36,62 +36,32 @@ class ProfileHeaderCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-          // Circular Avatar with Floating Edit Button
-          Stack(
-            children: [
-              Container(
-                width: 88,
-                height: 88,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: colors.primaryContainer.withValues(alpha: 0.15),
-                  border: Border.all(color: colors.surface, width: 4),
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0xFF15171C).withValues(alpha: 0.08),
-                      blurRadius: 16,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
+          // Circular Avatar (Clean, no floating edit badge)
+          Container(
+            width: 88,
+            height: 88,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: colors.primary.withValues(alpha: 0.12),
+              border: Border.all(color: colors.surface, width: 4),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFF15171C).withValues(alpha: 0.08),
+                  blurRadius: 16,
+                  offset: const Offset(0, 4),
                 ),
-                child: Center(
-                  child: Text(
-                    displayName.isNotEmpty ? displayName[0].toUpperCase() : 'A',
-                    style: TextStyle(
-                      fontSize: 34,
-                      fontWeight: FontWeight.w900,
-                      color: colors.primary,
-                    ),
-                  ),
+              ],
+            ),
+            child: Center(
+              child: Text(
+                displayName.isNotEmpty ? displayName[0].toUpperCase() : 'A',
+                style: TextStyle(
+                  fontSize: 34,
+                  fontWeight: FontWeight.w900,
+                  color: colors.primary,
                 ),
               ),
-              Positioned(
-                bottom: 0,
-                right: 0,
-                child: GestureDetector(
-                  onTap: onEditTapped,
-                  child: Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      color: colors.primary,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: colors.primary.withValues(alpha: 0.4),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: const Icon(
-                      Icons.edit_rounded,
-                      size: 14,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
 
           const SizedBox(height: 14),
