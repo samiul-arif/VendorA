@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import '../../../../core/routing/app_routes.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_semantic_colors.dart';
+import '../../../../core/theme/app_shadows.dart';
+import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/app_typography.dart';
 
-/// Horizontal Quick Action Chips matching Stitch brief (`dashboard/code.html`)
+/// 2-Column Quick Action Cards matching the exact style and size of Total Orders & Payouts cards
 class QuickActionsBar extends StatelessWidget {
   final ValueChanged<int>? onNavigateTab;
 
@@ -15,144 +18,112 @@ class QuickActionsBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.appColors;
+    final isDark = context.isDark;
 
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      physics: const BouncingScrollPhysics(),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // 1. "+ Add Product" Solid Black Pill
-          InkWell(
+    return Row(
+      children: [
+        // Left Card: Add Item
+        Expanded(
+          child: GestureDetector(
             onTap: () {
               Navigator.of(context).pushNamed(AppRoutes.addProduct);
             },
-            borderRadius: AppRadius.full,
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 11),
+              padding: AppSpacing.cardPadding,
               decoration: BoxDecoration(
-                color: colors.ctaPrimary,
-                borderRadius: AppRadius.full,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.08),
-                    blurRadius: 6,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
+                color: colors.surface,
+                borderRadius: AppRadius.md,
+                border: Border.all(color: colors.borderSubtle),
+                boxShadow: isDark ? AppShadows.darkCard : AppShadows.card,
               ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(Icons.add_rounded, size: 18, color: colors.ctaPrimaryText),
-                  const SizedBox(width: 6),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.add_circle_outline_rounded,
+                        size: 20,
+                        color: colors.primary,
+                      ),
+                      AppSpacing.hGap8,
+                      Text(
+                        'Inventory',
+                        style: AppTypography.bodyMedium.copyWith(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: colors.textSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                  AppSpacing.vGap12,
                   Text(
-                    'Add Product',
-                    style: TextStyle(
-                      fontSize: 13,
+                    'Add Item',
+                    style: AppTypography.headlineMedium.copyWith(
+                      fontSize: 22,
                       fontWeight: FontWeight.w800,
-                      color: colors.ctaPrimaryText,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          const SizedBox(width: 10),
-
-          // 2. "View Products" Outlined Pill
-          InkWell(
-            onTap: () => onNavigateTab?.call(2),
-            borderRadius: AppRadius.full,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              decoration: BoxDecoration(
-                color: colors.surface,
-                borderRadius: AppRadius.full,
-                border: Border.all(color: colors.borderSubtle, width: 1.2),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.inventory_2_outlined, size: 17, color: colors.textPrimary),
-                  const SizedBox(width: 6),
-                  Text(
-                    'View Products',
-                    style: TextStyle(
                       color: colors.textPrimary,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
+                      letterSpacing: -0.4,
                     ),
                   ),
                 ],
               ),
             ),
           ),
+        ),
 
-          const SizedBox(width: 10),
+        AppSpacing.hGap14,
 
-          // 3. "Categories" Outlined Pill
-          InkWell(
-            onTap: () => onNavigateTab?.call(2),
-            borderRadius: AppRadius.full,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              decoration: BoxDecoration(
-                color: colors.surface,
-                borderRadius: AppRadius.full,
-                border: Border.all(color: colors.borderSubtle, width: 1.2),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.category_outlined, size: 17, color: colors.textPrimary),
-                  const SizedBox(width: 6),
-                  Text(
-                    'Categories',
-                    style: TextStyle(
-                      color: colors.textPrimary,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          const SizedBox(width: 10),
-
-          // 4. "Orders" Outlined Pill
-          InkWell(
+        // Right Card: View Orders
+        Expanded(
+          child: GestureDetector(
             onTap: () => onNavigateTab?.call(1),
-            borderRadius: AppRadius.full,
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              padding: AppSpacing.cardPadding,
               decoration: BoxDecoration(
                 color: colors.surface,
-                borderRadius: AppRadius.full,
-                border: Border.all(color: colors.borderSubtle, width: 1.2),
+                borderRadius: AppRadius.md,
+                border: Border.all(color: colors.borderSubtle),
+                boxShadow: isDark ? AppShadows.darkCard : AppShadows.card,
               ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(Icons.receipt_long_outlined, size: 17, color: colors.textPrimary),
-                  const SizedBox(width: 6),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.receipt_long_outlined,
+                        size: 20,
+                        color: colors.primary,
+                      ),
+                      AppSpacing.hGap8,
+                      Text(
+                        'Live Queue',
+                        style: AppTypography.bodyMedium.copyWith(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: colors.textSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                  AppSpacing.vGap12,
                   Text(
-                    'All Orders',
-                    style: TextStyle(
+                    'View Orders',
+                    style: AppTypography.headlineMedium.copyWith(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w800,
                       color: colors.textPrimary,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
+                      letterSpacing: -0.4,
                     ),
                   ),
                 ],
               ),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

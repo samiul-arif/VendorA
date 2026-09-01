@@ -5,12 +5,12 @@ class Formatters {
   Formatters._();
 
   static final NumberFormat _currencyFormatter = NumberFormat.currency(
-    symbol: '\$',
+    symbol: '৳',
     decimalDigits: 2,
   );
 
   static final NumberFormat _compactCurrencyFormatter = NumberFormat.compactCurrency(
-    symbol: '\$',
+    symbol: '৳',
     decimalDigits: 1,
   );
 

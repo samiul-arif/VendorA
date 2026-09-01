@@ -10,8 +10,11 @@ class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
   final Color primaryLight;
   final Color secondary;
   final Color secondaryContainer;
+  final Color canvas;
   final Color surface;
+  final Color surfaceLow;
   final Color surfaceSubtle;
+  final Color surfaceHigh;
   final Color border;
   final Color borderSubtle;
   final Color divider;
@@ -54,8 +57,11 @@ class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
     required this.primaryLight,
     required this.secondary,
     required this.secondaryContainer,
+    required this.canvas,
     required this.surface,
+    required this.surfaceLow,
     required this.surfaceSubtle,
+    required this.surfaceHigh,
     required this.border,
     required this.borderSubtle,
     required this.divider,
@@ -94,12 +100,15 @@ class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
   /// Standard Light Theme Semantic Tokens
   static const AppSemanticColors light = AppSemanticColors(
     primary: AppColors.primary,
-    primaryContainer: AppColors.primaryTint,
+    primaryContainer: AppColors.primaryContainer,
     primaryLight: AppColors.primaryLight,
     secondary: AppColors.secondary,
-    secondaryContainer: AppColors.secondaryTint,
+    secondaryContainer: AppColors.secondaryContainer,
+    canvas: AppColors.lightCanvas,
     surface: AppColors.lightSurface,
+    surfaceLow: AppColors.lightSurfaceLow,
     surfaceSubtle: AppColors.lightSurfaceSubtle,
+    surfaceHigh: AppColors.lightSurfaceHigh,
     border: AppColors.lightBorder,
     borderSubtle: AppColors.lightDivider,
     divider: AppColors.lightDivider,
@@ -138,12 +147,15 @@ class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
   /// Standard Dark Theme Semantic Tokens
   static const AppSemanticColors dark = AppSemanticColors(
     primary: AppColors.primary,
-    primaryContainer: AppColors.primaryTintDark,
+    primaryContainer: AppColors.primaryDark,
     primaryLight: AppColors.primaryLight,
-    secondary: AppColors.secondary,
+    secondary: AppColors.secondaryContainer,
     secondaryContainer: AppColors.secondaryTintDark,
+    canvas: AppColors.darkCanvas,
     surface: AppColors.darkSurface,
+    surfaceLow: AppColors.darkSurfaceElevated,
     surfaceSubtle: AppColors.darkSurfaceHighest,
+    surfaceHigh: AppColors.darkSurfaceHighest,
     border: AppColors.darkBorder,
     borderSubtle: AppColors.darkDivider,
     divider: AppColors.darkDivider,
@@ -186,8 +198,11 @@ class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
     Color? primaryLight,
     Color? secondary,
     Color? secondaryContainer,
+    Color? canvas,
     Color? surface,
+    Color? surfaceLow,
     Color? surfaceSubtle,
+    Color? surfaceHigh,
     Color? border,
     Color? borderSubtle,
     Color? divider,
@@ -228,8 +243,11 @@ class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
       primaryLight: primaryLight ?? this.primaryLight,
       secondary: secondary ?? this.secondary,
       secondaryContainer: secondaryContainer ?? this.secondaryContainer,
+      canvas: canvas ?? this.canvas,
       surface: surface ?? this.surface,
+      surfaceLow: surfaceLow ?? this.surfaceLow,
       surfaceSubtle: surfaceSubtle ?? this.surfaceSubtle,
+      surfaceHigh: surfaceHigh ?? this.surfaceHigh,
       border: border ?? this.border,
       borderSubtle: borderSubtle ?? this.borderSubtle,
       divider: divider ?? this.divider,
@@ -279,8 +297,11 @@ class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
       primaryLight: Color.lerp(primaryLight, other.primaryLight, t)!,
       secondary: Color.lerp(secondary, other.secondary, t)!,
       secondaryContainer: Color.lerp(secondaryContainer, other.secondaryContainer, t)!,
+      canvas: Color.lerp(canvas, other.canvas, t)!,
       surface: Color.lerp(surface, other.surface, t)!,
+      surfaceLow: Color.lerp(surfaceLow, other.surfaceLow, t)!,
       surfaceSubtle: Color.lerp(surfaceSubtle, other.surfaceSubtle, t)!,
+      surfaceHigh: Color.lerp(surfaceHigh, other.surfaceHigh, t)!,
       border: Color.lerp(border, other.border, t)!,
       borderSubtle: Color.lerp(borderSubtle, other.borderSubtle, t)!,
       divider: Color.lerp(divider, other.divider, t)!,

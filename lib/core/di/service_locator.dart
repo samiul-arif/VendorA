@@ -11,8 +11,10 @@ import '../../features/auth/presentation/controllers/auth_controller.dart';
 import '../../features/dashboard/domain/repositories/dashboard_repository_interface.dart';
 import '../../features/dashboard/domain/usecases/get_dashboard_metrics_usecase.dart';
 import '../../features/dashboard/domain/usecases/get_sales_chart_usecase.dart';
+import '../../features/dashboard/domain/usecases/get_analytics_summary_usecase.dart';
 import '../../features/dashboard/data/repositories/mock_dashboard_repository.dart';
 import '../../features/dashboard/presentation/controllers/dashboard_controller.dart';
+import '../../features/dashboard/presentation/controllers/analytics_controller.dart';
 import '../../features/shop/domain/repositories/shop_repository_interface.dart';
 import '../../features/shop/domain/usecases/toggle_shop_status_usecase.dart';
 import '../../features/shop/domain/usecases/update_shop_info_usecase.dart';
@@ -152,11 +154,19 @@ class ServiceLocator {
     final getSalesChartUseCase = GetSalesChartUseCase(dashboardRepository);
     instance.register<GetSalesChartUseCase>(getSalesChartUseCase);
 
+    final getAnalyticsSummaryUseCase = GetAnalyticsSummaryUseCase(dashboardRepository);
+    instance.register<GetAnalyticsSummaryUseCase>(getAnalyticsSummaryUseCase);
+
     final dashboardController = DashboardController(
       getMetricsUseCase: getMetricsUseCase,
       getSalesChartUseCase: getSalesChartUseCase,
     );
     instance.register<DashboardController>(dashboardController);
+
+    final analyticsController = AnalyticsController(
+      getAnalyticsSummaryUseCase: getAnalyticsSummaryUseCase,
+    );
+    instance.register<AnalyticsController>(analyticsController);
 
     // Shop Module Services & Use Cases
     final shopRepository = MockShopRepository();
@@ -207,6 +217,7 @@ class ServiceLocator {
       toggleAvailabilityUseCase: toggleAvailabilityUseCase,
       restockProductUseCase: restockProductUseCase,
     );
+    await productController.loadProducts(shopId: 'shop_01');
     instance.register<ProductController>(productController);
 
     // Category Module Services & Use Cases
@@ -251,6 +262,7 @@ class ServiceLocator {
       getOrderDetailsUseCase: getOrderDetailsUseCase,
       updateOrderStatusUseCase: updateOrderStatusUseCase,
     );
+    await orderController.loadOrders(shopId: 'shop_01');
     instance.register<OrderController>(orderController);
 
     // Profile & Settings Module Services & Use Cases

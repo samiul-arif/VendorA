@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_semantic_colors.dart';
+import '../../../../core/theme/app_shadows.dart';
+import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../domain/models/product_model.dart';
 
-/// Product Card matching Stitch 2x2 Grid brief (`products_2x2_grid_view/code.html`)
+/// Product Card strictly matching Stitch 2x2 Grid brief (`products_2x2_grid_view/code.html`)
 class ProductCard extends StatelessWidget {
   final ProductModel product;
   final ValueChanged<bool> onToggleAvailability;
@@ -21,6 +25,7 @@ class ProductCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.appColors;
+    final isDark = context.isDark;
     final isSoldOut = !product.isAvailable || product.stockQuantity == 0;
 
     return GestureDetector(
@@ -28,15 +33,9 @@ class ProductCard extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: colors.surface,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: AppRadius.md,
           border: Border.all(color: colors.borderSubtle),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFF15171C).withValues(alpha: 0.04),
-              blurRadius: 16,
-              offset: const Offset(0, 4),
-            ),
-          ],
+          boxShadow: isDark ? AppShadows.darkCard : AppShadows.card,
         ),
         clipBehavior: Clip.antiAlias,
         child: Column(
@@ -50,7 +49,7 @@ class ProductCard extends StatelessWidget {
                 children: [
                   // Image / Placeholder
                   Container(
-                    color: colors.surfaceSubtle,
+                    color: colors.surfaceLow,
                     child: Image.network(
                       product.imageUrl,
                       fit: BoxFit.cover,
@@ -78,11 +77,11 @@ class ProductCard extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: colors.surface.withValues(alpha: 0.92),
                           shape: BoxShape.circle,
-                          boxShadow: [
+                          boxShadow: const [
                             BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.12),
+                              color: Color(0x1F000000),
                               blurRadius: 6,
-                              offset: const Offset(0, 2),
+                              offset: Offset(0, 2),
                             ),
                           ],
                         ),
@@ -95,7 +94,7 @@ class ProductCard extends StatelessWidget {
                     ),
                   ),
 
-                  // Stock Chip Bottom-Left (Frosted Glass Effect matching Stitch HTML)
+                  // Stock Chip Bottom-Left
                   Positioned(
                     bottom: 6,
                     left: 6,
@@ -105,22 +104,22 @@ class ProductCard extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
                         decoration: BoxDecoration(
                           color: isSoldOut
-                              ? colors.error.withValues(alpha: 0.9)
+                              ? colors.error.withValues(alpha: 0.92)
                               : colors.surface.withValues(alpha: 0.92),
-                          borderRadius: BorderRadius.circular(6),
-                          boxShadow: [
+                          borderRadius: AppRadius.xs,
+                          boxShadow: const [
                             BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.08),
+                              color: Color(0x14000000),
                               blurRadius: 4,
                             ),
                           ],
                         ),
                         child: Text(
                           isSoldOut ? 'Sold out' : '${product.stockQuantity} in stock',
-                          style: TextStyle(
+                          style: AppTypography.labelSmall.copyWith(
                             fontSize: 10,
                             fontWeight: FontWeight.w800,
-                            color: isSoldOut ? Colors.white : colors.textPrimary,
+                            color: isSoldOut ? colors.textInverse : colors.textPrimary,
                           ),
                         ),
                       ),
@@ -138,25 +137,25 @@ class ProductCard extends StatelessWidget {
                 children: [
                   Text(
                     product.name,
-                    style: TextStyle(
+                    style: AppTypography.titleSmall.copyWith(
                       fontSize: 13.5,
                       fontWeight: FontWeight.w800,
-                      color: colors.textPrimary,
+                      color: isSoldOut ? colors.textMuted : colors.textPrimary,
                       height: 1.2,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 4),
+                  AppSpacing.vGap4,
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
                         Formatters.formatCurrency(product.price),
-                        style: TextStyle(
+                        style: AppTypography.titleSmall.copyWith(
                           fontSize: 14,
                           fontWeight: FontWeight.w900,
-                          color: colors.textPrimary,
+                          color: isSoldOut ? colors.textMuted : colors.textPrimary,
                         ),
                       ),
                       GestureDetector(
@@ -166,7 +165,7 @@ class ProductCard extends StatelessWidget {
                           height: 8,
                           decoration: BoxDecoration(
                             color: product.isAvailable && product.stockQuantity > 0
-                                ? const Color(0xFF006B57)
+                                ? colors.secondary
                                 : colors.error,
                             shape: BoxShape.circle,
                           ),

@@ -589,11 +589,20 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                         // Price Input
                         Expanded(
                           child: AppTextField(
-                            label: 'Price (\$) *',
+                            label: 'Price (৳) *',
                             hint: '14.99',
                             controller: _priceController,
                             keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                            prefixIcon: const Icon(Icons.attach_money_rounded, size: 18),
+                            prefixIcon: Center(
+                              widthFactor: 1.0,
+                              child: Text(
+                                '৳',
+                                style: AppTypography.titleMedium.copyWith(
+                                  fontWeight: FontWeight.w800,
+                                  color: colors.primary,
+                                ),
+                              ),
+                            ),
                             validator: (val) {
                               if (val == null || val.trim().isEmpty) {
                                 return 'Required';

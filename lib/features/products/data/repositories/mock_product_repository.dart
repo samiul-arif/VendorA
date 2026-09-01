@@ -10,11 +10,11 @@ class MockProductRepository extends BaseMockRepository implements IProductReposi
   final List<ProductModel> _inMemoryProducts = [];
 
   MockProductRepository() {
-    _initDefaultProducts();
+    _inMemoryProducts.addAll(createDefaultProducts());
   }
 
-  void _initDefaultProducts() {
-    _inMemoryProducts.addAll([
+  static List<ProductModel> createDefaultProducts() {
+    return [
       ProductModel(
         id: 'prod_01',
         shopId: 'shop_01',
@@ -148,7 +148,7 @@ class MockProductRepository extends BaseMockRepository implements IProductReposi
         createdAt: DateTime.now().subtract(const Duration(days: 8)),
         updatedAt: DateTime.now(),
       ),
-    ]);
+    ];
   }
 
   @override
@@ -159,7 +159,10 @@ class MockProductRepository extends BaseMockRepository implements IProductReposi
   }) async {
     return executeMock(
       operation: () async {
-        var list = _inMemoryProducts.where((p) => p.shopId == shopId).toList();
+        var list = _inMemoryProducts.where((p) => p.shopId == shopId || p.shopId == 'shop_01').toList();
+        if (list.isEmpty) {
+          list = _inMemoryProducts;
+        }
 
         if (categoryId != null && categoryId != 'all' && categoryId.isNotEmpty) {
           list = list.where((p) => p.categoryId == categoryId).toList();

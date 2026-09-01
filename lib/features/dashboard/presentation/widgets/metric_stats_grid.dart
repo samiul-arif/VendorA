@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_semantic_colors.dart';
+import '../../../../core/theme/app_shadows.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../domain/models/dashboard_metrics.dart';
 
-/// 2-Column Metric Stats Grid matching Stitch brief (`dashboard/code.html`)
+/// 2-Column Metric Stats Grid strictly matching Stitch brief (`dashboard/code.html`)
 class MetricStatsGrid extends StatelessWidget {
   final DashboardMetrics? metrics;
   final VoidCallback? onOrdersTapped;
@@ -20,6 +23,7 @@ class MetricStatsGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.appColors;
+    final isDark = context.isDark;
 
     final totalOrders = metrics?.totalOrdersToday ?? 48;
     final totalPayouts = metrics?.nextPayoutAmount ?? 850.00;
@@ -31,18 +35,12 @@ class MetricStatsGrid extends StatelessWidget {
           child: GestureDetector(
             onTap: onOrdersTapped,
             child: Container(
-              padding: const EdgeInsets.all(18),
+              padding: AppSpacing.cardPadding,
               decoration: BoxDecoration(
                 color: colors.surface,
-                borderRadius: BorderRadius.circular(18),
+                borderRadius: AppRadius.md,
                 border: Border.all(color: colors.borderSubtle),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFF15171C).withValues(alpha: 0.04),
-                    blurRadius: 16,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
+                boxShadow: isDark ? AppShadows.darkCard : AppShadows.card,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -54,10 +52,10 @@ class MetricStatsGrid extends StatelessWidget {
                         size: 20,
                         color: colors.textSecondary,
                       ),
-                      const SizedBox(width: 8),
+                      AppSpacing.hGap8,
                       Text(
                         'Total Orders',
-                        style: TextStyle(
+                        style: AppTypography.bodyMedium.copyWith(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
                           color: colors.textSecondary,
@@ -68,7 +66,7 @@ class MetricStatsGrid extends StatelessWidget {
                   AppSpacing.vGap12,
                   Text(
                     '$totalOrders',
-                    style: TextStyle(
+                    style: AppTypography.headlineLarge.copyWith(
                       fontSize: 28,
                       fontWeight: FontWeight.w900,
                       color: colors.textPrimary,
@@ -81,25 +79,19 @@ class MetricStatsGrid extends StatelessWidget {
           ),
         ),
 
-        const SizedBox(width: 14),
+        AppSpacing.hGap14,
 
         // Right Card: Total Payouts
         Expanded(
           child: GestureDetector(
             onTap: onPayoutsTapped,
             child: Container(
-              padding: const EdgeInsets.all(18),
+              padding: AppSpacing.cardPadding,
               decoration: BoxDecoration(
                 color: colors.surface,
-                borderRadius: BorderRadius.circular(18),
+                borderRadius: AppRadius.md,
                 border: Border.all(color: colors.borderSubtle),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFF15171C).withValues(alpha: 0.04),
-                    blurRadius: 16,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
+                boxShadow: isDark ? AppShadows.darkCard : AppShadows.card,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -111,10 +103,10 @@ class MetricStatsGrid extends StatelessWidget {
                         size: 20,
                         color: colors.textSecondary,
                       ),
-                      const SizedBox(width: 8),
+                      AppSpacing.hGap8,
                       Text(
                         'Total Payouts',
-                        style: TextStyle(
+                        style: AppTypography.bodyMedium.copyWith(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
                           color: colors.textSecondary,
@@ -125,7 +117,7 @@ class MetricStatsGrid extends StatelessWidget {
                   AppSpacing.vGap12,
                   Text(
                     Formatters.formatCurrency(totalPayouts),
-                    style: TextStyle(
+                    style: AppTypography.headlineLarge.copyWith(
                       fontSize: 26,
                       fontWeight: FontWeight.w900,
                       color: colors.textPrimary,

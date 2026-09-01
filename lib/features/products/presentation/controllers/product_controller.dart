@@ -1,5 +1,6 @@
 import '../../../../core/base/base_controller.dart';
 import '../../../../core/utils/result.dart';
+import '../../data/repositories/mock_product_repository.dart';
 import '../../domain/models/product_model.dart';
 import '../../domain/usecases/get_products_usecase.dart';
 import '../../domain/usecases/add_product_usecase.dart';
@@ -30,7 +31,7 @@ class ProductController extends BaseController {
   final ToggleProductAvailabilityUseCase _toggleAvailabilityUseCase;
   final RestockProductUseCase _restockProductUseCase;
 
-  List<ProductModel> _allProducts = [];
+  List<ProductModel> _allProducts = MockProductRepository.createDefaultProducts();
   String _selectedCategoryId = 'all';
   String _searchQuery = '';
   String? _activeShopId;

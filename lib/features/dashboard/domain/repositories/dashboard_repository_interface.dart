@@ -1,4 +1,6 @@
 import '../../../../core/utils/result.dart';
+import '../models/analytics_summary_model.dart';
+import '../models/analytics_time_range.dart';
 import '../models/dashboard_metrics.dart';
 import '../models/sales_chart_point.dart';
 
@@ -13,6 +15,12 @@ abstract class IDashboardRepository {
   Future<Result<List<SalesChartPoint>>> getSalesAnalytics({
     required String shopId,
     String period = 'weekly',
+  });
+
+  // Get full standalone analytics summary for specific time range
+  Future<Result<AnalyticsSummaryModel>> getAnalyticsSummary({
+    required String shopId,
+    required AnalyticsTimeRange range,
   });
 
   // Refresh dashboard metrics

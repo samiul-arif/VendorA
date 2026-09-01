@@ -8,9 +8,9 @@ class AppConstants {
   static const String appTagline = 'Merchant & Store Management';
 
   // Currency & Locale
-  static const String defaultCurrencySymbol = '\$';
-  static const String defaultCurrencyCode = 'USD';
-  static const String defaultLocale = 'en_US';
+  static const String defaultCurrencySymbol = '৳';
+  static const String defaultCurrencyCode = 'BDT';
+  static const String defaultLocale = 'bn_BD';
 
   // Mock Network Latency Simulation (ms)
   static const int mockShortDelayMs = 400;

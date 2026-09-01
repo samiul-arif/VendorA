@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_semantic_colors.dart';
+import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/app_typography.dart';
 import '../controllers/product_controller.dart';
 
-/// Category Horizontal Filter Bar matching Stitch brief (`products_2x2_grid_view/code.html`)
+/// Category Horizontal Filter Bar strictly matching Stitch brief (`products_2x2_grid_view/code.html`)
 class CategoryFilterBar extends StatelessWidget {
   final List<CategoryFilterItem> categories;
   final String selectedCategoryId;
@@ -25,7 +27,7 @@ class CategoryFilterBar extends StatelessWidget {
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: categories.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 8),
+        separatorBuilder: (_, __) => AppSpacing.hGap8,
         itemBuilder: (context, index) {
           final cat = categories[index];
           final isSelected = selectedCategoryId == cat.id;
@@ -58,26 +60,28 @@ class CategoryFilterBar extends StatelessWidget {
                 children: [
                   Text(
                     cat.name,
-                    style: TextStyle(
-                      color: isSelected ? Colors.white : colors.textPrimary,
+                    style: AppTypography.labelMedium.copyWith(
+                      color: isSelected ? colors.textInverse : colors.textPrimary,
                       fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
                       fontSize: 13,
                     ),
                   ),
                   if (cat.itemCount > 0) ...[
-                    const SizedBox(width: 6),
+                    AppSpacing.hGap6,
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
                       decoration: BoxDecoration(
-                        color: isSelected ? Colors.white.withValues(alpha: 0.22) : colors.surfaceSubtle,
+                        color: isSelected
+                            ? colors.textInverse.withValues(alpha: 0.22)
+                            : colors.surfaceLow,
                         borderRadius: AppRadius.full,
                       ),
                       child: Text(
                         '${cat.itemCount}',
-                        style: TextStyle(
+                        style: AppTypography.labelSmall.copyWith(
                           fontSize: 10,
                           fontWeight: FontWeight.w900,
-                          color: isSelected ? Colors.white : colors.textSecondary,
+                          color: isSelected ? colors.textInverse : colors.textSecondary,
                         ),
                       ),
                     ),

@@ -1,5 +1,6 @@
 import '../../../../core/base/base_controller.dart';
 import '../../../../core/utils/result.dart';
+import '../../data/repositories/mock_order_repository.dart';
 import '../../domain/models/order_model.dart';
 import '../../domain/models/order_status.dart';
 import '../../domain/usecases/get_orders_usecase.dart';
@@ -12,7 +13,7 @@ class OrderController extends BaseController {
   final GetOrderDetailsUseCase _getOrderDetailsUseCase;
   final UpdateOrderStatusUseCase _updateOrderStatusUseCase;
 
-  List<OrderModel> _allOrders = [];
+  List<OrderModel> _allOrders = MockOrderRepository.createDefaultOrders();
   OrderStatus _selectedStatus = OrderStatus.all;
   String _searchQuery = '';
   String? _activeShopId;

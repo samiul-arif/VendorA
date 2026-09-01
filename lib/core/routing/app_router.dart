@@ -6,6 +6,7 @@ import '../../features/auth/presentation/views/registration_screen.dart';
 import '../../features/auth/presentation/views/otp_verification_screen.dart';
 import '../../features/onboarding/presentation/views/welcome_screen.dart';
 import '../../features/navigation/views/main_shell_screen.dart';
+import '../../features/dashboard/presentation/views/analytics_screen.dart';
 import '../../features/orders/presentation/views/order_details_screen.dart';
 import '../../features/products/domain/models/product_model.dart';
 import '../../features/products/presentation/views/add_edit_product_screen.dart';
@@ -69,6 +70,12 @@ class AppRouter {
         return _buildPageRoute(
           settings: settings,
           builder: (_) => MainShellScreen(initialIndex: initialTab),
+        );
+
+      case AppRoutes.analytics:
+        return _buildPageRoute(
+          settings: settings,
+          builder: (_) => const AnalyticsScreen(),
         );
 
       case AppRoutes.orders:

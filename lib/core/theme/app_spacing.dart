@@ -17,11 +17,12 @@ class AppSpacing {
   static const double xxxl = 40.0;
   static const double massive = 48.0;
 
-  // Screen Padding
+  // Screen & Card Padding Helpers
   static const EdgeInsets screenPadding = EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0);
   static const EdgeInsets screenPaddingWide = EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0);
   static const EdgeInsets modalPadding = EdgeInsets.all(24.0);
   static const EdgeInsets cardPadding = EdgeInsets.all(16.0);
+  static const EdgeInsets cardPaddingLg = EdgeInsets.all(20.0);
   static const EdgeInsets cardPaddingDense = EdgeInsets.all(12.0);
   static const EdgeInsets chipPadding = EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0);
   static const EdgeInsets buttonPadding = EdgeInsets.symmetric(horizontal: 24.0, vertical: 14.0);
@@ -41,7 +42,9 @@ class AppSpacing {
   static const Widget vGap40 = SizedBox(height: xxxl);
   static const Widget vGap48 = SizedBox(height: massive);
 
+  static const Widget hGap2 = SizedBox(width: xxxs);
   static const Widget hGap4 = SizedBox(width: xxs);
+  static const Widget hGap6 = SizedBox(width: 6.0);
   static const Widget hGap8 = SizedBox(width: xs);
   static const Widget hGap10 = SizedBox(width: 10.0);
   static const Widget hGap12 = SizedBox(width: sm);

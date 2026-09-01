@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_semantic_colors.dart';
+import '../../../../core/theme/app_shadows.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/app_typography.dart';
 import '../../../orders/domain/models/order_status.dart';
 import '../../../orders/presentation/controllers/order_controller.dart';
 import '../../../orders/presentation/views/order_details_screen.dart';
@@ -10,7 +12,7 @@ import '../../../notifications/presentation/controllers/notification_controller.
 import '../../../notifications/domain/models/notification_type.dart';
 import '../../../../shared/components/app_toast.dart';
 
-/// Active Orders Section matching Stitch brief (`dashboard/code.html`)
+/// Active Orders Section strictly matching Stitch brief (`dashboard/code.html`)
 class IncomingOrdersStream extends StatelessWidget {
   final VoidCallback onViewAllTapped;
 
@@ -22,6 +24,7 @@ class IncomingOrdersStream extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.appColors;
+    final isDark = context.isDark;
     final orderController = context.watch<OrderController>();
 
     final liveOrders = orderController.allOrders
@@ -41,9 +44,8 @@ class IncomingOrdersStream extends StatelessWidget {
           children: [
             Text(
               'Active Orders',
-              style: TextStyle(
+              style: AppTypography.headlineSmall.copyWith(
                 fontWeight: FontWeight.w800,
-                fontSize: 18,
                 color: colors.textPrimary,
                 letterSpacing: -0.2,
               ),
@@ -52,10 +54,9 @@ class IncomingOrdersStream extends StatelessWidget {
               onTap: onViewAllTapped,
               child: Text(
                 'See All',
-                style: TextStyle(
+                style: AppTypography.labelLarge.copyWith(
                   color: colors.primary,
                   fontWeight: FontWeight.w800,
-                  fontSize: 13,
                 ),
               ),
             ),
@@ -69,7 +70,7 @@ class IncomingOrdersStream extends StatelessWidget {
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
               color: colors.surface,
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: AppRadius.md,
               border: Border.all(color: colors.borderSubtle),
             ),
             child: Row(
@@ -78,10 +79,14 @@ class IncomingOrdersStream extends StatelessWidget {
                   width: 44,
                   height: 44,
                   decoration: BoxDecoration(
-                    color: colors.primaryContainer.withValues(alpha: 0.15),
+                    color: colors.primary.withValues(alpha: 0.12),
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(Icons.check_circle_outline_rounded, color: colors.primary, size: 22),
+                  child: Icon(
+                    Icons.check_circle_outline_rounded,
+                    color: colors.primary,
+                    size: 22,
+                  ),
                 ),
                 AppSpacing.hGap14,
                 Expanded(
@@ -90,17 +95,15 @@ class IncomingOrdersStream extends StatelessWidget {
                     children: [
                       Text(
                         'All Orders Fulfilled',
-                        style: TextStyle(
+                        style: AppTypography.titleSmall.copyWith(
                           fontWeight: FontWeight.w800,
-                          fontSize: 14,
                           color: colors.textPrimary,
                         ),
                       ),
-                      const SizedBox(height: 2),
+                      AppSpacing.vGap2,
                       Text(
                         'New live customer orders will appear here automatically.',
-                        style: TextStyle(
-                          fontSize: 12,
+                        style: AppTypography.bodySmall.copyWith(
                           color: colors.textSecondary,
                         ),
                       ),
@@ -120,18 +123,12 @@ class IncomingOrdersStream extends StatelessWidget {
               final order = liveOrders[index];
 
               return Container(
-                padding: const EdgeInsets.all(18),
+                padding: AppSpacing.cardPadding,
                 decoration: BoxDecoration(
                   color: colors.surface,
-                  borderRadius: BorderRadius.circular(18),
+                  borderRadius: AppRadius.md,
                   border: Border.all(color: colors.borderSubtle),
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0xFF15171C).withValues(alpha: 0.04),
-                      blurRadius: 16,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
+                  boxShadow: isDark ? AppShadows.darkCard : AppShadows.card,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -147,17 +144,15 @@ class IncomingOrdersStream extends StatelessWidget {
                             children: [
                               Text(
                                 'Order #${order.orderNumber}',
-                                style: TextStyle(
-                                  fontSize: 12,
+                                style: AppTypography.bodySmall.copyWith(
                                   fontWeight: FontWeight.w500,
                                   color: colors.textSecondary,
                                 ),
                               ),
-                              const SizedBox(height: 3),
+                              AppSpacing.vGap2,
                               Text(
                                 order.itemsSummary,
-                                style: TextStyle(
-                                  fontSize: 15,
+                                style: AppTypography.titleMedium.copyWith(
                                   fontWeight: FontWeight.w800,
                                   color: colors.textPrimary,
                                 ),
@@ -167,7 +162,7 @@ class IncomingOrdersStream extends StatelessWidget {
                             ],
                           ),
                         ),
-                        const SizedBox(width: 8),
+                        AppSpacing.hGap8,
                         _buildStatusBadge(order.status, colors),
                       ],
                     ),
@@ -187,14 +182,17 @@ class IncomingOrdersStream extends StatelessWidget {
                         children: [
                           Row(
                             children: [
-                              Icon(Icons.schedule_rounded, size: 15, color: colors.textMuted),
-                              const SizedBox(width: 4),
+                              Icon(
+                                Icons.schedule_rounded,
+                                size: 15,
+                                color: colors.textMuted,
+                              ),
+                              AppSpacing.hGap4,
                               Text(
                                 order.status == OrderStatus.preparing
                                     ? 'Pickup in 5 mins'
                                     : 'Delivery in 15 mins',
-                                style: TextStyle(
-                                  fontSize: 12,
+                                style: AppTypography.bodySmall.copyWith(
                                   color: colors.textSecondary,
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -233,13 +231,16 @@ class IncomingOrdersStream extends StatelessWidget {
                                       color: colors.primary,
                                       borderRadius: AppRadius.full,
                                     ),
-                                    child: const Text(
+                                    child: Text(
                                       'Accept',
-                                      style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w800),
+                                      style: AppTypography.labelSmall.copyWith(
+                                        color: colors.textInverse,
+                                        fontWeight: FontWeight.w800,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              if (order.status == OrderStatus.pending) const SizedBox(width: 8),
+                              if (order.status == OrderStatus.pending) AppSpacing.hGap8,
                               InkWell(
                                 onTap: () {
                                   Navigator.of(context).push(
@@ -258,9 +259,8 @@ class IncomingOrdersStream extends StatelessWidget {
                                   ),
                                   child: Text(
                                     'Details',
-                                    style: TextStyle(
+                                    style: AppTypography.labelSmall.copyWith(
                                       color: colors.textPrimary,
-                                      fontSize: 12,
                                       fontWeight: FontWeight.w700,
                                     ),
                                   ),
@@ -285,19 +285,22 @@ class IncomingOrdersStream extends StatelessWidget {
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(
-          color: const Color(0xFF5C5D64).withValues(alpha: 0.12),
-          borderRadius: BorderRadius.circular(8),
+          color: colors.textSecondary.withValues(alpha: 0.12),
+          borderRadius: AppRadius.xs,
         ),
-        child: const Row(
+        child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.local_fire_department_rounded, size: 14, color: Color(0xFF5C5D64)),
-            SizedBox(width: 4),
+            Icon(
+              Icons.local_fire_department_rounded,
+              size: 14,
+              color: colors.textSecondary,
+            ),
+            AppSpacing.hGap4,
             Text(
               'Preparing',
-              style: TextStyle(
-                color: Color(0xFF5C5D64),
-                fontSize: 11,
+              style: AppTypography.labelSmall.copyWith(
+                color: colors.textSecondary,
                 fontWeight: FontWeight.w800,
               ),
             ),
@@ -308,19 +311,22 @@ class IncomingOrdersStream extends StatelessWidget {
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(
-          color: const Color(0xFF75F9D6).withValues(alpha: 0.25),
-          borderRadius: BorderRadius.circular(8),
+          color: colors.secondaryContainer.withValues(alpha: 0.25),
+          borderRadius: AppRadius.xs,
         ),
-        child: const Row(
+        child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.check_circle_rounded, size: 14, color: Color(0xFF006B57)),
-            SizedBox(width: 4),
+            Icon(
+              Icons.check_circle_rounded,
+              size: 14,
+              color: colors.secondary,
+            ),
+            AppSpacing.hGap4,
             Text(
               'Accepted',
-              style: TextStyle(
-                color: Color(0xFF006B57),
-                fontSize: 11,
+              style: AppTypography.labelSmall.copyWith(
+                color: colors.secondary,
                 fontWeight: FontWeight.w800,
               ),
             ),
@@ -331,19 +337,18 @@ class IncomingOrdersStream extends StatelessWidget {
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(
-          color: colors.primaryContainer.withValues(alpha: 0.15),
-          borderRadius: BorderRadius.circular(8),
+          color: colors.primary.withValues(alpha: 0.12),
+          borderRadius: AppRadius.xs,
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(Icons.fiber_new_rounded, size: 14, color: colors.primary),
-            const SizedBox(width: 3),
+            AppSpacing.hGap4,
             Text(
               'New',
-              style: TextStyle(
+              style: AppTypography.labelSmall.copyWith(
                 color: colors.primary,
-                fontSize: 11,
                 fontWeight: FontWeight.w800,
               ),
             ),

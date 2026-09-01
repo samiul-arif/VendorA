@@ -13,10 +13,10 @@ class MockOrderRepository extends BaseMockRepository implements IOrderRepository
     _initDefaultOrders();
   }
 
-  void _initDefaultOrders() {
+  static List<OrderModel> createDefaultOrders() {
     final now = DateTime.now();
 
-    final defaultList = [
+    return [
       // 1. Pending (New Incoming Order)
       OrderModel(
         id: 'ord_101',
@@ -280,8 +280,10 @@ class MockOrderRepository extends BaseMockRepository implements IOrderRepository
         updatedAt: now.subtract(const Duration(hours: 3, minutes: 55)),
       ),
     ];
+  }
 
-    for (final order in defaultList) {
+  void _initDefaultOrders() {
+    for (final order in createDefaultOrders()) {
       _orders[order.id] = order;
     }
   }
@@ -295,6 +297,9 @@ class MockOrderRepository extends BaseMockRepository implements IOrderRepository
     return executeMock(
       operation: () async {
         var list = _orders.values.where((o) => o.shopId == shopId || o.shopId == 'shop_01').toList();
+        if (list.isEmpty) {
+          list = _orders.values.toList();
+        }
 
         if (status != OrderStatus.all) {
           list = list.where((o) => o.status == status).toList();

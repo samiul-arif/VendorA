@@ -1,19 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../core/routing/app_routes.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_semantic_colors.dart';
+import '../../../../core/theme/app_shadows.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/app_typography.dart';
 import '../../../../shared/components/error_state_view.dart';
 import '../../../../shared/components/shimmer_skeleton.dart';
+import '../../../../shared/components/app_toast.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
+import '../../../notifications/presentation/controllers/notification_controller.dart';
 import '../../domain/models/order_model.dart';
 import '../../domain/models/order_status.dart';
 import '../controllers/order_controller.dart';
 import '../widgets/order_card.dart';
-import '../../../../shared/components/app_toast.dart';
 import 'order_details_screen.dart';
 
-/// Order Management Screen matching Stitch brief (`orders_list/code.html`)
+/// Order Management Screen strictly matching Stitch brief (`orders_list/code.html` & `orders_empty_state/code.html`)
+/// with Fixed Top App Bar & Filter Bar, and Scrollable Orders List.
 class OrderListScreen extends StatefulWidget {
   const OrderListScreen({super.key});
 
@@ -33,6 +38,7 @@ class _OrderListScreenState extends State<OrderListScreen> {
   }
 
   void _loadOrders() {
+    if (!mounted) return;
     final authController = context.read<AuthController>();
     final orderController = context.read<OrderController>();
     final shopId = authController.activeShop?.id ?? 'shop_01';
@@ -71,7 +77,7 @@ class _OrderListScreenState extends State<OrderListScreen> {
       success: (_) => AppToast.showSuccess(
         context,
         title: 'Order Ready',
-        message: 'Order #${order.orderNumber} marked ready for courier pickup.',
+        message: 'Order #${order.orderNumber} marked ready for pickup.',
       ),
       failure: (msg, _) => AppToast.showError(context, title: 'Error', message: msg),
     );
@@ -95,7 +101,10 @@ class _OrderListScreenState extends State<OrderListScreen> {
   @override
   Widget build(BuildContext context) {
     final colors = context.appColors;
+    final isDark = context.isDark;
     final orderController = context.watch<OrderController>();
+    final notifController = context.watch<NotificationController>();
+    final unreadCount = notifController.unreadCount;
     final allOrders = orderController.allOrders;
 
     final activeOrders = allOrders.where((o) => o.status != OrderStatus.delivered && o.status != OrderStatus.cancelled).toList();
@@ -103,127 +112,181 @@ class _OrderListScreenState extends State<OrderListScreen> {
     final cancelledOrders = allOrders.where((o) => o.status == OrderStatus.cancelled).toList();
 
     List<OrderModel> currentList;
-    String screenTitle;
     if (_selectedFilterIndex == 0) {
       currentList = activeOrders;
-      screenTitle = 'Active Orders';
     } else if (_selectedFilterIndex == 1) {
       currentList = completedOrders;
-      screenTitle = 'Completed Orders';
     } else {
       currentList = cancelledOrders;
-      screenTitle = 'Cancelled Orders';
     }
 
     return Scaffold(
       backgroundColor: colors.surface,
-      body: SafeArea(
-        bottom: false,
-        child: orderController.isLoading && allOrders.isEmpty
-            ? const _OrderListSkeleton()
-            : orderController.hasError && allOrders.isEmpty
-                ? ErrorStateView(
-                    message: orderController.errorMessage ?? 'Failed to load orders.',
-                    onRetry: _loadOrders,
-                  )
-                : RefreshIndicator(
-                    onRefresh: () async => _loadOrders(),
-                    color: colors.primary,
-                    child: ListView(
-                      padding: const EdgeInsets.fromLTRB(18, 14, 18, 120),
-                      children: [
-                        // Page Header matching Stitch: "Active Orders" + "Manage and process live incoming requests."
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  screenTitle,
-                                  style: TextStyle(
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.w900,
-                                    color: colors.textPrimary,
-                                    letterSpacing: -0.4,
-                                  ),
-                                ),
-                                const SizedBox(height: 2),
-                                Text(
-                                  'Manage and process live incoming requests.',
-                                  style: TextStyle(
-                                    fontSize: 12.5,
-                                    color: colors.textSecondary,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-
-                        AppSpacing.vGap16,
-
-                        // Segmented Control Pill Container matching Stitch
-                        Container(
-                          padding: const EdgeInsets.all(4),
-                          decoration: BoxDecoration(
-                            color: colors.surfaceSubtle,
-                            borderRadius: BorderRadius.circular(14),
-                            border: Border.all(color: colors.borderSubtle),
-                          ),
-                          child: Row(
-                            children: [
-                              _buildSegmentTab(
-                                index: 0,
-                                label: 'Active',
-                                count: activeOrders.length,
-                                isSelected: _selectedFilterIndex == 0,
-                                colors: colors,
-                              ),
-                              _buildSegmentTab(
-                                index: 1,
-                                label: 'Completed',
-                                count: completedOrders.length,
-                                isSelected: _selectedFilterIndex == 1,
-                                colors: colors,
-                              ),
-                              _buildSegmentTab(
-                                index: 2,
-                                label: 'Cancelled',
-                                count: cancelledOrders.length,
-                                isSelected: _selectedFilterIndex == 2,
-                                colors: colors,
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        AppSpacing.vGap16,
-
-                        // Orders List / Empty State
-                        if (currentList.isEmpty)
-                          _buildEmptyState(colors)
-                        else
-                          ListView.separated(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: currentList.length,
-                            separatorBuilder: (_, __) => AppSpacing.vGap12,
-                            itemBuilder: (context, index) {
-                              final order = currentList[index];
-                              return OrderCard(
-                                order: order,
-                                onTap: () => _openOrderDetails(order),
-                                onAccept: () => _handleAcceptOrder(order),
-                                onReady: () => _handleMarkReady(order),
-                                onDecline: () => _handleDeclineOrder(order),
-                              );
-                            },
-                          ),
-                      ],
+      // 1. Top App Bar with Order Related Logo & "Active Orders" title
+      appBar: AppBar(
+        backgroundColor: colors.surface,
+        elevation: 0,
+        scrolledUnderElevation: 1,
+        centerTitle: true,
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 16.0),
+          child: Center(
+            child: Container(
+              width: 38,
+              height: 38,
+              decoration: BoxDecoration(
+                color: colors.primary.withValues(alpha: 0.12),
+                shape: BoxShape.circle,
+                border: Border.all(color: colors.borderSubtle),
+              ),
+              child: Icon(
+                Icons.receipt_long_rounded,
+                size: 20,
+                color: colors.primary,
+              ),
+            ),
+          ),
+        ),
+        title: Text(
+          'Active Orders',
+          style: AppTypography.headlineMedium.copyWith(
+            color: colors.primary,
+            fontWeight: FontWeight.w800,
+            fontSize: 20,
+            letterSpacing: -0.2,
+          ),
+        ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.of(context).pushNamed(AppRoutes.notifications);
+            },
+            icon: Stack(
+              alignment: Alignment.center,
+              children: [
+                Icon(
+                  Icons.notifications_outlined,
+                  color: colors.textPrimary,
+                  size: 24,
+                ),
+                if (unreadCount > 0)
+                  Positioned(
+                    top: 2,
+                    right: 2,
+                    child: Container(
+                      width: 8,
+                      height: 8,
+                      decoration: BoxDecoration(
+                        color: colors.error,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: colors.surface, width: 1.5),
+                      ),
                     ),
                   ),
+              ],
+            ),
+          ),
+          AppSpacing.hGap8,
+        ],
+      ),
+      body: SafeArea(
+        bottom: false,
+        child: Column(
+          children: [
+            // 2. Fixed/Pinned Segmented Control Filter (Active / Completed / Cancelled)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.lg,
+                AppSpacing.xs,
+                AppSpacing.lg,
+                AppSpacing.sm,
+              ),
+              child: Container(
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: colors.surfaceLow,
+                  borderRadius: AppRadius.md,
+                  border: Border.all(color: colors.borderSubtle),
+                ),
+                child: Row(
+                  children: [
+                    _buildSegmentTab(
+                      index: 0,
+                      label: 'Active',
+                      count: activeOrders.length,
+                      isSelected: _selectedFilterIndex == 0,
+                      colors: colors,
+                      isDark: isDark,
+                    ),
+                    _buildSegmentTab(
+                      index: 1,
+                      label: 'Completed',
+                      count: completedOrders.length,
+                      isSelected: _selectedFilterIndex == 1,
+                      colors: colors,
+                      isDark: isDark,
+                    ),
+                    _buildSegmentTab(
+                      index: 2,
+                      label: 'Cancelled',
+                      count: cancelledOrders.length,
+                      isSelected: _selectedFilterIndex == 2,
+                      colors: colors,
+                      isDark: isDark,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            // 3. Scrollable Order List / Empty State View Only
+            Expanded(
+              child: orderController.isLoading && allOrders.isEmpty
+                  ? const _OrderListSkeleton()
+                  : orderController.hasError && allOrders.isEmpty
+                      ? ErrorStateView(
+                          message: orderController.errorMessage ?? 'Failed to load orders.',
+                          onRetry: _loadOrders,
+                        )
+                      : RefreshIndicator(
+                          onRefresh: () async => _loadOrders(),
+                          color: colors.primary,
+                          child: currentList.isEmpty
+                              ? ListView(
+                                  padding: const EdgeInsets.fromLTRB(
+                                    AppSpacing.lg,
+                                    AppSpacing.xs,
+                                    AppSpacing.lg,
+                                    120,
+                                  ),
+                                  children: [
+                                    _buildEmptyState(colors, isDark),
+                                  ],
+                                )
+                              : ListView.separated(
+                                  padding: const EdgeInsets.fromLTRB(
+                                    AppSpacing.lg,
+                                    AppSpacing.xs,
+                                    AppSpacing.lg,
+                                    120, // clearance for floating nav dock
+                                  ),
+                                  itemCount: currentList.length,
+                                  separatorBuilder: (_, __) => AppSpacing.vGap12,
+                                  itemBuilder: (context, index) {
+                                    final order = currentList[index];
+                                    return OrderCard(
+                                      order: order,
+                                      onTap: () => _openOrderDetails(order),
+                                      onAccept: () => _handleAcceptOrder(order),
+                                      onReady: () => _handleMarkReady(order),
+                                      onDecline: () => _handleDeclineOrder(order),
+                                    );
+                                  },
+                                ),
+                        ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -234,6 +297,7 @@ class _OrderListScreenState extends State<OrderListScreen> {
     required int count,
     required bool isSelected,
     required AppSemanticColors colors,
+    required bool isDark,
   }) {
     return Expanded(
       child: GestureDetector(
@@ -244,39 +308,31 @@ class _OrderListScreenState extends State<OrderListScreen> {
           padding: const EdgeInsets.symmetric(vertical: 9),
           decoration: BoxDecoration(
             color: isSelected ? colors.surface : Colors.transparent,
-            borderRadius: BorderRadius.circular(10),
-            boxShadow: isSelected
-                ? [
-                    BoxShadow(
-                      color: const Color(0xFF15171C).withValues(alpha: 0.06),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ]
-                : null,
+            borderRadius: AppRadius.sm,
+            boxShadow: isSelected ? (isDark ? AppShadows.darkCard : AppShadows.card) : null,
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
                 label,
-                style: TextStyle(
-                  fontSize: 12.5,
+                style: AppTypography.labelMedium.copyWith(
                   fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
                   color: isSelected ? colors.textPrimary : colors.textSecondary,
+                  fontSize: 13,
                 ),
               ),
               if (count > 0) ...[
-                const SizedBox(width: 5),
+                AppSpacing.hGap6,
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
                   decoration: BoxDecoration(
-                    color: isSelected ? colors.primaryContainer.withValues(alpha: 0.15) : colors.borderSubtle,
+                    color: isSelected ? colors.primary.withValues(alpha: 0.12) : colors.surfaceSubtle,
                     borderRadius: AppRadius.full,
                   ),
                   child: Text(
                     '$count',
-                    style: TextStyle(
+                    style: AppTypography.labelSmall.copyWith(
                       fontSize: 10,
                       fontWeight: FontWeight.w900,
                       color: isSelected ? colors.primary : colors.textSecondary,
@@ -291,44 +347,71 @@ class _OrderListScreenState extends State<OrderListScreen> {
     );
   }
 
-  Widget _buildEmptyState(AppSemanticColors colors) {
+  Widget _buildEmptyState(AppSemanticColors colors, bool isDark) {
     return Container(
       margin: const EdgeInsets.only(top: 20),
-      padding: const EdgeInsets.all(32),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 36),
       decoration: BoxDecoration(
         color: colors.surface,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: AppRadius.lg,
         border: Border.all(color: colors.borderSubtle),
+        boxShadow: isDark ? AppShadows.darkCard : AppShadows.card,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          // Illustration Circle
           Container(
-            width: 56,
-            height: 56,
+            width: 80,
+            height: 80,
             decoration: BoxDecoration(
-              color: colors.primaryContainer.withValues(alpha: 0.15),
+              color: colors.surfaceLow,
               shape: BoxShape.circle,
             ),
-            child: Icon(Icons.receipt_long_outlined, size: 28, color: colors.primary),
+            child: Icon(
+              Icons.receipt_long_outlined,
+              size: 40,
+              color: colors.textMuted,
+            ),
           ),
-          AppSpacing.vGap16,
+          AppSpacing.vGap20,
           Text(
-            'No Orders Found',
-            style: TextStyle(
-              fontSize: 16,
+            'No active orders yet',
+            style: AppTypography.headlineMedium.copyWith(
+              fontSize: 20,
               fontWeight: FontWeight.w800,
               color: colors.textPrimary,
             ),
+            textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 4),
+          AppSpacing.vGap6,
           Text(
-            'There are currently no orders under this filter category.',
-            style: TextStyle(
-              fontSize: 12.5,
+            'When you receive new orders, they\'ll appear here for you to manage and process.',
+            style: AppTypography.bodyMedium.copyWith(
               color: colors.textSecondary,
+              fontSize: 13,
             ),
             textAlign: TextAlign.center,
+          ),
+          AppSpacing.vGap24,
+          ElevatedButton(
+            onPressed: _loadOrders,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: colors.ctaPrimary,
+              foregroundColor: colors.ctaPrimaryText,
+              padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 13),
+              shape: const RoundedRectangleBorder(
+                borderRadius: AppRadius.full,
+              ),
+              elevation: 0,
+            ),
+            child: Text(
+              'Refresh Status',
+              style: AppTypography.labelMedium.copyWith(
+                color: colors.ctaPrimaryText,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
           ),
         ],
       ),
@@ -345,15 +428,11 @@ class _OrderListSkeleton extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.fromLTRB(18, 14, 18, 96),
       children: const [
-        ShimmerSkeleton(width: 140, height: 24),
-        SizedBox(height: 6),
-        ShimmerSkeleton(width: 220, height: 14),
-        AppSpacing.vGap16,
-        ShimmerSkeleton(width: double.infinity, height: 42, borderRadius: BorderRadius.all(Radius.circular(14))),
-        AppSpacing.vGap16,
-        ShimmerSkeleton(width: double.infinity, height: 130, borderRadius: BorderRadius.all(Radius.circular(18))),
+        ShimmerSkeleton(width: double.infinity, height: 130, borderRadius: AppRadius.md),
         AppSpacing.vGap12,
-        ShimmerSkeleton(width: double.infinity, height: 130, borderRadius: BorderRadius.all(Radius.circular(18))),
+        ShimmerSkeleton(width: double.infinity, height: 130, borderRadius: AppRadius.md),
+        AppSpacing.vGap12,
+        ShimmerSkeleton(width: double.infinity, height: 130, borderRadius: AppRadius.md),
       ],
     );
   }

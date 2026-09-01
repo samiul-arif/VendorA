@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Centralized Shadow Tokens (modern_ui_arif Ambient Multi-Stop Diffuse Shadows)
+/// Centralized Shadow Tokens (modern_ui_arif Ambient Multi-Stop Diffuse Shadows & Stitch Tokens)
 class AppShadows {
   AppShadows._();
 
@@ -16,6 +16,36 @@ class AppShadows {
       color: Color(0x08141414), // rgba(20, 20, 20, 0.03)
       offset: Offset(0, 2),
       blurRadius: 6,
+      spreadRadius: 0,
+    ),
+  ];
+
+  // Stitch 30px Ambient Card Shadow
+  static const List<BoxShadow> stitchCard = [
+    BoxShadow(
+      color: Color.fromRGBO(21, 23, 28, 0.08),
+      offset: Offset(0, 8),
+      blurRadius: 30,
+      spreadRadius: 0,
+    ),
+  ];
+
+  // Frosted Glass Center Container Shadow
+  static const List<BoxShadow> frostedGlass = [
+    BoxShadow(
+      color: Color.fromRGBO(0, 0, 0, 0.12),
+      offset: Offset(0, 8),
+      blurRadius: 24,
+      spreadRadius: 0,
+    ),
+  ];
+
+  // Hero Glow Shadow (Magenta Glow)
+  static const List<BoxShadow> heroGlow = [
+    BoxShadow(
+      color: Color(0x33B90058),
+      offset: Offset(0, 10),
+      blurRadius: 28,
       spreadRadius: 0,
     ),
   ];

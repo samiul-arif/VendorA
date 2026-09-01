@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
+import '../../../../core/theme/app_semantic_colors.dart';
+import '../../../../core/theme/app_shadows.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../domain/models/dashboard_metrics.dart';
 
-/// Hero Earnings Card matching Stitch brief (`dashboard/code.html`)
+/// Hero Earnings Card strictly matching Stitch brief (`dashboard/code.html`)
 /// with Gradient Background, Large Typography, Growth Chip, Mini Bar Chart, and Analytics Trigger.
 class HeroEarningsCard extends StatelessWidget {
   final DashboardMetrics? metrics;
@@ -18,29 +22,23 @@ class HeroEarningsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     final earnings = metrics?.totalEarningsToday ?? 1240.50;
     final growth = metrics?.earningsGrowthPercentage ?? 12.0;
 
     return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
+      padding: AppSpacing.cardPaddingLg,
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
           colors: [
-            Color(0xFFB90058), // primary
-            Color(0xFFE21B70), // primary-container
+            AppColors.primary,          // #B90058
+            AppColors.primaryContainer, // #E21B70
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFFB90058).withValues(alpha: 0.25),
-            offset: const Offset(0, 8),
-            blurRadius: 28,
-            spreadRadius: -2,
-          ),
-        ],
+        borderRadius: AppRadius.lg,
+        boxShadow: AppShadows.heroGlow,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -49,14 +47,13 @@ class HeroEarningsCard extends StatelessWidget {
           // Label: Today's Earnings
           Text(
             'Today\'s Earnings',
-            style: TextStyle(
-              fontSize: 14,
+            style: AppTypography.bodyMedium.copyWith(
+              color: colors.textInverse.withValues(alpha: 0.9),
               fontWeight: FontWeight.w600,
-              color: Colors.white.withValues(alpha: 0.9),
             ),
           ),
 
-          const SizedBox(height: 8),
+          AppSpacing.vGap8,
 
           // Amount + Growth Pill
           Row(
@@ -64,31 +61,35 @@ class HeroEarningsCard extends StatelessWidget {
             children: [
               Text(
                 Formatters.formatCurrency(earnings),
-                style: const TextStyle(
+                style: AppTypography.displayMedium.copyWith(
                   fontSize: 34,
                   fontWeight: FontWeight.w900,
-                  color: Colors.white,
+                  color: colors.textInverse,
                   letterSpacing: -0.6,
                 ),
               ),
-              const SizedBox(width: 10),
+              AppSpacing.hGap10,
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.22),
-                  borderRadius: BorderRadius.circular(10),
+                  color: colors.textInverse.withValues(alpha: 0.22),
+                  borderRadius: AppRadius.sm,
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.trending_up_rounded, size: 14, color: Colors.white),
-                    const SizedBox(width: 3),
+                    Icon(
+                      Icons.trending_up_rounded,
+                      size: 14,
+                      color: colors.textInverse,
+                    ),
+                    AppSpacing.hGap4,
                     Text(
                       '+${growth.toStringAsFixed(0)}%',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 11.5,
+                      style: AppTypography.labelSmall.copyWith(
+                        color: colors.textInverse,
                         fontWeight: FontWeight.w800,
+                        fontSize: 11.5,
                       ),
                     ),
                   ],
@@ -97,12 +98,12 @@ class HeroEarningsCard extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: 2),
+          AppSpacing.vGap2,
           Text(
             'vs yesterday',
-            style: TextStyle(
+            style: AppTypography.bodySmall.copyWith(
+              color: colors.textInverse.withValues(alpha: 0.8),
               fontSize: 12,
-              color: Colors.white.withValues(alpha: 0.8),
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -114,36 +115,40 @@ class HeroEarningsCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              // View Analytics White Pill Button (InkWell + Container to avoid unconstrained flex bugs)
+              // "View Analytics" Pill Button
               InkWell(
                 onTap: onAnalyticsTapped,
                 borderRadius: AppRadius.full,
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: colors.textInverse,
                     borderRadius: AppRadius.full,
-                    boxShadow: [
+                    boxShadow: const [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.1),
+                        color: Color(0x1A000000),
                         blurRadius: 8,
-                        offset: const Offset(0, 2),
+                        offset: Offset(0, 2),
                       ),
                     ],
                   ),
-                  child: const Row(
+                  child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
                         'View Analytics',
-                        style: TextStyle(
+                        style: AppTypography.labelSmall.copyWith(
                           fontSize: 12,
                           fontWeight: FontWeight.w800,
-                          color: Color(0xFFB90058),
+                          color: colors.primary,
                         ),
                       ),
-                      SizedBox(width: 4),
-                      Icon(Icons.arrow_forward_rounded, size: 15, color: Color(0xFFB90058)),
+                      AppSpacing.hGap4,
+                      Icon(
+                        Icons.arrow_forward_rounded,
+                        size: 15,
+                        color: colors.primary,
+                      ),
                     ],
                   ),
                 ),
@@ -153,15 +158,15 @@ class HeroEarningsCard extends StatelessWidget {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  _buildMiniBar(height: 14, opacity: 0.4),
+                  _buildMiniBar(height: 14, opacity: 0.4, color: colors.textInverse),
                   const SizedBox(width: 5),
-                  _buildMiniBar(height: 22, opacity: 0.4),
+                  _buildMiniBar(height: 22, opacity: 0.4, color: colors.textInverse),
                   const SizedBox(width: 5),
-                  _buildMiniBar(height: 30, opacity: 0.5),
+                  _buildMiniBar(height: 30, opacity: 0.5, color: colors.textInverse),
                   const SizedBox(width: 5),
-                  _buildMiniBar(height: 38, opacity: 0.7),
+                  _buildMiniBar(height: 38, opacity: 0.7, color: colors.textInverse),
                   const SizedBox(width: 5),
-                  _buildMiniBar(height: 48, opacity: 1.0),
+                  _buildMiniBar(height: 48, opacity: 1.0, color: colors.textInverse),
                 ],
               ),
             ],
@@ -171,12 +176,16 @@ class HeroEarningsCard extends StatelessWidget {
     );
   }
 
-  Widget _buildMiniBar({required double height, required double opacity}) {
+  Widget _buildMiniBar({
+    required double height,
+    required double opacity,
+    required Color color,
+  }) {
     return Container(
       width: 14,
       height: height,
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: opacity),
+        color: color.withValues(alpha: opacity),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(3)),
       ),
     );

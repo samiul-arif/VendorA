@@ -175,13 +175,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     iconBg: colors.surfaceSubtle,
                     iconColor: colors.primary,
                     title: 'Analytics & Reports',
-                    subtitle: 'View performance and order metrics',
+                    subtitle: 'View performance and revenue analytics',
                     onTap: () {
-                      AppToast.showInfo(
-                        context,
-                        title: 'Analytics & Reports',
-                        message: 'Weekly earnings and metrics available on home dashboard.',
-                      );
+                      Navigator.of(context).pushNamed(AppRoutes.analytics);
                     },
                     colors: colors,
                   ),

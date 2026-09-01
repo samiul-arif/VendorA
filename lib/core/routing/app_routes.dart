@@ -17,6 +17,7 @@ class AppRoutes {
   // Main Shell & Dashboard
   static const String mainShell = '/main';
   static const String dashboard = '/dashboard';
+  static const String analytics = '/analytics';
 
   // Orders Flow
   static const String orders = '/orders';

@@ -176,7 +176,7 @@ class OnboardingMockPreview extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    '\$34.50',
+                    '৳34.50',
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w900,
@@ -271,7 +271,7 @@ class OnboardingMockPreview extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      '\$14.50  •  Stock: 18 left',
+                      '৳14.50  •  Stock: 18 left',
                       style: TextStyle(
                         fontSize: 11,
                         color: colors.textMuted,
@@ -381,7 +381,7 @@ class OnboardingMockPreview extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 const Text(
-                  '\$1,842.50',
+                  '৳1,842.50',
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.w900,
