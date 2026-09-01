@@ -47,6 +47,7 @@ class AppRoutes {
   static const String editProfile = '/profile/edit';
   static const String settings = '/settings';
   static const String accountSettings = '/settings/account';
+  static const String changePassword = '/settings/change-password';
   static const String notificationPreferences = '/settings/notifications';
   static const String languageSettings = '/settings/language';
   static const String privacySettings = '/settings/privacy';

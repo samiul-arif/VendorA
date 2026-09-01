@@ -12,6 +12,7 @@ import '../../features/products/domain/models/product_model.dart';
 import '../../features/products/presentation/views/add_edit_product_screen.dart';
 import '../../features/profile/presentation/views/profile_screen.dart';
 import '../../features/profile/presentation/views/edit_profile_screen.dart';
+import '../../features/profile/presentation/views/change_password_screen.dart';
 import '../../features/profile/presentation/views/shop_settings_screen.dart';
 import '../../features/notifications/presentation/views/notification_center_screen.dart';
 import '../../features/permissions/presentation/views/permissions_settings_screen.dart';
@@ -137,9 +138,16 @@ class AppRouter {
         );
 
       case AppRoutes.settings:
+      case AppRoutes.accountSettings:
         return _buildPageRoute(
           settings: settings,
           builder: (_) => const ProfileScreen(),
+        );
+
+      case AppRoutes.changePassword:
+        return _buildPageRoute(
+          settings: settings,
+          builder: (_) => const ChangePasswordScreen(),
         );
 
       case AppRoutes.permissions:

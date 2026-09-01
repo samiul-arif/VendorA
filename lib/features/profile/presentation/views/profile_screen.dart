@@ -10,12 +10,12 @@ import '../../../../shared/components/app_dialog.dart';
 import '../../../../shared/components/app_toast.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../../presentation/controllers/profile_controller.dart';
-import '../widgets/profile_header_card.dart';
 import 'edit_profile_screen.dart';
 import 'shop_settings_screen.dart';
 import 'bank_payout_screen.dart';
+import 'change_password_screen.dart';
 
-/// Vendor Profile & Settings Screen strictly matching Stitch brief (`settings/code.html` & `vendor_profile_with_account_settings_link/code.html`)
+/// Vendor Settings Screen strictly matching Stitch brief (`settings/code.html`)
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
@@ -62,13 +62,38 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     final colors = context.appColors;
     final isDark = context.isDark;
-    final authController = context.watch<AuthController>();
     final profileController = context.watch<ProfileController>();
-    final vendor = authController.vendor;
     final isDarkMode = profileController.isDarkMode;
 
     return Scaffold(
       backgroundColor: colors.surface,
+      appBar: AppBar(
+        backgroundColor: colors.surface,
+        elevation: 0,
+        scrolledUnderElevation: 1,
+        title: Text(
+          'Merchant Portal',
+          style: AppTypography.headlineMedium.copyWith(
+            color: colors.primary,
+            fontWeight: FontWeight.w800,
+            fontSize: 20,
+            letterSpacing: -0.2,
+          ),
+        ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.of(context).pushNamed(AppRoutes.notifications);
+            },
+            icon: Icon(
+              Icons.notifications_outlined,
+              color: colors.textPrimary,
+              size: 24,
+            ),
+          ),
+          AppSpacing.hGap8,
+        ],
+      ),
       body: SafeArea(
         bottom: false,
         child: ListView(
@@ -81,38 +106,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Text(
                   'Settings',
                   style: AppTypography.headlineMedium.copyWith(
-                    fontSize: 24,
+                    fontSize: 28,
                     fontWeight: FontWeight.w900,
                     color: colors.textPrimary,
                     letterSpacing: -0.4,
                   ),
                 ),
-                AppSpacing.vGap2,
+                AppSpacing.vGap4,
                 Text(
                   'Manage your app-level preferences and account settings.',
                   style: AppTypography.bodySmall.copyWith(
-                    fontSize: 12.5,
+                    fontSize: 13,
                     color: colors.textSecondary,
                   ),
                 ),
               ],
             ),
 
-            AppSpacing.vGap16,
-
-            // 1. Profile Overview Hero Card (Bento Style)
-            ProfileHeaderCard(
-              vendor: vendor,
-              onEditTapped: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const EditProfileScreen()),
-                );
-              },
-            ),
-
             AppSpacing.vGap24,
 
-            // 2. Account Section
+            // 1. Account Section matching Stitch (`settings/code.html`)
             _buildSectionHeader('ACCOUNT', colors),
             AppSpacing.vGap8,
             Container(
@@ -130,7 +143,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     iconBg: colors.primary.withValues(alpha: 0.12),
                     iconColor: colors.primary,
                     title: 'Profile Details',
-                    subtitle: 'Update your personal information & contact',
+                    subtitle: 'Update your personal information',
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(builder: (_) => const EditProfileScreen()),
@@ -144,10 +157,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     iconBg: colors.surfaceLow,
                     iconColor: colors.textPrimary,
                     title: 'Shop Management',
-                    subtitle: 'Manage storefront details, location & banner',
+                    subtitle: 'Manage business details and location',
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(builder: (_) => const ShopSettingsScreen()),
+                      );
+                    },
+                    colors: colors,
+                  ),
+                  _buildDivider(colors),
+                  _buildNavTile(
+                    icon: Icons.analytics_outlined,
+                    iconBg: colors.surfaceLow,
+                    iconColor: colors.primary,
+                    title: 'Analytics & Reports',
+                    subtitle: 'View performance and sales data',
+                    onTap: () {
+                      Navigator.of(context).pushNamed(AppRoutes.analytics);
+                    },
+                    colors: colors,
+                  ),
+                  _buildDivider(colors),
+                  _buildNavTile(
+                    icon: Icons.lock_outline_rounded,
+                    iconBg: colors.surfaceLow,
+                    iconColor: colors.primary,
+                    title: 'Change Password',
+                    subtitle: 'Manage account password & security',
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => const ChangePasswordScreen()),
                       );
                     },
                     colors: colors,
@@ -166,25 +205,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     },
                     colors: colors,
                   ),
-                  _buildDivider(colors),
-                  _buildNavTile(
-                    icon: Icons.analytics_outlined,
-                    iconBg: colors.surfaceLow,
-                    iconColor: colors.primary,
-                    title: 'Analytics & Reports',
-                    subtitle: 'View performance and revenue analytics',
-                    onTap: () {
-                      Navigator.of(context).pushNamed(AppRoutes.analytics);
-                    },
-                    colors: colors,
-                  ),
                 ],
               ),
             ),
 
             AppSpacing.vGap24,
 
-            // 3. Preferences Section (Switches connected to ProfileController)
+            // 2. Preferences Section matching Stitch (`settings/code.html`)
             _buildSectionHeader('PREFERENCES', colors),
             AppSpacing.vGap8,
             Container(
@@ -200,7 +227,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   _buildSwitchTile(
                     icon: Icons.notifications_active_outlined,
                     title: 'Push Notifications',
-                    subtitle: 'Receive real-time alerts for incoming orders',
+                    subtitle: 'Receive alerts for new orders',
                     value: _pushNotifications,
                     onChanged: (val) {
                       setState(() => _pushNotifications = val);
@@ -216,7 +243,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   _buildSwitchTile(
                     icon: Icons.dark_mode_outlined,
                     title: 'Dark Mode',
-                    subtitle: 'Switch between sleek light and dark theme appearance',
+                    subtitle: 'Switch to dark theme appearance',
                     value: isDarkMode,
                     onChanged: (val) {
                       profileController.toggleDarkMode(val);
@@ -234,7 +261,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             AppSpacing.vGap24,
 
-            // 4. Support & Legal Section
+            // 3. Support & Legal Section matching Stitch (`settings/code.html`)
             _buildSectionHeader('SUPPORT & LEGAL', colors),
             AppSpacing.vGap8,
             Container(
@@ -300,7 +327,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             AppSpacing.vGap24,
 
-            // 5. Sign Out Button
+            // 4. Sign Out Button matching Stitch (`settings/code.html`)
             SizedBox(
               height: 48,
               child: ElevatedButton.icon(
@@ -324,10 +351,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             AppSpacing.vGap20,
 
-            // 6. App Version & Build
+            // 5. App Version & Build
             Center(
               child: Text(
-                'CamPlus Vendor App v2.4.1 (Build 482)',
+                'Lumina Vendor App v2.4.1 (Build 482)',
                 style: AppTypography.labelSmall.copyWith(
                   fontSize: 11.5,
                   fontWeight: FontWeight.w600,
