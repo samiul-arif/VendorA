@@ -74,7 +74,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         elevation: 0,
         scrolledUnderElevation: 1,
         title: Text(
-          'Merchant Portal',
+          'Profile',
           style: AppTypography.headlineMedium.copyWith(
             color: colors.primary,
             fontWeight: FontWeight.w800,
