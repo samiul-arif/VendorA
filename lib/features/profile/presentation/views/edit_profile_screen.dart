@@ -5,12 +5,12 @@ import '../../../../core/theme/app_semantic_colors.dart';
 import '../../../../core/theme/app_shadows.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../core/routing/app_routes.dart';
 import '../../../../shared/components/app_toast.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../../../notifications/presentation/controllers/notification_controller.dart';
 import '../../../notifications/domain/models/notification_type.dart';
 import '../controllers/profile_controller.dart';
-import 'change_password_screen.dart';
 
 /// Vendor Profile Details Screen strictly matching Stitch brief (`vendor_profile_with_account_settings_link/code.html`)
 class EditProfileScreen extends StatefulWidget {
@@ -93,9 +93,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     final authController = context.watch<AuthController>();
     final vendor = authController.vendor;
     final displayName = _nameController.text.isNotEmpty ? _nameController.text : (vendor?.name ?? 'Alex Johnson');
+    final avatarUrl = vendor?.profileImageUrl;
 
     return Scaffold(
-      backgroundColor: colors.surface,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: colors.surface,
         elevation: 0,
@@ -150,15 +151,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               ),
                             ],
                           ),
-                          child: Center(
-                            child: Text(
-                              displayName.isNotEmpty ? displayName[0].toUpperCase() : 'A',
-                              style: TextStyle(
-                                fontSize: 34,
-                                fontWeight: FontWeight.w900,
-                                color: colors.primary,
-                              ),
-                            ),
+                          child: ClipOval(
+                            child: avatarUrl != null && avatarUrl.isNotEmpty
+                                ? Image.network(
+                                    avatarUrl,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (_, __, ___) => _buildInitials(displayName, colors),
+                                  )
+                                : _buildInitials(displayName, colors),
                           ),
                         ),
                         Positioned(
@@ -218,74 +218,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           letterSpacing: 0.6,
                         ),
                       ),
-                    ),
-
-                    AppSpacing.vGap20,
-
-                    // Divider
-                    Divider(color: colors.divider, height: 1),
-
-                    AppSpacing.vGap16,
-
-                    // Two Stat Columns: Active Items (142) & Store Rating (4.8 ★)
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Column(
-                          children: [
-                            Text(
-                              '142',
-                              style: AppTypography.titleLarge.copyWith(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w900,
-                                color: colors.textPrimary,
-                              ),
-                            ),
-                            AppSpacing.vGap2,
-                            Text(
-                              'Active Items',
-                              style: AppTypography.bodySmall.copyWith(
-                                fontSize: 12,
-                                color: colors.textSecondary,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Container(
-                          height: 28,
-                          width: 1,
-                          color: colors.borderSubtle,
-                        ),
-                        Column(
-                          children: [
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Icon(Icons.star_rounded, size: 18, color: Color(0xFFF59E0B)),
-                                const SizedBox(width: 3),
-                                Text(
-                                  '4.8',
-                                  style: AppTypography.titleLarge.copyWith(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w900,
-                                    color: colors.textPrimary,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            AppSpacing.vGap2,
-                            Text(
-                              'Store Rating',
-                              style: AppTypography.bodySmall.copyWith(
-                                fontSize: 12,
-                                color: colors.textSecondary,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
                     ),
                   ],
                 ),
@@ -358,15 +290,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
                     AppSpacing.vGap24,
 
-                    // Action Buttons Row: Save Changes & Change Password
+                    // Action Buttons Row: Change Password & Save Changes
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         OutlinedButton(
                           onPressed: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(builder: (_) => const ChangePasswordScreen()),
-                            );
+                            Navigator.of(context).pushNamed(AppRoutes.changePassword);
                           },
                           style: OutlinedButton.styleFrom(
                             side: BorderSide(color: colors.borderSubtle, width: 1.2),
@@ -420,6 +350,19 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInitials(String displayName, AppSemanticColors colors) {
+    return Center(
+      child: Text(
+        displayName.isNotEmpty ? displayName[0].toUpperCase() : 'A',
+        style: TextStyle(
+          fontSize: 34,
+          fontWeight: FontWeight.w900,
+          color: colors.primary,
         ),
       ),
     );

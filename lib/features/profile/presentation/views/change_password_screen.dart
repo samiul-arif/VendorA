@@ -56,7 +56,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     final isDark = context.isDark;
 
     return Scaffold(
-      backgroundColor: colors.surface,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: colors.surface,
         elevation: 0,

@@ -11,9 +11,7 @@ import '../../../../shared/components/app_toast.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../../presentation/controllers/profile_controller.dart';
 import '../widgets/profile_header_card.dart';
-import 'edit_profile_screen.dart';
 import 'bank_payout_screen.dart';
-import 'change_password_screen.dart';
 
 /// Vendor Profile & Settings Screen strictly matching Stitch brief (`settings/code.html` & `vendor_profile_with_account_settings_link/code.html`)
 class ProfileScreen extends StatefulWidget {
@@ -73,6 +71,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
         backgroundColor: colors.surface,
         elevation: 0,
         scrolledUnderElevation: 1,
+        leadingWidth: 60,
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 16),
+          child: Center(
+            child: Container(
+              width: 38,
+              height: 38,
+              decoration: BoxDecoration(
+                color: colors.primary.withValues(alpha: 0.12),
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: colors.borderSubtle,
+                  width: 1.2,
+                ),
+              ),
+              child: Icon(
+                Icons.person_rounded,
+                size: 20,
+                color: colors.primary,
+              ),
+            ),
+          ),
+        ),
         title: Text(
           'Profile',
           style: AppTypography.headlineMedium.copyWith(
@@ -101,40 +122,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
         child: ListView(
           padding: const EdgeInsets.fromLTRB(18, 14, 18, 120),
           children: [
-            // Page Header: "Profile" + Subtitle
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Profile',
-                  style: AppTypography.headlineMedium.copyWith(
-                    fontSize: 28,
-                    fontWeight: FontWeight.w900,
-                    color: colors.textPrimary,
-                    letterSpacing: -0.4,
-                  ),
-                ),
-                AppSpacing.vGap4,
-                Text(
-                  'Manage your profile preferences and account settings.',
-                  style: AppTypography.bodySmall.copyWith(
-                    fontSize: 13,
-                    color: colors.textSecondary,
-                  ),
-                ),
-              ],
-            ),
-
-            AppSpacing.vGap16,
-
-            // 1. Profile Overview Hero Card (Bento Style with Clean Avatar)
+            // 1. Profile Overview Hero Card (Bento Style with Avatar, Name, Phone & Address)
             ProfileHeaderCard(
               vendor: vendor,
             ),
 
             AppSpacing.vGap24,
 
-            // 2. Account Section
+            // 2. Account Section (No shop management)
             _buildSectionHeader('ACCOUNT', colors),
             AppSpacing.vGap8,
             Container(
@@ -154,9 +149,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     title: 'Profile Details',
                     subtitle: 'Update your personal information',
                     onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => const EditProfileScreen()),
-                      );
+                      Navigator.of(context).pushNamed(AppRoutes.editProfile);
                     },
                     colors: colors,
                   ),
@@ -180,9 +173,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     title: 'Change Password',
                     subtitle: 'Manage account password & security',
                     onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => const ChangePasswordScreen()),
-                      );
+                      Navigator.of(context).pushNamed(AppRoutes.changePassword);
                     },
                     colors: colors,
                   ),

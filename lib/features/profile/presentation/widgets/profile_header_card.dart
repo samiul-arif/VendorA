@@ -6,7 +6,7 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../shared/models/vendor_model.dart';
 
-/// Profile Header Card matching Stitch brief with Name, Phone, Address, Image & Stats
+/// Profile Header Card with Name, Phone, Address & Avatar (No active item/rating counters)
 class ProfileHeaderCard extends StatelessWidget {
   final VendorModel? vendor;
   final VoidCallback? onEditTapped;
@@ -41,7 +41,7 @@ class ProfileHeaderCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-          // 1. Avatar (Clean circular image / initial badge, no floating edit icon)
+          // 1. Avatar (Clean circular image / initial badge)
           Container(
             width: 84,
             height: 84,
@@ -101,7 +101,7 @@ class ProfileHeaderCard extends StatelessWidget {
             ),
           ),
 
-          AppSpacing.vGap12,
+          AppSpacing.vGap14,
 
           // 4. Contact & Address Details
           Container(
@@ -163,74 +163,6 @@ class ProfileHeaderCard extends StatelessWidget {
                 ),
               ],
             ),
-          ),
-
-          AppSpacing.vGap16,
-
-          // Divider
-          Divider(color: colors.divider, height: 1),
-
-          AppSpacing.vGap14,
-
-          // 5. Two Stat Columns: Active Items (142) & Store Rating (4.8 ★)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Column(
-                children: [
-                  Text(
-                    '142',
-                    style: AppTypography.titleLarge.copyWith(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w900,
-                      color: colors.textPrimary,
-                    ),
-                  ),
-                  AppSpacing.vGap2,
-                  Text(
-                    'Active Items',
-                    style: AppTypography.bodySmall.copyWith(
-                      fontSize: 12,
-                      color: colors.textSecondary,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-              Container(
-                height: 28,
-                width: 1,
-                color: colors.borderSubtle,
-              ),
-              Column(
-                children: [
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.star_rounded, size: 18, color: Color(0xFFF59E0B)),
-                      const SizedBox(width: 3),
-                      Text(
-                        '4.8',
-                        style: AppTypography.titleLarge.copyWith(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w900,
-                          color: colors.textPrimary,
-                        ),
-                      ),
-                    ],
-                  ),
-                  AppSpacing.vGap2,
-                  Text(
-                    'Store Rating',
-                    style: AppTypography.bodySmall.copyWith(
-                      fontSize: 12,
-                      color: colors.textSecondary,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-            ],
           ),
         ],
       ),
