@@ -1,5 +1,6 @@
 import '../../../../core/base/base_controller.dart';
 import '../../../../core/utils/result.dart';
+import '../../../../shared/models/pagination_model.dart';
 import '../../data/repositories/mock_order_repository.dart';
 import '../../domain/models/order_model.dart';
 import '../../domain/models/order_status.dart';
@@ -7,17 +8,22 @@ import '../../domain/usecases/get_orders_usecase.dart';
 import '../../domain/usecases/get_order_details_usecase.dart';
 import '../../domain/usecases/update_order_status_usecase.dart';
 
-// Order Management Controller
+// Order Management Controller with Enterprise Pagination
 class OrderController extends BaseController {
   final GetOrdersUseCase _getOrdersUseCase;
   final GetOrderDetailsUseCase _getOrderDetailsUseCase;
   final UpdateOrderStatusUseCase _updateOrderStatusUseCase;
 
-  List<OrderModel> _allOrders = MockOrderRepository.createDefaultOrders();
+  PaginatedList<OrderModel> _paginatedOrders = PaginatedList.empty();
+  int _currentPage = 1;
+  int _pageSize = 20;
   OrderStatus _selectedStatus = OrderStatus.all;
   String _searchQuery = '';
   String? _activeShopId;
   OrderModel? _selectedOrder;
+
+  // Snapshot of default orders for accurate total count badges
+  final List<OrderModel> _allOrdersSnapshot = MockOrderRepository.createDefaultOrders();
 
   OrderController({
     required GetOrdersUseCase getOrdersUseCase,
@@ -28,79 +34,130 @@ class OrderController extends BaseController {
         _updateOrderStatusUseCase = updateOrderStatusUseCase;
 
   // Getters
-  List<OrderModel> get allOrders => _allOrders;
+  PaginatedList<OrderModel> get paginatedOrders => _paginatedOrders;
+  List<OrderModel> get allOrders => _paginatedOrders.items;
+  List<OrderModel> get filteredOrders => _paginatedOrders.items;
+  int get currentPage => _currentPage;
+  int get pageSize => _pageSize;
+  int get totalItems => _paginatedOrders.totalItems;
+  int get totalPages => _paginatedOrders.totalPages;
   OrderStatus get selectedStatus => _selectedStatus;
   String get searchQuery => _searchQuery;
   String? get activeShopId => _activeShopId;
   OrderModel? get selectedOrder => _selectedOrder;
 
-  List<OrderModel> get filteredOrders {
-    var list = _allOrders;
-
-    // Filter by status tab
-    if (_selectedStatus != OrderStatus.all) {
-      list = list.where((o) => o.status == _selectedStatus).toList();
-    }
-
-    // Filter by search query
-    if (_searchQuery.trim().isNotEmpty) {
-      final q = _searchQuery.toLowerCase().trim();
-      list = list.where((o) {
-        return o.orderNumber.toLowerCase().contains(q) ||
-            o.customerName.toLowerCase().contains(q) ||
-            o.itemsSummary.toLowerCase().contains(q);
-      }).toList();
-    }
-
-    return list;
-  }
-
-  // Count by status
+  // Accurate Count by Status across the dataset
   int getCount(OrderStatus status) {
-    if (status == OrderStatus.all) return _allOrders.length;
-    return _allOrders.where((o) => o.status == status).length;
+    if (status == OrderStatus.all) return _allOrdersSnapshot.length;
+    return _allOrdersSnapshot.where((o) => o.status == status).length;
   }
 
-  // Load Orders
-  Future<void> loadOrders({required String shopId, bool forceRefresh = false}) async {
-    _activeShopId = shopId;
+  // Active Recent Orders for lightweight Home Dashboard Widget
+  List<OrderModel> getRecentActiveOrders({int limit = 5}) {
+    return _allOrdersSnapshot
+        .where((o) =>
+            o.status == OrderStatus.pending ||
+            o.status == OrderStatus.accepted ||
+            o.status == OrderStatus.preparing)
+        .take(limit)
+        .toList();
+  }
 
-    await runWithState<void>(() async {
+  // Load Orders with Pagination
+  Future<void> loadOrders({
+    required String shopId,
+    int? page,
+    int? pageSize,
+    bool forceRefresh = false,
+    bool isSilent = false,
+  }) async {
+    _activeShopId = shopId;
+    if (page != null) _currentPage = page;
+    if (pageSize != null) _pageSize = pageSize;
+
+    await runWithState<PaginatedList<OrderModel>>(() async {
       final result = await _getOrdersUseCase.execute(
         shopId: shopId,
+        page: _currentPage,
+        pageSize: _pageSize,
+        status: _selectedStatus,
+        searchQuery: _searchQuery,
         forceRefresh: forceRefresh,
       );
 
-      if (result is Success<List<OrderModel>>) {
-        _allOrders = result.data;
-        return const Success<void>(null);
-      } else if (result is Failure<List<OrderModel>>) {
-        return Failure<void>(result.message);
+      if (result is Success<PaginatedList<OrderModel>>) {
+        _paginatedOrders = result.data;
+        _currentPage = result.data.currentPage;
       }
-      return const Success<void>(null);
-    });
+      return result;
+    }, isUpdate: isSilent);
+  }
+
+  // Go to specific Page
+  Future<void> goToPage(int page) async {
+    if (_activeShopId == null || page == _currentPage || page < 1) return;
+    await loadOrders(shopId: _activeShopId!, page: page, isSilent: false);
+  }
+
+  // Set Page Size (e.g. 10, 20, 50, 100)
+  Future<void> setPageSize(int size) async {
+    if (_activeShopId == null || size == _pageSize) return;
+    _pageSize = size;
+    _currentPage = 1;
+    await loadOrders(shopId: _activeShopId!, page: 1, pageSize: size);
+  }
+
+  // Next Page
+  Future<void> nextPage() async {
+    if (_paginatedOrders.hasNextPage) {
+      await goToPage(_currentPage + 1);
+    }
+  }
+
+  // Previous Page
+  Future<void> previousPage() async {
+    if (_paginatedOrders.hasPreviousPage) {
+      await goToPage(_currentPage - 1);
+    }
   }
 
   // Set Status Tab
   void setStatusFilter(OrderStatus status) {
+    if (_selectedStatus == status) return;
     _selectedStatus = status;
-    notifyListeners();
+    _currentPage = 1;
+    if (_activeShopId != null) {
+      loadOrders(shopId: _activeShopId!, page: 1);
+    } else {
+      notifyListeners();
+    }
   }
 
   // Search
   void setSearchQuery(String query) {
     _searchQuery = query;
-    notifyListeners();
+    _currentPage = 1;
+    if (_activeShopId != null) {
+      loadOrders(shopId: _activeShopId!, page: 1);
+    } else {
+      notifyListeners();
+    }
   }
 
   void clearSearch() {
     _searchQuery = '';
-    notifyListeners();
+    _currentPage = 1;
+    if (_activeShopId != null) {
+      loadOrders(shopId: _activeShopId!, page: 1);
+    } else {
+      notifyListeners();
+    }
   }
 
   // Load Single Order Details
   Future<void> loadOrderDetails(String orderId) async {
-    final cached = _allOrders.where((o) => o.id == orderId).firstOrNull;
+    final cached = _paginatedOrders.items.where((o) => o.id == orderId).firstOrNull ??
+        _allOrdersSnapshot.where((o) => o.id == orderId).firstOrNull;
     if (cached != null) {
       _selectedOrder = cached;
       notifyListeners();
@@ -127,9 +184,15 @@ class OrderController extends BaseController {
 
     if (result is Success<OrderModel>) {
       final updated = result.data;
-      final index = _allOrders.indexWhere((o) => o.id == orderId);
+      final currentItems = List<OrderModel>.from(_paginatedOrders.items);
+      final index = currentItems.indexWhere((o) => o.id == orderId);
       if (index != -1) {
-        _allOrders[index] = updated;
+        currentItems[index] = updated;
+        _paginatedOrders = _paginatedOrders.copyWith(items: currentItems);
+      }
+      final snapshotIndex = _allOrdersSnapshot.indexWhere((o) => o.id == orderId);
+      if (snapshotIndex != -1) {
+        _allOrdersSnapshot[snapshotIndex] = updated;
       }
       if (_selectedOrder?.id == orderId) {
         _selectedOrder = updated;

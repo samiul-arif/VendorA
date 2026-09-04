@@ -323,11 +323,11 @@ class _ShopSettingsScreenState extends State<ShopSettingsScreen> {
         child: Form(
           key: _formKey,
           child: ListView(
-            padding: const EdgeInsets.fromLTRB(18, 14, 18, 130),
+            padding: const EdgeInsets.fromLTRB(16, 14, 16, 140),
             children: [
-              // 1. Updated Shop Top Card: Open/Close & Switch buttons stacked vertically
+              // 1. Updated Shop Top Card: Open/Close & Switch buttons stacked vertically (Responsive)
               Container(
-                padding: const EdgeInsets.all(18),
+                padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
                   color: colors.surface,
                   borderRadius: AppRadius.lg,
@@ -335,7 +335,7 @@ class _ShopSettingsScreenState extends State<ShopSettingsScreen> {
                   boxShadow: isDark ? AppShadows.darkCard : AppShadows.card,
                 ),
                 child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     // Store Avatar / Logo with edit trigger
                     GestureDetector(
@@ -343,8 +343,8 @@ class _ShopSettingsScreenState extends State<ShopSettingsScreen> {
                       child: Stack(
                         children: [
                           Container(
-                            width: 54,
-                            height: 54,
+                            width: 48,
+                            height: 48,
                             decoration: BoxDecoration(
                               color: colors.primary.withValues(alpha: 0.12),
                               borderRadius: AppRadius.md,
@@ -358,49 +358,54 @@ class _ShopSettingsScreenState extends State<ShopSettingsScreen> {
                                     errorBuilder: (_, __, ___) => Icon(
                                       Icons.storefront_rounded,
                                       color: colors.primary,
-                                      size: 28,
+                                      size: 24,
                                     ),
                                   )
                                 : Icon(
                                     Icons.storefront_rounded,
                                     color: colors.primary,
-                                    size: 28,
+                                    size: 24,
                                   ),
                           ),
                           Positioned(
                             bottom: 0,
                             right: 0,
                             child: Container(
-                              padding: const EdgeInsets.all(3),
+                              padding: const EdgeInsets.all(2.5),
                               decoration: BoxDecoration(
                                 color: colors.primary,
                                 shape: BoxShape.circle,
                                 border: Border.all(color: colors.surface, width: 1.5),
                               ),
-                              child: Icon(Icons.edit_rounded, size: 10, color: colors.textInverse),
+                              child: Icon(Icons.edit_rounded, size: 9, color: colors.textInverse),
                             ),
                           ),
                         ],
                       ),
                     ),
-                    AppSpacing.hGap14,
-                    // Branch Info
+                    AppSpacing.hGap10,
+                    // Branch Info (Flexible and responsive)
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Row(
                             children: [
-                              Text(
-                                'Active Store Branch',
-                                style: AppTypography.bodySmall.copyWith(
-                                  color: colors.textSecondary,
-                                  fontWeight: FontWeight.w600,
+                              Flexible(
+                                child: Text(
+                                  'Active Store',
+                                  style: AppTypography.bodySmall.copyWith(
+                                    color: colors.textSecondary,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 11.5,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
-                              AppSpacing.hGap6,
+                              const SizedBox(width: 4),
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
                                 decoration: BoxDecoration(
                                   color: isOpen
                                       ? colors.secondary.withValues(alpha: 0.15)
@@ -410,7 +415,7 @@ class _ShopSettingsScreenState extends State<ShopSettingsScreen> {
                                 child: Text(
                                   isOpen ? 'OPEN' : 'CLOSED',
                                   style: AppTypography.labelSmall.copyWith(
-                                    fontSize: 9.5,
+                                    fontSize: 9,
                                     fontWeight: FontWeight.w900,
                                     color: isOpen ? colors.secondary : colors.error,
                                   ),
@@ -418,23 +423,24 @@ class _ShopSettingsScreenState extends State<ShopSettingsScreen> {
                               ),
                             ],
                           ),
-                          AppSpacing.vGap4,
+                          const SizedBox(height: 2),
                           Text(
                             shop?.name ?? 'Jane\'s Gourmet Bakery',
                             style: AppTypography.titleMedium.copyWith(
                               fontWeight: FontWeight.w900,
                               color: colors.textPrimary,
                               letterSpacing: -0.2,
+                              fontSize: 14.5,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
-                          AppSpacing.vGap2,
+                          const SizedBox(height: 1),
                           Text(
                             shop?.address ?? 'House 42, Road 11, Banani, Dhaka',
                             style: AppTypography.bodySmall.copyWith(
                               color: colors.textMuted,
-                              fontSize: 12,
+                              fontSize: 11,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -442,7 +448,7 @@ class _ShopSettingsScreenState extends State<ShopSettingsScreen> {
                         ],
                       ),
                     ),
-                    AppSpacing.hGap10,
+                    AppSpacing.hGap8,
                     // Two Buttons Vertically Stacked: Open/Close & Switch
                     Column(
                       mainAxisSize: MainAxisSize.min,
@@ -461,8 +467,8 @@ class _ShopSettingsScreenState extends State<ShopSettingsScreen> {
                           },
                           borderRadius: AppRadius.full,
                           child: Container(
-                            width: 82,
-                            padding: const EdgeInsets.symmetric(vertical: 6),
+                            width: 74,
+                            padding: const EdgeInsets.symmetric(vertical: 5),
                             decoration: BoxDecoration(
                               color: colors.surface,
                               borderRadius: AppRadius.full,
@@ -477,19 +483,19 @@ class _ShopSettingsScreenState extends State<ShopSettingsScreen> {
                               style: AppTypography.labelSmall.copyWith(
                                 color: isOpen ? colors.error : colors.secondary,
                                 fontWeight: FontWeight.w800,
-                                fontSize: 11,
+                                fontSize: 10.5,
                               ),
                             ),
                           ),
                         ),
-                        AppSpacing.vGap6,
+                        const SizedBox(height: 5),
                         // Button 2: Switch Branch Action
                         InkWell(
                           onTap: _showShopSwitcherModal,
                           borderRadius: AppRadius.full,
                           child: Container(
-                            width: 82,
-                            padding: const EdgeInsets.symmetric(vertical: 6),
+                            width: 74,
+                            padding: const EdgeInsets.symmetric(vertical: 5),
                             decoration: BoxDecoration(
                               color: colors.primary,
                               borderRadius: AppRadius.full,
@@ -504,14 +510,14 @@ class _ShopSettingsScreenState extends State<ShopSettingsScreen> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(Icons.swap_horiz_rounded, size: 14, color: colors.textInverse),
-                                const SizedBox(width: 4),
+                                Icon(Icons.swap_horiz_rounded, size: 13, color: colors.textInverse),
+                                const SizedBox(width: 3),
                                 Text(
                                   'Switch',
                                   style: AppTypography.labelSmall.copyWith(
                                     color: colors.textInverse,
                                     fontWeight: FontWeight.w800,
-                                    fontSize: 11,
+                                    fontSize: 10.5,
                                   ),
                                 ),
                               ],

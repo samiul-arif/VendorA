@@ -196,19 +196,24 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
             'GROSS REVENUE',
             style: AppTypography.labelSmall.copyWith(
               color: colors.textSecondary,
-              fontSize: 12,
+              fontSize: 11.5,
               letterSpacing: 0.5,
               fontWeight: FontWeight.w700,
             ),
           ),
           const SizedBox(height: AppSpacing.xs),
-          Text(
-            Formatters.formatCurrency(summary.grossRevenue),
-            style: AppTypography.displayLarge.copyWith(
-              color: colors.textPrimary,
-              fontSize: 38,
-              fontWeight: FontWeight.w800,
-              letterSpacing: -0.03,
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(
+              Formatters.formatCurrency(summary.grossRevenue),
+              style: AppTypography.displayLarge.copyWith(
+                color: colors.textPrimary,
+                fontSize: 28,
+                fontWeight: FontWeight.w900,
+                letterSpacing: -0.5,
+              ),
+              maxLines: 1,
             ),
           ),
           const SizedBox(height: AppSpacing.md),
@@ -225,7 +230,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                   children: [
                     Icon(
                       Icons.trending_up,
-                      size: 16,
+                      size: 15,
                       color: emeraldText,
                     ),
                     const SizedBox(width: 4),
@@ -234,17 +239,22 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                       style: AppTypography.labelSmall.copyWith(
                         color: emeraldText,
                         fontWeight: FontWeight.w700,
+                        fontSize: 11.5,
                       ),
                     ),
                   ],
                 ),
               ),
               const SizedBox(width: AppSpacing.sm),
-              Text(
-                summary.range.comparisonLabel,
-                style: AppTypography.bodySmall.copyWith(
-                  color: colors.textSecondary,
-                  fontSize: 13,
+              Flexible(
+                child: Text(
+                  summary.range.comparisonLabel,
+                  style: AppTypography.bodySmall.copyWith(
+                    color: colors.textSecondary,
+                    fontSize: 12,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
@@ -267,7 +277,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
 
     return Column(
       children: [
-        // 2-Col row: Total Orders & Avg Order Value
+        // 2-Col row: Total Orders & Avg Order Value (Responsive)
         Row(
           children: [
             // Total Orders
@@ -292,28 +302,38 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          'TOTAL ORDERS',
-                          style: AppTypography.labelSmall.copyWith(
-                            color: colors.textSecondary,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
+                        Flexible(
+                          child: Text(
+                            'TOTAL ORDERS',
+                            style: AppTypography.labelSmall.copyWith(
+                              color: colors.textSecondary,
+                              fontSize: 10.5,
+                              fontWeight: FontWeight.w700,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
+                        const SizedBox(width: 4),
                         Icon(
                           Icons.receipt_long_outlined,
-                          size: 18,
+                          size: 16,
                           color: colors.textSecondary,
                         ),
                       ],
                     ),
-                    const SizedBox(height: AppSpacing.md),
-                    Text(
-                      '${summary.totalOrders}',
-                      style: AppTypography.headlineMedium.copyWith(
-                        fontWeight: FontWeight.w700,
-                        color: colors.textPrimary,
-                        fontSize: 26,
+                    const SizedBox(height: AppSpacing.sm),
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        '${summary.totalOrders}',
+                        style: AppTypography.headlineMedium.copyWith(
+                          fontWeight: FontWeight.w800,
+                          color: colors.textPrimary,
+                          fontSize: 20,
+                        ),
+                        maxLines: 1,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -323,7 +343,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                           summary.isOrdersGrowthPositive
                               ? Icons.arrow_upward
                               : Icons.arrow_downward,
-                          size: 14,
+                          size: 13,
                           color: summary.isOrdersGrowthPositive ? emeraldText : errorText,
                         ),
                         const SizedBox(width: 2),
@@ -341,7 +361,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                 ),
               ),
             ),
-            const SizedBox(width: 16.0),
+            const SizedBox(width: 14.0),
 
             // Avg Order Value
             Expanded(
@@ -365,28 +385,38 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          'AVG ORDER VALUE',
-                          style: AppTypography.labelSmall.copyWith(
-                            color: colors.textSecondary,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
+                        Flexible(
+                          child: Text(
+                            'AVG ORDER VALUE',
+                            style: AppTypography.labelSmall.copyWith(
+                              color: colors.textSecondary,
+                              fontSize: 10.5,
+                              fontWeight: FontWeight.w700,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
+                        const SizedBox(width: 4),
                         Icon(
                           Icons.shopping_bag_outlined,
-                          size: 18,
+                          size: 16,
                           color: colors.textSecondary,
                         ),
                       ],
                     ),
-                    const SizedBox(height: AppSpacing.md),
-                    Text(
-                      Formatters.formatCurrency(summary.avgOrderValue),
-                      style: AppTypography.headlineMedium.copyWith(
-                        fontWeight: FontWeight.w700,
-                        color: colors.textPrimary,
-                        fontSize: 26,
+                    const SizedBox(height: AppSpacing.sm),
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        Formatters.formatCurrency(summary.avgOrderValue),
+                        style: AppTypography.headlineMedium.copyWith(
+                          fontWeight: FontWeight.w800,
+                          color: colors.textPrimary,
+                          fontSize: 20,
+                        ),
+                        maxLines: 1,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -396,7 +426,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                           summary.isAovGrowthPositive
                               ? Icons.arrow_upward
                               : Icons.arrow_downward,
-                          size: 14,
+                          size: 13,
                           color: summary.isAovGrowthPositive ? emeraldText : errorText,
                         ),
                         const SizedBox(width: 2),
@@ -416,9 +446,9 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
             ),
           ],
         ),
-        const SizedBox(height: 16.0),
+        const SizedBox(height: 14.0),
 
-        // Total Payouts (Pending) Card with "VIEW DETAILS"
+        // Total Payouts (Pending) Card with "VIEW DETAILS" (Responsive & No Overlap)
         Container(
           width: double.infinity,
           padding: AppSpacing.cardPadding,
@@ -450,7 +480,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                   ),
                   Icon(
                     Icons.account_balance_outlined,
-                    size: 18,
+                    size: 17,
                     color: colors.textSecondary,
                   ),
                 ],
@@ -458,16 +488,24 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
               const SizedBox(height: AppSpacing.sm),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(
-                    Formatters.formatCurrency(summary.pendingPayouts),
-                    style: AppTypography.headlineMedium.copyWith(
-                      fontWeight: FontWeight.w700,
-                      color: colors.textPrimary,
-                      fontSize: 26,
+                  Expanded(
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        Formatters.formatCurrency(summary.pendingPayouts),
+                        style: AppTypography.headlineMedium.copyWith(
+                          fontWeight: FontWeight.w800,
+                          color: colors.textPrimary,
+                          fontSize: 22,
+                        ),
+                        maxLines: 1,
+                      ),
                     ),
                   ),
+                  const SizedBox(width: 8),
                   InkWell(
                     onTap: () => PayoutBreakdownBottomSheet.show(context, summary: summary),
                     borderRadius: BorderRadius.circular(4),
@@ -529,12 +567,16 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                   color: colors.textPrimary,
                 ),
               ),
-              Text(
-                'THIS ${summary.range.label.toUpperCase()}',
-                style: AppTypography.labelSmall.copyWith(
-                  color: colors.textSecondary,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w700,
+              Flexible(
+                child: Text(
+                  'THIS ${summary.range.label.toUpperCase()}',
+                  style: AppTypography.labelSmall.copyWith(
+                    color: colors.textSecondary,
+                    fontSize: 10.5,
+                    fontWeight: FontWeight.w700,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
@@ -548,23 +590,27 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
           const SizedBox(height: AppSpacing.md),
 
           // View All Products Button
-          OutlinedButton(
-            onPressed: () {
-              Navigator.of(context).pushNamed(AppRoutes.products);
-            },
-            style: OutlinedButton.styleFrom(
-              minimumSize: const Size(double.infinity, 48),
-              side: BorderSide(color: borderColor, width: 1),
-              shape: const RoundedRectangleBorder(
-                borderRadius: AppRadius.md,
+          SizedBox(
+            width: double.infinity,
+            height: 46,
+            child: OutlinedButton(
+              onPressed: () {
+                Navigator.of(context).pushNamed(AppRoutes.products);
+              },
+              style: OutlinedButton.styleFrom(
+                minimumSize: const Size(64, 46),
+                side: BorderSide(color: borderColor, width: 1),
+                shape: const RoundedRectangleBorder(
+                  borderRadius: AppRadius.md,
+                ),
               ),
-            ),
-            child: Text(
-              'VIEW ALL PRODUCTS',
-              style: AppTypography.labelSmall.copyWith(
-                color: colors.primary,
-                fontWeight: FontWeight.w700,
-                fontSize: 13,
+              child: Text(
+                'VIEW ALL PRODUCTS',
+                style: AppTypography.labelSmall.copyWith(
+                  color: colors.primary,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 12.5,
+                ),
               ),
             ),
           ),

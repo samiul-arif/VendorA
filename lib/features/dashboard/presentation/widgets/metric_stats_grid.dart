@@ -49,28 +49,37 @@ class MetricStatsGrid extends StatelessWidget {
                     children: [
                       Icon(
                         Icons.shopping_bag_outlined,
-                        size: 20,
+                        size: 18,
                         color: colors.textSecondary,
                       ),
                       AppSpacing.hGap8,
-                      Text(
-                        'Total Orders',
-                        style: AppTypography.bodyMedium.copyWith(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: colors.textSecondary,
+                      Expanded(
+                        child: Text(
+                          'Total Orders',
+                          style: AppTypography.bodyMedium.copyWith(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: colors.textSecondary,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],
                   ),
-                  AppSpacing.vGap12,
-                  Text(
-                    '$totalOrders',
-                    style: AppTypography.headlineLarge.copyWith(
-                      fontSize: 28,
-                      fontWeight: FontWeight.w900,
-                      color: colors.textPrimary,
-                      letterSpacing: -0.5,
+                  AppSpacing.vGap10,
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      '$totalOrders',
+                      style: AppTypography.headlineLarge.copyWith(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w900,
+                        color: colors.textPrimary,
+                        letterSpacing: -0.5,
+                      ),
+                      maxLines: 1,
                     ),
                   ),
                 ],
@@ -100,28 +109,37 @@ class MetricStatsGrid extends StatelessWidget {
                     children: [
                       Icon(
                         Icons.account_balance_wallet_outlined,
-                        size: 20,
+                        size: 18,
                         color: colors.textSecondary,
                       ),
                       AppSpacing.hGap8,
-                      Text(
-                        'Total Payouts',
-                        style: AppTypography.bodyMedium.copyWith(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: colors.textSecondary,
+                      Expanded(
+                        child: Text(
+                          'Total Payouts',
+                          style: AppTypography.bodyMedium.copyWith(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: colors.textSecondary,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],
                   ),
-                  AppSpacing.vGap12,
-                  Text(
-                    Formatters.formatCurrency(totalPayouts),
-                    style: AppTypography.headlineLarge.copyWith(
-                      fontSize: 26,
-                      fontWeight: FontWeight.w900,
-                      color: colors.textPrimary,
-                      letterSpacing: -0.5,
+                  AppSpacing.vGap10,
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      Formatters.formatCurrency(totalPayouts),
+                      style: AppTypography.headlineLarge.copyWith(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w900,
+                        color: colors.textPrimary,
+                        letterSpacing: -0.4,
+                      ),
+                      maxLines: 1,
                     ),
                   ),
                 ],

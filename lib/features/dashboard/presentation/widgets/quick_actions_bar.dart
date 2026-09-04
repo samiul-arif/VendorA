@@ -43,28 +43,37 @@ class QuickActionsBar extends StatelessWidget {
                     children: [
                       Icon(
                         Icons.add_circle_outline_rounded,
-                        size: 20,
+                        size: 18,
                         color: colors.primary,
                       ),
                       AppSpacing.hGap8,
-                      Text(
-                        'Inventory',
-                        style: AppTypography.bodyMedium.copyWith(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: colors.textSecondary,
+                      Expanded(
+                        child: Text(
+                          'Inventory',
+                          style: AppTypography.bodyMedium.copyWith(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: colors.textSecondary,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],
                   ),
-                  AppSpacing.vGap12,
-                  Text(
-                    'Add Item',
-                    style: AppTypography.headlineMedium.copyWith(
-                      fontSize: 22,
-                      fontWeight: FontWeight.w800,
-                      color: colors.textPrimary,
-                      letterSpacing: -0.4,
+                  AppSpacing.vGap10,
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Add Item',
+                      style: AppTypography.titleMedium.copyWith(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w800,
+                        color: colors.textPrimary,
+                        letterSpacing: -0.2,
+                      ),
+                      maxLines: 1,
                     ),
                   ),
                 ],
@@ -94,28 +103,37 @@ class QuickActionsBar extends StatelessWidget {
                     children: [
                       Icon(
                         Icons.receipt_long_outlined,
-                        size: 20,
+                        size: 18,
                         color: colors.primary,
                       ),
                       AppSpacing.hGap8,
-                      Text(
-                        'Live Queue',
-                        style: AppTypography.bodyMedium.copyWith(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: colors.textSecondary,
+                      Expanded(
+                        child: Text(
+                          'Live Queue',
+                          style: AppTypography.bodyMedium.copyWith(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: colors.textSecondary,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],
                   ),
-                  AppSpacing.vGap12,
-                  Text(
-                    'View Orders',
-                    style: AppTypography.headlineMedium.copyWith(
-                      fontSize: 22,
-                      fontWeight: FontWeight.w800,
-                      color: colors.textPrimary,
-                      letterSpacing: -0.4,
+                  AppSpacing.vGap10,
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'View Orders',
+                      style: AppTypography.titleMedium.copyWith(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w800,
+                        color: colors.textPrimary,
+                        letterSpacing: -0.2,
+                      ),
+                      maxLines: 1,
                     ),
                   ),
                 ],

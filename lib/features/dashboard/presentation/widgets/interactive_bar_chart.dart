@@ -138,13 +138,16 @@ class _InteractiveBarChartState extends State<InteractiveBarChart>
 
                 // Animated Bars & Interactive Tap targets
                 Positioned(
-                  left: 36,
-                  right: 8,
+                  left: 40,
+                  right: 4,
                   top: 10,
                   bottom: 0,
                   child: AnimatedBuilder(
                     animation: _scaleAnimation,
                     builder: (context, child) {
+                      final isDense = widget.points.length > 5;
+                      final barWidth = isDense ? 14.0 : 20.0;
+
                       return Row(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -154,11 +157,10 @@ class _InteractiveBarChartState extends State<InteractiveBarChart>
                           final barHeightRatio = (point.amount / yMax).clamp(0.05, 1.0);
                           final animatedHeight = 160.0 * barHeightRatio * _scaleAnimation.value;
 
-                          return GestureDetector(
-                            behavior: HitTestBehavior.opaque,
-                            onTap: () => widget.onBarTapped(index),
-                            child: SizedBox(
-                              width: 38,
+                          return Expanded(
+                            child: GestureDetector(
+                              behavior: HitTestBehavior.opaque,
+                              onTap: () => widget.onBarTapped(index),
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
@@ -167,14 +169,14 @@ class _InteractiveBarChartState extends State<InteractiveBarChart>
                                     Container(
                                       margin: const EdgeInsets.only(bottom: 6),
                                       padding: const EdgeInsets.symmetric(
-                                        horizontal: 8,
-                                        vertical: 3,
+                                        horizontal: 5,
+                                        vertical: 2,
                                       ),
                                       decoration: BoxDecoration(
                                         color: isDark
                                             ? const Color(0xFFEDF0FC)
                                             : const Color(0xFF2C3039),
-                                        borderRadius: BorderRadius.circular(6),
+                                        borderRadius: BorderRadius.circular(5),
                                         boxShadow: const [
                                           BoxShadow(
                                             color: Colors.black26,
@@ -183,36 +185,40 @@ class _InteractiveBarChartState extends State<InteractiveBarChart>
                                           ),
                                         ],
                                       ),
-                                      child: Text(
-                                        '৳${point.amount.toStringAsFixed(0)}',
-                                        style: AppTypography.labelSmall.copyWith(
-                                          color: isDark
-                                              ? const Color(0xFF171C24)
-                                              : Colors.white,
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.w700,
+                                      child: FittedBox(
+                                        fit: BoxFit.scaleDown,
+                                        child: Text(
+                                          '৳${point.amount.toStringAsFixed(0)}',
+                                          style: AppTypography.labelSmall.copyWith(
+                                            color: isDark
+                                                ? const Color(0xFF171C24)
+                                                : Colors.white,
+                                            fontSize: 9.5,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                          maxLines: 1,
                                         ),
                                       ),
                                     )
                                   else
-                                    const SizedBox(height: 22),
+                                    const SizedBox(height: 20),
 
                                   // Bar
                                   Container(
                                     height: animatedHeight,
-                                    width: 24,
+                                    width: barWidth,
                                     decoration: BoxDecoration(
                                       color: isSelected
                                           ? primaryColor
                                           : primaryColor.withValues(alpha: 0.22),
                                       borderRadius: const BorderRadius.vertical(
-                                        top: Radius.circular(6),
+                                        top: Radius.circular(5),
                                       ),
                                       boxShadow: isSelected
                                           ? [
                                               BoxShadow(
                                                 color: primaryColor.withValues(alpha: 0.4),
-                                                blurRadius: 10,
+                                                blurRadius: 8,
                                                 offset: const Offset(0, -2),
                                               ),
                                             ]
@@ -222,16 +228,20 @@ class _InteractiveBarChartState extends State<InteractiveBarChart>
                                   const SizedBox(height: 8),
 
                                   // X-Axis Label
-                                  Text(
-                                    point.label,
-                                    style: AppTypography.labelSmall.copyWith(
-                                      fontSize: 10,
-                                      color: isSelected
-                                          ? primaryColor
-                                          : colors.textSecondary,
-                                      fontWeight: isSelected
-                                          ? FontWeight.w700
-                                          : FontWeight.w500,
+                                  FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    child: Text(
+                                      point.label,
+                                      style: AppTypography.labelSmall.copyWith(
+                                        fontSize: 10,
+                                        color: isSelected
+                                            ? primaryColor
+                                            : colors.textSecondary,
+                                        fontWeight: isSelected
+                                            ? FontWeight.w700
+                                            : FontWeight.w500,
+                                      ),
+                                      maxLines: 1,
                                     ),
                                   ),
                                 ],
@@ -255,16 +265,22 @@ class _InteractiveBarChartState extends State<InteractiveBarChart>
     return Row(
       children: [
         SizedBox(
-          width: 32,
-          child: Text(
-            label,
-            style: TextStyle(
-              fontSize: 10,
-              fontWeight: FontWeight.w700,
-              color: isDark ? const Color(0xFF8E92A0) : const Color(0xFF8E6F76),
+          width: 36,
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: 9.5,
+                fontWeight: FontWeight.w700,
+                color: isDark ? const Color(0xFF8E92A0) : const Color(0xFF8E6F76),
+              ),
+              maxLines: 1,
             ),
           ),
         ),
+        const SizedBox(width: 4),
         Expanded(
           child: Container(
             height: 1,

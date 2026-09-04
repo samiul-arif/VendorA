@@ -27,13 +27,7 @@ class IncomingOrdersStream extends StatelessWidget {
     final isDark = context.isDark;
     final orderController = context.watch<OrderController>();
 
-    final liveOrders = orderController.allOrders
-        .where((o) =>
-            o.status == OrderStatus.pending ||
-            o.status == OrderStatus.accepted ||
-            o.status == OrderStatus.preparing)
-        .take(4)
-        .toList();
+    final liveOrders = orderController.getRecentActiveOrders(limit: 5);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -276,6 +270,27 @@ class IncomingOrdersStream extends StatelessWidget {
               );
             },
           ),
+        if (liveOrders.isNotEmpty) ...[
+          AppSpacing.vGap12,
+          Center(
+            child: TextButton.icon(
+              onPressed: onViewAllTapped,
+              icon: Icon(Icons.receipt_long_rounded, size: 16, color: colors.primary),
+              label: Text(
+                'View All Orders',
+                style: AppTypography.labelMedium.copyWith(
+                  color: colors.primary,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              style: TextButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                shape: const RoundedRectangleBorder(borderRadius: AppRadius.full),
+                backgroundColor: colors.primary.withValues(alpha: 0.08),
+              ),
+            ),
+          ),
+        ],
       ],
     );
   }

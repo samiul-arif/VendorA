@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'core/constants/app_constants.dart';
 import 'core/theme/app_theme.dart';
+import 'core/theme/app_scroll_behavior.dart';
 import 'core/routing/app_router.dart';
 import 'core/routing/app_routes.dart';
 import 'core/routing/navigation_service.dart';
@@ -72,6 +73,7 @@ class VendorApp extends StatelessWidget {
             title: AppConstants.appName,
             debugShowCheckedModeBanner: false,
             navigatorKey: NavigationService.instance.navigatorKey,
+            scrollBehavior: const AppScrollBehavior(),
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
             themeMode: profile.themeMode,

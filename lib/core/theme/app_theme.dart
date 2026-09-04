@@ -80,7 +80,7 @@ class AppTheme {
           backgroundColor: AppColors.ctaPrimaryLight,
           foregroundColor: AppColors.ctaPrimaryLightText,
           elevation: 0,
-          minimumSize: const Size(double.infinity, 52),
+          minimumSize: const Size(64, 50),
           padding: AppSpacing.buttonPadding,
           shape: const RoundedRectangleBorder(borderRadius: AppRadius.button),
           textStyle: AppTypography.buttonLarge,
@@ -92,7 +92,7 @@ class AppTheme {
         style: OutlinedButton.styleFrom(
           foregroundColor: AppColors.textPrimaryLight,
           elevation: 0,
-          minimumSize: const Size(double.infinity, 52),
+          minimumSize: const Size(64, 50),
           padding: AppSpacing.buttonPadding,
           side: const BorderSide(color: AppColors.lightBorder, width: 1.5),
           shape: const RoundedRectangleBorder(borderRadius: AppRadius.button),
@@ -180,6 +180,13 @@ class AppTheme {
         space: 1.0,
       ),
 
+      // Scrollbar Theme (Avoids unmanaged thumb crashes on Flutter Web)
+      scrollbarTheme: ScrollbarThemeData(
+        thumbVisibility: WidgetStateProperty.all(false),
+        trackVisibility: WidgetStateProperty.all(false),
+        radius: const Radius.circular(8),
+      ),
+
       // Semantic Theme Extensions
       extensions: const [
         AppSemanticColors.light,
@@ -255,7 +262,7 @@ class AppTheme {
           backgroundColor: AppColors.ctaPrimaryDark,
           foregroundColor: AppColors.ctaPrimaryDarkText,
           elevation: 0,
-          minimumSize: const Size(double.infinity, 52),
+          minimumSize: const Size(64, 50),
           padding: AppSpacing.buttonPadding,
           shape: const RoundedRectangleBorder(borderRadius: AppRadius.button),
           textStyle: AppTypography.buttonLarge.copyWith(color: AppColors.ctaPrimaryDarkText),
@@ -267,7 +274,7 @@ class AppTheme {
         style: OutlinedButton.styleFrom(
           foregroundColor: AppColors.textPrimaryDark,
           elevation: 0,
-          minimumSize: const Size(double.infinity, 52),
+          minimumSize: const Size(64, 50),
           padding: AppSpacing.buttonPadding,
           side: const BorderSide(color: AppColors.darkBorder, width: 1.5),
           shape: const RoundedRectangleBorder(borderRadius: AppRadius.button),
@@ -353,6 +360,13 @@ class AppTheme {
         color: AppColors.darkDivider,
         thickness: 1.0,
         space: 1.0,
+      ),
+
+      // Scrollbar Theme
+      scrollbarTheme: ScrollbarThemeData(
+        thumbVisibility: WidgetStateProperty.all(false),
+        trackVisibility: WidgetStateProperty.all(false),
+        radius: const Radius.circular(8),
       ),
 
       // Semantic Theme Extensions

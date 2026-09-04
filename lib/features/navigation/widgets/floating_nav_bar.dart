@@ -44,11 +44,11 @@ class FloatingNavBar extends StatelessWidget {
         height: 62,
         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
         decoration: BoxDecoration(
-          color: colors.surface.withValues(alpha: 0.95),
+          color: colors.navBarBg,
           borderRadius: AppRadius.full,
           boxShadow: isDark ? AppShadows.darkCard : AppShadows.floating,
           border: Border.all(
-            color: colors.borderSubtle,
+            color: colors.navBarBorder,
             width: 1.0,
           ),
         ),
@@ -109,7 +109,7 @@ class _NavBarItemWidgetState extends State<_NavBarItemWidget> {
           duration: const Duration(milliseconds: 200),
           curve: Curves.easeInOut,
           padding: EdgeInsets.symmetric(
-            horizontal: widget.isSelected ? 14 : 10,
+            horizontal: widget.isSelected ? 12 : 8,
             vertical: 8,
           ),
           decoration: BoxDecoration(
@@ -125,7 +125,7 @@ class _NavBarItemWidgetState extends State<_NavBarItemWidget> {
                 children: [
                   Icon(
                     widget.isSelected ? widget.item.selectedIcon : widget.item.icon,
-                    size: 20,
+                    size: 19,
                     color: widget.isSelected ? activeFgColor : inactiveFgColor,
                   ),
                   if (!widget.isSelected && widget.item.badgeCount > 0)
@@ -133,7 +133,7 @@ class _NavBarItemWidgetState extends State<_NavBarItemWidget> {
                       top: -4,
                       right: -7,
                       child: Container(
-                        padding: const EdgeInsets.all(3),
+                        padding: const EdgeInsets.all(2.5),
                         decoration: BoxDecoration(
                           color: colors.primary,
                           shape: BoxShape.circle,
@@ -142,12 +142,12 @@ class _NavBarItemWidgetState extends State<_NavBarItemWidget> {
                             width: 1.5,
                           ),
                         ),
-                        constraints: const BoxConstraints(minWidth: 14, minHeight: 14),
+                        constraints: const BoxConstraints(minWidth: 13, minHeight: 13),
                         child: Text(
                           '${widget.item.badgeCount}',
                           style: TextStyle(
                             color: colors.textInverse,
-                            fontSize: 8,
+                            fontSize: 7.5,
                             fontWeight: FontWeight.w900,
                             height: 1.0,
                           ),
@@ -158,12 +158,12 @@ class _NavBarItemWidgetState extends State<_NavBarItemWidget> {
                 ],
               ),
               if (widget.isSelected) ...[
-                const SizedBox(width: 6),
+                const SizedBox(width: 5),
                 Text(
                   widget.item.label,
                   style: TextStyle(
                     color: activeFgColor,
-                    fontSize: 12,
+                    fontSize: 11.5,
                     fontWeight: FontWeight.w800,
                   ),
                 ),

@@ -1,11 +1,14 @@
 import '../../../../core/utils/result.dart';
+import '../../../../shared/models/pagination_model.dart';
 import '../models/product_model.dart';
 
 // Product & Inventory Repository Contract
 abstract class IProductRepository {
-  // Get products for a shop with optional category and search filters
-  Future<Result<List<ProductModel>>> getProducts({
+  // Get paginated products for a shop with optional category and search filters
+  Future<Result<PaginatedList<ProductModel>>> getProducts({
     required String shopId,
+    int page = 1,
+    int pageSize = 20,
     String? categoryId,
     String? searchQuery,
   });

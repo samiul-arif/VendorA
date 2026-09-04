@@ -112,11 +112,17 @@ class PayoutBreakdownBottomSheet extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text(
-                    Formatters.formatCurrency(summary.pendingPayouts),
-                    style: AppTypography.headlineMedium.copyWith(
-                      color: colors.primary,
-                      fontWeight: FontWeight.w800,
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      Formatters.formatCurrency(summary.pendingPayouts),
+                      style: AppTypography.headlineMedium.copyWith(
+                        color: colors.primary,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 24,
+                      ),
+                      maxLines: 1,
                     ),
                   ),
                   const SizedBox(height: AppSpacing.sm),
@@ -201,11 +207,17 @@ class PayoutBreakdownBottomSheet extends StatelessWidget {
             color: colors.textSecondary,
           ),
         ),
-        Text(
-          value,
-          style: AppTypography.bodyMedium.copyWith(
-            color: colors.textPrimary,
-            fontWeight: FontWeight.w700,
+        const SizedBox(width: 8),
+        Flexible(
+          child: Text(
+            value,
+            style: AppTypography.bodyMedium.copyWith(
+              color: colors.textPrimary,
+              fontWeight: FontWeight.w700,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.end,
           ),
         ),
       ],

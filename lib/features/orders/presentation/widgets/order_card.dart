@@ -77,49 +77,60 @@ class OrderCard extends StatelessWidget {
             ),
 
             Padding(
-              padding: const EdgeInsets.fromLTRB(18, 16, 16, 16),
+              padding: const EdgeInsets.fromLTRB(16, 14, 14, 14),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Top Row: #1206 + Time ago & Status Badge
+                  // Top Row: #1206 + Time ago & Status Badge (Responsive)
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(
-                        children: [
-                          Text(
-                            '#${order.orderNumber}',
-                            style: AppTypography.titleMedium.copyWith(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w900,
-                              color: colors.textPrimary,
+                      Expanded(
+                        child: Row(
+                          children: [
+                            Text(
+                              '#${order.orderNumber}',
+                              style: AppTypography.titleMedium.copyWith(
+                                fontSize: 16.5,
+                                fontWeight: FontWeight.w900,
+                                color: colors.textPrimary,
+                              ),
                             ),
-                          ),
-                          AppSpacing.hGap8,
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.schedule_rounded,
-                                size: 14,
-                                color: colors.textMuted,
+                            AppSpacing.hGap6,
+                            Flexible(
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.schedule_rounded,
+                                    size: 13,
+                                    color: colors.textMuted,
+                                  ),
+                                  const SizedBox(width: 3),
+                                  Flexible(
+                                    child: Text(
+                                      Formatters.formatTime(order.createdAt),
+                                      style: AppTypography.bodySmall.copyWith(
+                                        color: colors.textSecondary,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 11.5,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
                               ),
-                              AppSpacing.hGap4,
-                              Text(
-                                Formatters.formatTime(order.createdAt),
-                                style: AppTypography.bodySmall.copyWith(
-                                  color: colors.textSecondary,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
+                            ),
+                          ],
+                        ),
                       ),
+                      const SizedBox(width: 6),
                       _buildStatusBadge(order.status, colors),
                     ],
                   ),
 
-                  AppSpacing.vGap12,
+                  AppSpacing.vGap10,
 
                   // Items Summary String
                   Text(
@@ -127,16 +138,17 @@ class OrderCard extends StatelessWidget {
                     style: AppTypography.bodySmall.copyWith(
                       color: colors.textSecondary,
                       fontWeight: FontWeight.w500,
+                      fontSize: 12,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
 
-                  AppSpacing.vGap14,
+                  AppSpacing.vGap12,
 
-                  // Divider & Bottom Customer Row + Action Buttons
+                  // Divider & Bottom Customer Row + Action Buttons (Responsive)
                   Container(
-                    padding: const EdgeInsets.only(top: 12),
+                    padding: const EdgeInsets.only(top: 10),
                     decoration: BoxDecoration(
                       border: Border(
                         top: BorderSide(color: colors.divider, width: 0.8),
@@ -156,21 +168,23 @@ class OrderCard extends StatelessWidget {
                                 style: AppTypography.titleSmall.copyWith(
                                   fontWeight: FontWeight.w800,
                                   color: colors.textPrimary,
+                                  fontSize: 13.5,
                                 ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
-                              AppSpacing.vGap2,
+                              const SizedBox(height: 2),
                               Row(
                                 children: [
                                   Text(
                                     itemsCountText,
                                     style: AppTypography.bodySmall.copyWith(
                                       color: colors.textSecondary,
+                                      fontSize: 11.5,
                                     ),
                                   ),
                                   Container(
-                                    margin: const EdgeInsets.symmetric(horizontal: 6),
+                                    margin: const EdgeInsets.symmetric(horizontal: 4),
                                     width: 3,
                                     height: 3,
                                     decoration: BoxDecoration(
@@ -178,11 +192,16 @@ class OrderCard extends StatelessWidget {
                                       shape: BoxShape.circle,
                                     ),
                                   ),
-                                  Text(
-                                    Formatters.formatCurrency(order.totalAmount),
-                                    style: AppTypography.titleSmall.copyWith(
-                                      fontWeight: FontWeight.w900,
-                                      color: colors.textPrimary,
+                                  Flexible(
+                                    child: Text(
+                                      Formatters.formatCurrency(order.totalAmount),
+                                      style: AppTypography.titleSmall.copyWith(
+                                        fontWeight: FontWeight.w900,
+                                        color: colors.textPrimary,
+                                        fontSize: 12.5,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
                                 ],
@@ -191,9 +210,9 @@ class OrderCard extends StatelessWidget {
                           ),
                         ),
 
-                        AppSpacing.hGap8,
+                        const SizedBox(width: 6),
 
-                        // Action Buttons with refined, comfortable touch sizes
+                        // Action Buttons with refined, compact sizes for small screens
                         if (isPending)
                           Row(
                             mainAxisSize: MainAxisSize.min,
@@ -203,35 +222,35 @@ class OrderCard extends StatelessWidget {
                                   onTap: onDecline,
                                   borderRadius: AppRadius.full,
                                   child: Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                    padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 6),
                                     decoration: BoxDecoration(
                                       color: colors.surface,
                                       borderRadius: AppRadius.full,
-                                      border: Border.all(color: colors.borderSubtle, width: 1.2),
+                                      border: Border.all(color: colors.borderSubtle, width: 1.1),
                                     ),
                                     child: Text(
                                       'Decline',
                                       style: AppTypography.labelMedium.copyWith(
                                         color: colors.textSecondary,
                                         fontWeight: FontWeight.w700,
-                                        fontSize: 13,
+                                        fontSize: 12,
                                       ),
                                     ),
                                   ),
                                 ),
-                              if (onDecline != null) AppSpacing.hGap8,
+                              if (onDecline != null) const SizedBox(width: 6),
                               InkWell(
                                 onTap: onAccept,
                                 borderRadius: AppRadius.full,
                                 child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 8),
+                                  padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 6),
                                   decoration: BoxDecoration(
                                     color: colors.primary,
                                     borderRadius: AppRadius.full,
                                     boxShadow: [
                                       BoxShadow(
                                         color: colors.primary.withValues(alpha: 0.25),
-                                        blurRadius: 8,
+                                        blurRadius: 6,
                                         offset: const Offset(0, 2),
                                       ),
                                     ],
@@ -241,7 +260,7 @@ class OrderCard extends StatelessWidget {
                                     style: AppTypography.labelMedium.copyWith(
                                       color: colors.textInverse,
                                       fontWeight: FontWeight.w800,
-                                      fontSize: 13,
+                                      fontSize: 12,
                                     ),
                                   ),
                                 ),
@@ -253,14 +272,14 @@ class OrderCard extends StatelessWidget {
                             onTap: onReady,
                             borderRadius: AppRadius.full,
                             child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 6),
                               decoration: BoxDecoration(
                                 color: colors.ctaPrimary,
                                 borderRadius: AppRadius.full,
                                 boxShadow: [
                                   BoxShadow(
                                     color: colors.ctaPrimary.withValues(alpha: 0.25),
-                                    blurRadius: 8,
+                                    blurRadius: 6,
                                     offset: const Offset(0, 2),
                                   ),
                                 ],
@@ -270,7 +289,7 @@ class OrderCard extends StatelessWidget {
                                 style: AppTypography.labelMedium.copyWith(
                                   color: colors.ctaPrimaryText,
                                   fontWeight: FontWeight.w800,
-                                  fontSize: 13,
+                                  fontSize: 12,
                                 ),
                               ),
                             ),
@@ -280,18 +299,18 @@ class OrderCard extends StatelessWidget {
                             onTap: onTap,
                             borderRadius: AppRadius.full,
                             child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+                              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 6),
                               decoration: BoxDecoration(
                                 color: colors.surface,
                                 borderRadius: AppRadius.full,
-                                border: Border.all(color: colors.borderSubtle, width: 1.2),
+                                border: Border.all(color: colors.borderSubtle, width: 1.1),
                               ),
                               child: Text(
                                 'Details',
                                 style: AppTypography.labelMedium.copyWith(
                                   color: colors.textPrimary,
                                   fontWeight: FontWeight.w700,
-                                  fontSize: 13,
+                                  fontSize: 12,
                                 ),
                               ),
                             ),

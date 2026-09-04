@@ -70,6 +70,8 @@ class AppColors {
   static const Color lightSurfaceHighest = Color(0xFFDFE2EE);// Stitch surface-container-highest
   static const Color lightBorder = Color(0xFFDFE2EE);       // Outline variant
   static const Color lightDivider = Color(0xFFEAEDF9);
+  static const Color navBarBgLight = Color(0xFFEFF2F8);     // Subtle dark white / tinted off-white
+  static const Color navBarBorderLight = Color(0xFFDCE0EC); // Subtle distinct navbar border
 
   // ── Canvas & Surface Tokens (Dark Theme) ──────────────────────────────
   // True elevation model (à la Material 3 / Linear dark): each level gets
@@ -80,6 +82,8 @@ class AppColors {
   static const Color darkSurfaceHighest = Color(0xFF232733); // Level 3 — nested/hover surfaces
   static const Color darkBorder = Color(0xFF272B35);
   static const Color darkDivider = Color(0xFF1E212A);
+  static const Color navBarBgDark = Color(0xFF1E222D);      // Lighter elevated dark ("little white dark")
+  static const Color navBarBorderDark = Color(0xFF323746);  // Distinct elevated navbar border
 
   // ── Typography & Text Tokens (Light Theme) ────────────────────────────
   static const Color textPrimaryLight = Color(0xFF15171C);   // Near-black, cool undertone

@@ -36,6 +36,8 @@ class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
   final Color ctaSecondaryText;
   final Color shimmerBase;
   final Color shimmerHighlight;
+  final Color navBarBg;
+  final Color navBarBorder;
 
   // Order Flow Status Tokens
   final Color orderPending;
@@ -83,6 +85,8 @@ class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
     required this.ctaSecondaryText,
     required this.shimmerBase,
     required this.shimmerHighlight,
+    required this.navBarBg,
+    required this.navBarBorder,
     required this.orderPending,
     required this.orderPendingBg,
     required this.orderAccepted,
@@ -130,6 +134,8 @@ class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
     ctaSecondaryText: AppColors.ctaSecondaryLightText,
     shimmerBase: AppColors.shimmerBaseLight,
     shimmerHighlight: AppColors.shimmerHighlightLight,
+    navBarBg: AppColors.navBarBgLight,
+    navBarBorder: AppColors.navBarBorderLight,
     orderPending: AppColors.orderPending,
     orderPendingBg: AppColors.statusWarningBgLight,
     orderAccepted: AppColors.orderAccepted,
@@ -177,6 +183,8 @@ class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
     ctaSecondaryText: AppColors.ctaSecondaryDarkText,
     shimmerBase: AppColors.shimmerBaseDark,
     shimmerHighlight: AppColors.shimmerHighlightDark,
+    navBarBg: AppColors.navBarBgDark,
+    navBarBorder: AppColors.navBarBorderDark,
     orderPending: AppColors.orderPending,
     orderPendingBg: AppColors.statusWarningBgDark,
     orderAccepted: AppColors.orderAccepted,
@@ -224,6 +232,8 @@ class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
     Color? ctaSecondaryText,
     Color? shimmerBase,
     Color? shimmerHighlight,
+    Color? navBarBg,
+    Color? navBarBorder,
     Color? orderPending,
     Color? orderPendingBg,
     Color? orderAccepted,
@@ -269,6 +279,8 @@ class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
       ctaSecondaryText: ctaSecondaryText ?? this.ctaSecondaryText,
       shimmerBase: shimmerBase ?? this.shimmerBase,
       shimmerHighlight: shimmerHighlight ?? this.shimmerHighlight,
+      navBarBg: navBarBg ?? this.navBarBg,
+      navBarBorder: navBarBorder ?? this.navBarBorder,
       orderPending: orderPending ?? this.orderPending,
       orderPendingBg: orderPendingBg ?? this.orderPendingBg,
       orderAccepted: orderAccepted ?? this.orderAccepted,
@@ -323,6 +335,8 @@ class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
       ctaSecondaryText: Color.lerp(ctaSecondaryText, other.ctaSecondaryText, t)!,
       shimmerBase: Color.lerp(shimmerBase, other.shimmerBase, t)!,
       shimmerHighlight: Color.lerp(shimmerHighlight, other.shimmerHighlight, t)!,
+      navBarBg: Color.lerp(navBarBg, other.navBarBg, t)!,
+      navBarBorder: Color.lerp(navBarBorder, other.navBarBorder, t)!,
       orderPending: Color.lerp(orderPending, other.orderPending, t)!,
       orderPendingBg: Color.lerp(orderPendingBg, other.orderPendingBg, t)!,
       orderAccepted: Color.lerp(orderAccepted, other.orderAccepted, t)!,

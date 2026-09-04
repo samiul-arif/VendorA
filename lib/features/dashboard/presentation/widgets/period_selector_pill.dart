@@ -68,7 +68,7 @@ class PeriodSelectorPill extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeInOut,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6.5),
         decoration: BoxDecoration(
           color: isSelected ? activeBg : Colors.transparent,
           borderRadius: AppRadius.full,
@@ -90,14 +90,14 @@ class PeriodSelectorPill extends StatelessWidget {
               style: AppTypography.labelMedium.copyWith(
                 color: isSelected ? activeText : inactiveText,
                 fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
-                fontSize: 12,
+                fontSize: 11.5,
               ),
             ),
             if (range == AnalyticsTimeRange.custom) ...[
-              const SizedBox(width: 4),
+              const SizedBox(width: 3),
               Icon(
                 Icons.calendar_month_outlined,
-                size: 14,
+                size: 13,
                 color: isSelected ? activeText : inactiveText,
               ),
             ],

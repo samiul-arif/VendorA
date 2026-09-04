@@ -1,5 +1,6 @@
 import '../../../../core/base/base_controller.dart';
 import '../../../../core/utils/result.dart';
+import '../../../../shared/models/pagination_model.dart';
 import '../../data/repositories/mock_product_repository.dart';
 import '../../domain/models/product_model.dart';
 import '../../domain/usecases/get_products_usecase.dart';
@@ -22,7 +23,7 @@ class CategoryFilterItem {
   });
 }
 
-// Product & Inventory Controller
+// Product & Inventory Controller with Enterprise Pagination
 class ProductController extends BaseController {
   final GetProductsUseCase _getProductsUseCase;
   final AddProductUseCase _addProductUseCase;
@@ -31,10 +32,15 @@ class ProductController extends BaseController {
   final ToggleProductAvailabilityUseCase _toggleAvailabilityUseCase;
   final RestockProductUseCase _restockProductUseCase;
 
-  List<ProductModel> _allProducts = MockProductRepository.createDefaultProducts();
+  PaginatedList<ProductModel> _paginatedProducts = PaginatedList.empty();
+  int _currentPage = 1;
+  int _pageSize = 20;
   String _selectedCategoryId = 'all';
   String _searchQuery = '';
   String? _activeShopId;
+
+  // Cached global category totals for accurate filter tab counts
+  final List<ProductModel> _allCatalogSnapshot = MockProductRepository.createDefaultProducts();
 
   ProductController({
     required GetProductsUseCase getProductsUseCase,
@@ -51,36 +57,30 @@ class ProductController extends BaseController {
         _restockProductUseCase = restockProductUseCase;
 
   // Getters
-  List<ProductModel> get products => _allProducts;
+  PaginatedList<ProductModel> get paginatedProducts => _paginatedProducts;
+  List<ProductModel> get products => _paginatedProducts.items;
+  List<ProductModel> get filteredProducts => _paginatedProducts.items;
+  int get currentPage => _currentPage;
+  int get pageSize => _pageSize;
+  int get totalItems => _paginatedProducts.totalItems;
+  int get totalPages => _paginatedProducts.totalPages;
   String get selectedCategoryId => _selectedCategoryId;
   String get searchQuery => _searchQuery;
   String? get activeShopId => _activeShopId;
 
-  // Filtered Products based on search query and category
-  List<ProductModel> get filteredProducts {
-    var list = _allProducts;
-
-    if (_selectedCategoryId != 'all') {
-      list = list.where((p) => p.categoryId == _selectedCategoryId).toList();
-    }
-
-    if (_searchQuery.trim().isNotEmpty) {
-      final query = _searchQuery.toLowerCase().trim();
-      list = list.where((p) =>
-          p.name.toLowerCase().contains(query) ||
-          p.description.toLowerCase().contains(query) ||
-          p.categoryName.toLowerCase().contains(query)).toList();
-    }
-
-    return list;
-  }
-
-  // Calculated Category list with counts
+  // Calculated Category list with counts across the full catalog
   List<CategoryFilterItem> get categories {
     final Map<String, int> counts = {};
-    final Map<String, String> names = {};
+    final Map<String, String> names = {
+      'cat_01': 'Burgers & Sandwiches',
+      'cat_02': 'Sides & Appetizers',
+      'cat_03': 'Beverages & Drinks',
+      'cat_04': 'Pizzas & Calzones',
+      'cat_05': 'Desserts & Sweets',
+      'cat_06': 'Combos & Deals',
+    };
 
-    for (final p in _allProducts) {
+    for (final p in _allCatalogSnapshot) {
       counts[p.categoryId] = (counts[p.categoryId] ?? 0) + 1;
       names[p.categoryId] = p.categoryName;
     }
@@ -89,7 +89,7 @@ class ProductController extends BaseController {
       CategoryFilterItem(
         id: 'all',
         name: 'All Items',
-        itemCount: _allProducts.length,
+        itemCount: _allCatalogSnapshot.length,
       ),
     ];
 
@@ -106,35 +106,94 @@ class ProductController extends BaseController {
     return items;
   }
 
-  // Load Products for Active Shop
-  Future<void> loadProducts({required String shopId}) async {
+  // Load Products for Active Shop with Pagination
+  Future<void> loadProducts({
+    required String shopId,
+    int? page,
+    int? pageSize,
+    bool isSilent = false,
+  }) async {
     _activeShopId = shopId;
+    if (page != null) _currentPage = page;
+    if (pageSize != null) _pageSize = pageSize;
 
-    await runWithState<List<ProductModel>>(() async {
-      final result = await _getProductsUseCase.execute(shopId: shopId);
-      if (result is Success<List<ProductModel>>) {
-        _allProducts = result.data;
+    await runWithState<PaginatedList<ProductModel>>(() async {
+      final result = await _getProductsUseCase.execute(
+        shopId: shopId,
+        page: _currentPage,
+        pageSize: _pageSize,
+        categoryId: _selectedCategoryId,
+        searchQuery: _searchQuery,
+      );
+
+      if (result is Success<PaginatedList<ProductModel>>) {
+        _paginatedProducts = result.data;
+        _currentPage = result.data.currentPage;
       }
       return result;
-    });
+    }, isUpdate: isSilent);
+  }
+
+  // Go to specific Page
+  Future<void> goToPage(int page) async {
+    if (_activeShopId == null || page == _currentPage || page < 1) return;
+    await loadProducts(shopId: _activeShopId!, page: page, isSilent: false);
+  }
+
+  // Set Page Size (e.g. 10, 20, 50, 100)
+  Future<void> setPageSize(int size) async {
+    if (_activeShopId == null || size == _pageSize) return;
+    _pageSize = size;
+    _currentPage = 1;
+    await loadProducts(shopId: _activeShopId!, page: 1, pageSize: size);
+  }
+
+  // Next Page
+  Future<void> nextPage() async {
+    if (_paginatedProducts.hasNextPage) {
+      await goToPage(_currentPage + 1);
+    }
+  }
+
+  // Previous Page
+  Future<void> previousPage() async {
+    if (_paginatedProducts.hasPreviousPage) {
+      await goToPage(_currentPage - 1);
+    }
   }
 
   // Category Filter Select
   void setCategoryFilter(String categoryId) {
+    if (_selectedCategoryId == categoryId) return;
     _selectedCategoryId = categoryId;
-    notifyListeners();
+    _currentPage = 1;
+    if (_activeShopId != null) {
+      loadProducts(shopId: _activeShopId!, page: 1);
+    } else {
+      notifyListeners();
+    }
   }
 
   // Search Filter
   void setSearchQuery(String query) {
     _searchQuery = query;
-    notifyListeners();
+    _currentPage = 1;
+    if (_activeShopId != null) {
+      loadProducts(shopId: _activeShopId!, page: 1);
+    } else {
+      notifyListeners();
+    }
   }
 
   // Clear Search
   void clearSearch() {
     _searchQuery = '';
-    notifyListeners();
+    _currentPage = 1;
+    if (_activeShopId != null) {
+      loadProducts(shopId: _activeShopId!, page: 1);
+    } else {
+      notifyListeners();
+    }
   }
 
   // 1-Tap Toggle Availability (Optimistic Offline Sync)
@@ -142,17 +201,19 @@ class ProductController extends BaseController {
     String productId,
     bool isAvailable,
   ) async {
-    final index = _allProducts.indexWhere((p) => p.id == productId);
+    final currentItems = List<ProductModel>.from(_paginatedProducts.items);
+    final index = currentItems.indexWhere((p) => p.id == productId);
     if (index == -1) {
       return const Failure('Product not found in current view.');
     }
 
     // Optimistic Update
-    final original = _allProducts[index];
-    _allProducts[index] = original.copyWith(
+    final original = currentItems[index];
+    currentItems[index] = original.copyWith(
       isAvailable: isAvailable,
       isManualOutOfStock: !isAvailable,
     );
+    _paginatedProducts = _paginatedProducts.copyWith(items: currentItems);
     notifyListeners();
 
     final result = await _toggleAvailabilityUseCase.execute(
@@ -162,12 +223,14 @@ class ProductController extends BaseController {
 
     result.when(
       success: (updated) {
-        _allProducts[index] = updated;
+        currentItems[index] = updated;
+        _paginatedProducts = _paginatedProducts.copyWith(items: currentItems);
         notifyListeners();
       },
       failure: (message, _) {
         // Rollback
-        _allProducts[index] = original;
+        currentItems[index] = original;
+        _paginatedProducts = _paginatedProducts.copyWith(items: currentItems);
         notifyListeners();
       },
     );
@@ -188,9 +251,11 @@ class ProductController extends BaseController {
         );
 
         if (result is Success<ProductModel>) {
-          final index = _allProducts.indexWhere((p) => p.id == productId);
+          final currentItems = List<ProductModel>.from(_paginatedProducts.items);
+          final index = currentItems.indexWhere((p) => p.id == productId);
           if (index != -1) {
-            _allProducts[index] = result.data;
+            currentItems[index] = result.data;
+            _paginatedProducts = _paginatedProducts.copyWith(items: currentItems);
           }
         }
         return result;
@@ -205,7 +270,9 @@ class ProductController extends BaseController {
       () async {
         final result = await _addProductUseCase.execute(product: product);
         if (result is Success<ProductModel>) {
-          _allProducts.insert(0, result.data);
+          if (_activeShopId != null) {
+            await loadProducts(shopId: _activeShopId!, page: 1, isSilent: true);
+          }
         }
         return result;
       },
@@ -219,9 +286,11 @@ class ProductController extends BaseController {
       () async {
         final result = await _updateProductUseCase.execute(product: product);
         if (result is Success<ProductModel>) {
-          final index = _allProducts.indexWhere((p) => p.id == product.id);
+          final currentItems = List<ProductModel>.from(_paginatedProducts.items);
+          final index = currentItems.indexWhere((p) => p.id == product.id);
           if (index != -1) {
-            _allProducts[index] = result.data;
+            currentItems[index] = result.data;
+            _paginatedProducts = _paginatedProducts.copyWith(items: currentItems);
           }
         }
         return result;
@@ -236,7 +305,9 @@ class ProductController extends BaseController {
       () async {
         final result = await _deleteProductUseCase.execute(productId: productId);
         if (result is Success<void>) {
-          _allProducts.removeWhere((p) => p.id == productId);
+          if (_activeShopId != null) {
+            await loadProducts(shopId: _activeShopId!, page: _currentPage, isSilent: true);
+          }
         }
         return result;
       },

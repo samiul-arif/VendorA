@@ -1,13 +1,17 @@
 import '../../../../core/utils/result.dart';
+import '../../../../shared/models/pagination_model.dart';
 import '../models/order_model.dart';
 import '../models/order_status.dart';
 
 // Order Repository Interface Definition
 abstract class IOrderRepository {
-  // Fetch list of orders filtered optionally by status
-  Future<Result<List<OrderModel>>> getOrders({
+  // Fetch paginated list of orders filtered optionally by status and search query
+  Future<Result<PaginatedList<OrderModel>>> getOrders({
     required String shopId,
+    int page = 1,
+    int pageSize = 20,
     OrderStatus status = OrderStatus.all,
+    String? searchQuery,
     bool forceRefresh = false,
   });
 

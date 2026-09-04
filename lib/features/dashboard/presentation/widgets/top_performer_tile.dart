@@ -75,16 +75,24 @@ class TopPerformerTile extends StatelessWidget {
               ],
             ),
           ),
+          const SizedBox(width: AppSpacing.sm),
 
           // Revenue & Growth Trend
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                Formatters.formatCurrency(item.totalRevenue),
-                style: AppTypography.titleSmall.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: colors.textPrimary,
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerRight,
+                child: Text(
+                  Formatters.formatCurrency(item.totalRevenue),
+                  style: AppTypography.titleSmall.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: colors.textPrimary,
+                    fontSize: 13.5,
+                  ),
+                  maxLines: 1,
                 ),
               ),
               const SizedBox(height: 2),
@@ -106,7 +114,7 @@ class TopPerformerTile extends StatelessWidget {
                   Text(
                     '${item.growthPercentage.toStringAsFixed(0)}%',
                     style: AppTypography.labelSmall.copyWith(
-                      fontSize: 11,
+                      fontSize: 10.5,
                       fontWeight: FontWeight.w700,
                       color: item.growthPercentage == 0
                           ? neutralColor

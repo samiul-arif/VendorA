@@ -1,10 +1,11 @@
 import 'package:uuid/uuid.dart';
 import '../../../../core/network/base_mock_repository.dart';
 import '../../../../core/utils/result.dart';
+import '../../../../shared/models/pagination_model.dart';
 import '../../domain/models/product_model.dart';
 import '../../domain/repositories/product_repository_interface.dart';
 
-// Mock Product Repository with Inventory Tracking and Offline Stock-Out Logic
+// Mock Product Repository with 2,483 Products, Inventory Tracking and Paginated Queries
 class MockProductRepository extends BaseMockRepository implements IProductRepository {
   static const Uuid _uuid = Uuid();
   final List<ProductModel> _inMemoryProducts = [];
@@ -14,7 +15,7 @@ class MockProductRepository extends BaseMockRepository implements IProductReposi
   }
 
   static List<ProductModel> createDefaultProducts() {
-    return [
+    final List<ProductModel> products = [
       ProductModel(
         id: 'prod_01',
         shopId: 'shop_01',
@@ -149,11 +150,106 @@ class MockProductRepository extends BaseMockRepository implements IProductReposi
         updatedAt: DateTime.now(),
       ),
     ];
+
+    // Category profiles for deterministic generation of 2,483 products
+    final categories = [
+      {
+        'id': 'cat_01',
+        'name': 'Burgers & Sandwiches',
+        'prefixes': ['Artisan', 'Smoked', 'Gourmet', 'Crispy', 'BBQ', 'Double', 'Classic', 'Spicy', 'Truffle', 'Cheesy', 'Grilled', 'Fiery', 'Honey Glazed', 'Loaded'],
+        'items': ['Angus Burger', 'Chicken Club', 'Brisket Melt', 'Smashed Patty', 'Philly Cheesesteak', 'Veggie Stack', 'Slider Trio', 'Bacon Melt', 'Buffalo Burger', 'Avocado Wrap'],
+        'image': 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400',
+        'basePrice': 11.50,
+      },
+      {
+        'id': 'cat_02',
+        'name': 'Sides & Appetizers',
+        'prefixes': ['Seasoned', 'Loaded', 'Golden', 'Crispy', 'Spicy', 'Herb', 'Garlic', 'Truffle', 'Zesty', 'Cheesy', 'Cajun', 'Smoky'],
+        'items': ['Curly Fries', 'Mozzarella Sticks', 'Truffle Tots', 'Buffalo Wings', 'Garlic Bread Bites', 'Jalapeño Poppers', 'Sweet Potato Fries', 'Corn Ribs', 'Nachos Supreme'],
+        'image': 'https://images.unsplash.com/photo-1585109649139-366815a0d713?w=400',
+        'basePrice': 6.50,
+      },
+      {
+        'id': 'cat_03',
+        'name': 'Beverages & Drinks',
+        'prefixes': ['Iced', 'Fresh', 'Sparkling', 'Chilled', 'Cold Brew', 'Signature', 'Tropical', 'Organic', 'Hand-Crafted', 'Artisanal'],
+        'items': ['Lemon Iced Tea', 'Mango Peach Slush', 'Vanilla Bean Shake', 'Espresso Tonic', 'Strawberry Sparkler', 'Matcha Latte', 'Passionfruit Fizz', 'Cold Brew Coffee', 'Chocolate Malt'],
+        'image': 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=400',
+        'basePrice': 4.75,
+      },
+      {
+        'id': 'cat_04',
+        'name': 'Pizzas & Calzones',
+        'prefixes': ['Stone Baked', 'Artisan', 'Rustic', 'Cheesy', 'Truffle', 'Spicy', 'Classic', 'Wood Fired', 'Supreme', 'Stuffed Crust'],
+        'items': ['Pepperoni Feast XL', 'Margherita D.O.P.', 'Truffle Mushroom Pizza', 'BBQ Chicken Pizza', 'Four Cheese Calzone', 'Meat Lovers Supreme', 'Diavola Hot Pizza', 'Pesto Veggie Pizza'],
+        'image': 'https://images.unsplash.com/photo-1628840042765-356cda07504e?w=400',
+        'basePrice': 16.00,
+      },
+      {
+        'id': 'cat_05',
+        'name': 'Desserts & Sweets',
+        'prefixes': ['Warm', 'Decadent', 'Fluffy', 'Rich', 'Belgian', 'Velvet', 'Homemade', 'Artisan', 'Glazed', 'Creamy'],
+        'items': ['Lava Cake', 'New York Cheesecake', 'Cinnamon Rolls', 'Churro Bites', 'Berry Tiramisu', 'Fudge Brownie', 'Apple Crumble', 'Macaron Box', 'Caramel Pudding'],
+        'image': 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=400',
+        'basePrice': 6.99,
+      },
+      {
+        'id': 'cat_06',
+        'name': 'Combos & Deals',
+        'prefixes': ['Super Saver', 'Mega', 'Duo', 'Family', 'Midnight', 'Office Feast', 'Weekend Party', 'Student', 'Chef Special'],
+        'items': ['Burger & Wings Box', 'Pizza & Drink Feast', 'Duo Smash Combo', 'Lunch Delight Pack', 'Game Day Platter', 'Family Meal Deal'],
+        'image': 'https://images.unsplash.com/photo-1544025162-d76694265947?w=400',
+        'basePrice': 22.50,
+      },
+    ];
+
+    const targetTotal = 2483; // Exactly 2,483 products requirement
+    int index = products.length + 1;
+
+    while (products.length < targetTotal) {
+      final cat = categories[index % categories.length];
+      final prefixes = cat['prefixes'] as List<String>;
+      final items = cat['items'] as List<String>;
+
+      final prefix = prefixes[(index * 7) % prefixes.length];
+      final item = items[(index * 13) % items.length];
+      final basePrice = cat['basePrice'] as double;
+      final price = (basePrice + (index % 15) * 1.25);
+      final hasDiscount = index % 5 == 0;
+      final stock = (index % 17 == 0) ? 0 : ((index % 7 == 0) ? 2 : (10 + (index % 45)));
+
+      products.add(
+        ProductModel(
+          id: 'prod_${index.toString().padLeft(4, '0')}',
+          shopId: 'shop_01',
+          name: '$prefix $item #${index.toString().padLeft(3, '0')}',
+          description: 'Specialty crafted $item with premium fresh ingredients and house seasoning.',
+          price: double.parse(price.toStringAsFixed(2)),
+          originalPrice: hasDiscount ? double.parse((price * 1.20).toStringAsFixed(2)) : null,
+          stockQuantity: stock,
+          lowStockThreshold: 3,
+          isAvailable: stock > 0 && index % 23 != 0,
+          isManualOutOfStock: index % 23 == 0,
+          categoryId: cat['id'] as String,
+          categoryName: cat['name'] as String,
+          imageUrl: cat['image'] as String,
+          preparationTimeMinutes: 5 + (index % 25),
+          isPopular: index % 8 == 0,
+          createdAt: DateTime.now().subtract(Duration(days: (index % 120) + 1)),
+          updatedAt: DateTime.now().subtract(Duration(hours: (index % 48) + 1)),
+        ),
+      );
+      index++;
+    }
+
+    return products;
   }
 
   @override
-  Future<Result<List<ProductModel>>> getProducts({
+  Future<Result<PaginatedList<ProductModel>>> getProducts({
     required String shopId,
+    int page = 1,
+    int pageSize = 20,
     String? categoryId,
     String? searchQuery,
   }) async {
@@ -176,9 +272,13 @@ class MockProductRepository extends BaseMockRepository implements IProductReposi
               p.categoryName.toLowerCase().contains(query)).toList();
         }
 
-        return list;
+        return PaginatedList<ProductModel>.fromAllItems(
+          allItems: list,
+          page: page,
+          pageSize: pageSize,
+        );
       },
-      customDelayMs: 300,
+      customDelayMs: 250,
     );
   }
 

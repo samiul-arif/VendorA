@@ -1,5 +1,6 @@
 import '../../../../core/network/base_mock_repository.dart';
 import '../../../../core/utils/result.dart';
+import '../../../../shared/models/pagination_model.dart';
 import '../../domain/models/order_item_model.dart';
 import '../../domain/models/order_model.dart';
 import '../../domain/models/order_status.dart';
@@ -16,7 +17,7 @@ class MockOrderRepository extends BaseMockRepository implements IOrderRepository
   static List<OrderModel> createDefaultOrders() {
     final now = DateTime.now();
 
-    return [
+    final List<OrderModel> orders = [
       // 1. Pending (New Incoming Order)
       OrderModel(
         id: 'ord_101',
@@ -280,6 +281,154 @@ class MockOrderRepository extends BaseMockRepository implements IOrderRepository
         updatedAt: now.subtract(const Duration(hours: 3, minutes: 55)),
       ),
     ];
+
+    final firstNames = [
+      'Liam', 'Emma', 'Noah', 'Olivia', 'Lucas', 'Ava', 'Ethan', 'Sophia',
+      'Mason', 'Isabella', 'Alex', 'Mia', 'James', 'Charlotte', 'Daniel',
+      'Harper', 'Logan', 'Evelyn', 'Benjamin', 'Amelia', 'Oliver', 'Harper',
+    ];
+
+    final lastNames = [
+      'Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller',
+      'Davis', 'Rodriguez', 'Martinez', 'Hernandez', 'Lopez', 'Gonzalez',
+      'Wilson', 'Anderson', 'Thomas', 'Taylor', 'Moore', 'Jackson', 'Martin',
+    ];
+
+    final addresses = [
+      '742 Evergreen Terrace, Apt 4B', '120 Howard St, Suite 500',
+      '88 King St, Apt 1402', '350 Mission St, 12th Floor',
+      '500 Pine St, Apt 3A', '220 Montgomery St, Floor 8',
+      '150 California St, Downtown', '789 Market St, Apt 21B',
+      '415 Castro St, Unit 302', '620 Folsom St, Apt 8C',
+      '1010 Bush St, Apt 15', '450 Sutter St, Suite 900',
+    ];
+
+    final productPool = [
+      const OrderItemModel(
+        productId: 'prod_01',
+        productName: 'Truffle Smash Burger',
+        unitPrice: 14.99,
+        quantity: 1,
+        imageUrl: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400',
+      ),
+      const OrderItemModel(
+        productId: 'prod_02',
+        productName: 'Double Bacon Cheeseburger',
+        unitPrice: 12.50,
+        quantity: 1,
+        imageUrl: 'https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=400',
+      ),
+      const OrderItemModel(
+        productId: 'prod_03',
+        productName: 'Crispy Chicken Rice Bowl',
+        unitPrice: 11.00,
+        quantity: 1,
+        imageUrl: 'https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?w=400',
+      ),
+      const OrderItemModel(
+        productId: 'prod_04',
+        productName: 'Loaded Bacon Cheese Fries',
+        unitPrice: 8.50,
+        quantity: 1,
+        imageUrl: 'https://images.unsplash.com/photo-1585109649139-366815a0d713?w=400',
+      ),
+      const OrderItemModel(
+        productId: 'prod_05',
+        productName: 'Golden Onion Rings',
+        unitPrice: 6.50,
+        quantity: 1,
+        imageUrl: 'https://images.unsplash.com/photo-1639024471287-035186f55a1c?w=400',
+      ),
+      const OrderItemModel(
+        productId: 'prod_06',
+        productName: 'Specialty Vanilla Milkshake',
+        unitPrice: 5.50,
+        quantity: 1,
+        imageUrl: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=400',
+      ),
+      const OrderItemModel(
+        productId: 'prod_07',
+        productName: 'Warm Chocolate Lava Cake',
+        unitPrice: 7.50,
+        quantity: 1,
+        imageUrl: 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=400',
+      ),
+    ];
+
+    const targetTotal = 12581; // Exactly 12,581 orders requirement
+    int index = orders.length + 1;
+
+    while (orders.length < targetTotal) {
+      final firstName = firstNames[(index * 3) % firstNames.length];
+      final lastName = lastNames[(index * 7) % lastNames.length];
+      final address = addresses[(index * 11) % addresses.length];
+
+      final p1 = productPool[(index * 5) % productPool.length];
+      final p2 = productPool[(index * 13) % productPool.length];
+      final items = (index % 3 == 0) ? [p1] : [p1, p2];
+
+      final subtotal = items.fold<double>(0.0, (sum, i) => sum + (i.unitPrice * i.quantity));
+      final deliveryFee = (index % 4 == 0) ? 0.0 : 2.99;
+      final tax = double.parse((subtotal * 0.085).toStringAsFixed(2));
+      final discount = (index % 6 == 0) ? 3.0 : 0.0;
+      final total = double.parse((subtotal + deliveryFee + tax - discount).toStringAsFixed(2));
+
+      // Status distribution
+      OrderStatus status;
+      DateTime createdAt;
+      int prepMinutes = 0;
+
+      if (index <= 30) {
+        status = OrderStatus.pending;
+        createdAt = now.subtract(Duration(minutes: 1 + (index * 2)));
+        prepMinutes = 15;
+      } else if (index <= 65) {
+        status = OrderStatus.accepted;
+        createdAt = now.subtract(Duration(minutes: 5 + (index * 2)));
+        prepMinutes = 20;
+      } else if (index <= 110) {
+        status = OrderStatus.preparing;
+        createdAt = now.subtract(Duration(minutes: 10 + (index * 2)));
+        prepMinutes = 12;
+      } else if (index <= 170) {
+        status = OrderStatus.ready;
+        createdAt = now.subtract(Duration(minutes: 15 + (index * 2)));
+        prepMinutes = 0;
+      } else if (index % 19 == 0) {
+        status = OrderStatus.cancelled;
+        createdAt = now.subtract(Duration(hours: 2 + (index % 720)));
+      } else {
+        status = OrderStatus.delivered;
+        createdAt = now.subtract(Duration(hours: 1 + (index % 1440)));
+      }
+
+      orders.add(
+        OrderModel(
+          id: 'ord_${index.toString().padLeft(5, '0')}',
+          orderNumber: 'FP-${(8400 + index)}',
+          shopId: 'shop_01',
+          customerName: '$firstName $lastName',
+          customerPhone: '+1 (555) ${(100 + index % 900)}-${(1000 + index % 9000)}',
+          deliveryAddress: address,
+          items: items,
+          subtotal: double.parse(subtotal.toStringAsFixed(2)),
+          deliveryFee: deliveryFee,
+          tax: tax,
+          discount: discount,
+          totalAmount: total,
+          status: status,
+          paymentMethod: index % 2 == 0 ? 'Foodpanda Wallet' : 'Credit Card',
+          isPaid: status != OrderStatus.cancelled,
+          estimatedPrepMinutes: prepMinutes,
+          rejectionReason: status == OrderStatus.cancelled ? 'Item out of stock during peak hour' : null,
+          createdAt: createdAt,
+          updatedAt: createdAt.add(Duration(minutes: (index % 20) + 2)),
+        ),
+      );
+      index++;
+    }
+
+    return orders;
   }
 
   void _initDefaultOrders() {
@@ -289,9 +438,12 @@ class MockOrderRepository extends BaseMockRepository implements IOrderRepository
   }
 
   @override
-  Future<Result<List<OrderModel>>> getOrders({
+  Future<Result<PaginatedList<OrderModel>>> getOrders({
     required String shopId,
+    int page = 1,
+    int pageSize = 20,
     OrderStatus status = OrderStatus.all,
+    String? searchQuery,
     bool forceRefresh = false,
   }) async {
     return executeMock(
@@ -305,11 +457,25 @@ class MockOrderRepository extends BaseMockRepository implements IOrderRepository
           list = list.where((o) => o.status == status).toList();
         }
 
+        if (searchQuery != null && searchQuery.trim().isNotEmpty) {
+          final q = searchQuery.toLowerCase().trim();
+          list = list.where((o) {
+            return o.orderNumber.toLowerCase().contains(q) ||
+                o.customerName.toLowerCase().contains(q) ||
+                o.itemsSummary.toLowerCase().contains(q);
+          }).toList();
+        }
+
         // Sort by creation time (most recent first)
         list.sort((a, b) => b.createdAt.compareTo(a.createdAt));
-        return list;
+
+        return PaginatedList<OrderModel>.fromAllItems(
+          allItems: list,
+          page: page,
+          pageSize: pageSize,
+        );
       },
-      customDelayMs: forceRefresh ? 450 : 200,
+      customDelayMs: forceRefresh ? 350 : 150,
     );
   }
 

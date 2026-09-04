@@ -8,6 +8,7 @@ import '../../../../core/theme/app_shadows.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../shared/components/app_bottom_sheet.dart';
+import '../../../../shared/components/app_pagination_bar.dart';
 import '../../../../shared/components/error_state_view.dart';
 import '../../../../shared/components/shimmer_skeleton.dart';
 import '../../../../shared/components/app_toast.dart';
@@ -275,7 +276,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
               ),
             ),
 
-            // 4. Scrollable Product Bento Grid (2x2 Grid View)
+            // 4. Scrollable Product Bento Grid (2x2 Grid View) + Bottom Pagination Bar
             Expanded(
               child: productController.isLoading && productController.products.isEmpty
                   ? const _ProductGridSkeleton()
@@ -299,40 +300,66 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                     _buildEmptyState(colors, isDark),
                                   ],
                                 )
-                              : GridView.builder(
-                                  padding: const EdgeInsets.fromLTRB(
-                                    AppSpacing.lg,
-                                    AppSpacing.xs,
-                                    AppSpacing.lg,
-                                    130, // clearance for floating action button & bottom nav
-                                  ),
-                                  itemCount: filteredProducts.length,
-                                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 2,
-                                    crossAxisSpacing: 12,
-                                    mainAxisSpacing: 12,
-                                    childAspectRatio: 0.74,
-                                  ),
-                                  itemBuilder: (context, index) {
-                                    final product = filteredProducts[index];
-                                    return ProductCard(
-                                      product: product,
-                                      onToggleAvailability: (available) async {
-                                        final result = await productController.toggleAvailability(product.id, available);
-                                        if (!context.mounted) return;
-                                        result.when(
-                                          success: (_) => AppToast.showSuccess(
-                                            context,
-                                            title: 'Availability Updated',
-                                            message: '${product.name} is now ${available ? "available" : "sold out"}.',
-                                          ),
-                                          failure: (msg, _) => AppToast.showError(context, title: 'Error', message: msg),
-                                        );
-                                      },
-                                      onRestockTapped: () => _showRestockModal(product),
-                                      onEditTapped: () => _openAddEditScreen(product),
-                                    );
-                                  },
+                              : CustomScrollView(
+                                  physics: const AlwaysScrollableScrollPhysics(),
+                                  slivers: [
+                                    SliverPadding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                        AppSpacing.lg,
+                                        AppSpacing.xs,
+                                        AppSpacing.lg,
+                                        AppSpacing.xs,
+                                      ),
+                                      sliver: SliverGrid(
+                                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount: 2,
+                                          crossAxisSpacing: 12,
+                                          mainAxisSpacing: 12,
+                                          childAspectRatio: 0.74,
+                                        ),
+                                        delegate: SliverChildBuilderDelegate(
+                                          (context, index) {
+                                            final product = filteredProducts[index];
+                                            return ProductCard(
+                                              product: product,
+                                              onToggleAvailability: (available) async {
+                                                final result = await productController.toggleAvailability(product.id, available);
+                                                if (!context.mounted) return;
+                                                result.when(
+                                                  success: (_) => AppToast.showSuccess(
+                                                    context,
+                                                    title: 'Availability Updated',
+                                                    message: '${product.name} is now ${available ? "available" : "sold out"}.',
+                                                  ),
+                                                  failure: (msg, _) => AppToast.showError(context, title: 'Error', message: msg),
+                                                );
+                                              },
+                                              onRestockTapped: () => _showRestockModal(product),
+                                              onEditTapped: () => _openAddEditScreen(product),
+                                            );
+                                          },
+                                          childCount: filteredProducts.length,
+                                        ),
+                                      ),
+                                    ),
+                                    SliverPadding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                        AppSpacing.lg,
+                                        0,
+                                        AppSpacing.lg,
+                                        130, // clearance for floating action button & bottom nav
+                                      ),
+                                      sliver: SliverToBoxAdapter(
+                                        child: AppPaginationBar(
+                                          pagination: productController.paginatedProducts,
+                                          itemLabelPlural: 'products',
+                                          isLoading: productController.isLoading,
+                                          onPageChanged: (newPage) => productController.goToPage(newPage),
+                                          onPageSizeChanged: (newSize) => productController.setPageSize(newSize),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                         ),
             ),
